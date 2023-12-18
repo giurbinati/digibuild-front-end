@@ -84,7 +84,7 @@ export default function Home({ setList, list }) {
           </Typography>
           <Typography variant="h4"
             sx={{ color: "rgba(0, 0, 0, 0.6)", fontFamily: "Poppins, Roboto", fontWeight: 400 }}>
-            Welcome to Asm Monitoring Application
+            Welcome to Digibuild logbook
           </Typography>
         </Container>
       </Paper>

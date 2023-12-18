@@ -72,8 +72,9 @@ export default function MenuAppBar({ auth, setAuth, open, setOpen}) {
                             <MenuIcon />
                         </IconButton>
                     )} */}
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign:"left"}}>
-                        <img  src='/IoT-NGIN_logo_v1.png' alt='logo'></img>
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign:"left", color:"red"}}>
+                        {/* <img  src='/IoT-NGIN_logo_v1.png' alt='logo'></img> */}
+                        DigiBuild
                     </Typography>
                     {auth && (
                         <div>
