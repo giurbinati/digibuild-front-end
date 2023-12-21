@@ -35,7 +35,7 @@ export default function BottomAppBar({open}) {
                     <Grid style={{padding:"8px",alignItems:"center"}} container spacing={2}>
                         <Grid item xs={12} md={4}>
                             <Typography  variant="body2" component="div" >
-                                <p>Copyright MATRYCS Consortium @2022 All rights reserved</p>
+                                <p>Copyright DIGIBUILD</p>
                             </Typography>
                         </Grid>
                         <Grid item xs={12} md={1}>

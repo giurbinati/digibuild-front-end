@@ -11,54 +11,50 @@ import { styled } from '@mui/material/styles';
 // import UserServices from '../services/user';
 
 
-export default function MenuAppBar({ auth, setAuth, open, setOpen}) {
+export default function MenuAppBar({ auth, setAuth, open, setOpen }) {
     const navigate = useNavigate();
-    
+
 
     // const [anchorEl, setAnchorEl] = useState(null);
-    
+
     useEffect(() => {
         console.log("navbar auth")
     });
-    
-   
+
+
     const drawerWidth = 25;
     console.log(open)
     const AppBar = styled(MuiAppBar, {
         shouldForwardProp: (prop) => prop !== 'open',
-      })(({ theme, open }) => ({
+    })(({ theme, open }) => ({
         transition: theme.transitions.create(['margin', 'width'], {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.leavingScreen,
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
         }),
         ...(open && {
-          width: `calc(100% - ${drawerWidth}vh)`,
-          marginLeft: `${drawerWidth}vh`,
-          transition: theme.transitions.create(['margin', 'width'], {
-            easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.enteringScreen,
-          }),
+            width: `calc(100% - ${drawerWidth}vh)`,
+            marginLeft: `${drawerWidth}vh`,
+            transition: theme.transitions.create(['margin', 'width'], {
+                easing: theme.transitions.easing.easeOut,
+                duration: theme.transitions.duration.enteringScreen,
+            }),
         }),
-      }));
+    }));
 
     const logout = () => {
         console.log('logout')
         sessionStorage.clear();
         setAuth(false);
         if (open)
-         setOpen(!open)
+            setOpen(!open)
         navigate('/login')
-    }    
+    }
     
-    const handleDrawerOpen = () => {
-        //getListClient();
-        setOpen(!open)
-    };
 
     return (
         <Box sx={{ flexGrow: 1 }} >
-            <AppBar elevation={0} sx={{'background': '#D3D3D3', maxWidth:"100%"}} 
-            position="sticky" open={open} >
+            <AppBar elevation={0} sx={{ 'background': '#D3D3D3', maxWidth: "100%" }}
+                position="sticky" open={open} >
                 <Toolbar>
                     {/* {auth && (
                         <IconButton
@@ -72,9 +68,10 @@ export default function MenuAppBar({ auth, setAuth, open, setOpen}) {
                             <MenuIcon />
                         </IconButton>
                     )} */}
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign:"left", color:"red"}}>
-                        {/* <img  src='/IoT-NGIN_logo_v1.png' alt='logo'></img> */}
-                        DigiBuild
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: "left", color: "red" }}>
+                        <div sx={{ width: '30%', height: '30%' }}>
+                            <img src='/logo-DigiBuild.png' alt='logo' style={{ width: '15%', height: '15%' }} />
+                        </div>
                     </Typography>
                     {auth && (
                         <div>

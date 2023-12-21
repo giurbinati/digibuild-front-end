@@ -19,13 +19,6 @@ import { omit } from 'lodash';
 import './login.css';
 import { useNavigate } from 'react-router-dom';
 
-import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-
-
 const SignUp = () => {
     useEffect(() => {
 
@@ -40,14 +33,6 @@ const SignUp = () => {
         showPass: false,
         successMessage: null,
     });
-    const [role, setRole] = useState('');
-
-    const handleChangeRole = (event) => {
-        setRole(event.target.value);
-        validate('role', event.target.value)
-        console.log(errors); // Stampa gli errori sulla console per debugging
-    };
-
     const [errors, setErrors] = useState({});
 
     const handlePassVisibilty = () => {
@@ -143,19 +128,6 @@ const SignUp = () => {
                 }
                 break;
 
-            case 'role':
-                if (!value) {
-                    setErrors({
-                        ...errors,
-                        role: '*required',
-                    });
-                } else {
-                    let newObj = omit(errors, "role");
-                    setErrors(newObj);
-                }
-                break;
-
-
             default:
                 break;
         }
@@ -166,23 +138,13 @@ const SignUp = () => {
     //   }
     const handleSubmitClick = (e) => {
         console.log("send data")
-        console.log('ciao', role); // Stampa il valore di "role" sulla console
         e.preventDefault();
-        // Verifica se il campo "role" è vuoto
-        if (!role || typeof role !== 'string') {
-            setErrors({
-                ...errors,
-                role: '*required - must be a string',
-            });
-            return;
-        }
         if (Object.keys(errors).length === 0 && Object.keys(values).length !== 0) {
             const payload = {
                 "email": values.email,
                 "password": values.password,
                 "lastName": values.lastName,
-                "firstName": values.firstName,
-                "role": role
+                "firstName": values.firstName
             }
 
             UserService.sing_up(payload)
@@ -322,43 +284,14 @@ const SignUp = () => {
                                 }
                             </Grid>
                             <Grid item>
-                                <FormControl fullWidth variant="outlined" focused required>
-                                    <InputLabel id="demo-simple-select-label">Role</InputLabel>
-                                    <Select
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        value={role}
-                                        label="Role"
-                                        onChange={handleChangeRole}
-                                        displayEmpty
-                                    >
-                                        <MenuItem value="" disabled>
-                                            <em>Role</em>
-                                        </MenuItem>
-                                        <MenuItem value="Facility Manager">Facility Manager</MenuItem>
-                                        <MenuItem value="Building Manager">Building Manager</MenuItem>
-                                        <MenuItem value="Landlords">Landlords</MenuItem>
-                                        <MenuItem value="Owner-occupiers">Owner-occupiers</MenuItem>
-                                        <MenuItem value="Tenants">Tenants</MenuItem>
-                                        <MenuItem value="Public authorities">Public authorities</MenuItem>
-                                        <MenuItem value="policy makers">policy makers</MenuItem>
-                                    </Select>
-                                    {
-                                        errors.role && <span className="danger">{errors.role}</span>
-                                    }
-                                </FormControl>
-                            </Grid>
-
-
-                            <Grid item>
                                 <Button onClick={handleSubmitClick}
                                     style={{ 'background': 'linear-gradient(to right, #1A88C9, #2AB683)' }}
                                     disabled={!values.lastName || !values.firstName || !values.email || !values.password} type="submit" fullWidth variant="contained">
                                     Sign Up
                                 </Button>
                             </Grid>
-                            <Grid item sx={{ textAlign: "center" }}>
-                                <Typography><a href="/login">Sing In</a></Typography>
+                            <Grid item sx={{textAlign:"center"}}>
+                                <Typography><a href="/">Sing In</a></Typography>
                             </Grid>
 
                             {values.successMessage && (

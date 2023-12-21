@@ -12,6 +12,7 @@ import TableRow from '@mui/material/TableRow';
 
 import AuthService from '../services/auth';
 
+
 export default function Home({ setList, list }) {
   const [values, setValues] = useState({
     "Self consumption rate (%)": 0,
@@ -38,51 +39,88 @@ export default function Home({ setList, list }) {
     //console.log(Object.keys(values));
   }, [values]);
 
+  const [userRole, setUserRole] = useState("");
+
+useEffect(() => {
   // Nel componente dove hai bisogno del ruolo
-const role = AuthService.getRole();
-console.log(role)
+  setUserRole(AuthService.getRole());
+  console.log(userRole); // Questo potrebbe non riflettere il valore aggiornato di userRole
+}, []); // La dipendenza vuota fa sì che useEffect venga eseguito solo una volta
+
+
 
 
 
   const table = () => {
-    return(
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead sx={{ backgroundColor:"#38ACEC", fontWeight: 'bold' }}>
-          <TableRow>
-            <TableCell>Monitoring Device</TableCell>
-            <TableCell align="right">Value</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {Object.keys(values).map((row) => (
-            <TableRow
-              key={row}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {row}
-              </TableCell>
-              <TableCell align="right">{values[row]}</TableCell>
+    return (
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead sx={{ backgroundColor: "#38ACEC", fontWeight: 'bold' }}>
+            <TableRow>
+              <TableCell>Monitoring Device</TableCell>
+              <TableCell align="right">Value</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {Object.keys(values).map((row) => (
+              <TableRow
+                key={row}
+                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">
+                  {row}
+                </TableCell>
+                <TableCell align="right">{values[row]}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     )
   }
 
 
   return (
-    <Box sx={{ flexGrow: 1, minHeight: "78vh" }}>
-    {/* <Box sx={{ flexGrow: 1, minHeight: "90vh" }}> */}
+    <Box sx={{ flexGrow: 1, minHeight: "90vh" }}>
+      {/* <Box sx={{ flexGrow: 1, minHeight: "84.3vh" }}> */}
       <Paper elevation={0}
         sx={{ textAlign: "left" }} >
         <Container maxWidth="xl">
-          <Typography variant="h5"
+        <Typography variant="h5"
             sx={{ color: "rgb(42, 182, 131)", fontFamily: "Poppins, Roboto", fontSize: "16px", fontWeight: 700 }}>
             Homepage
           </Typography>
+          <div
+            style={{
+              color: "rgb(42, 182, 131)",
+              fontFamily: "Poppins, Roboto",
+              fontSize: "16px",
+              fontWeight: 700,
+            }}
+          >
+            {userRole}
+          </div>
+          <div
+  style={{
+    color: "rgb(42, 182, 131)",
+    fontFamily: "Poppins, Roboto",
+    fontSize: "16px",
+    fontWeight: 700,
+  }}
+>
+  {userRole === 'Facility Manager' ? 'I am Facility Manager' : null}
+</div>
+<div
+  style={{
+    color: "rgb(42, 182, 131)",
+    fontFamily: "Poppins, Roboto",
+    fontSize: "16px",
+    fontWeight: 700,
+  }}
+>
+  {userRole === 'Building Manager' ? 'I am Building Manager' : null}
+</div>
+
           <Typography variant="h4"
             sx={{ color: "rgba(0, 0, 0, 0.6)", fontFamily: "Poppins, Roboto", fontWeight: 400 }}>
             Welcome to Digibuild logbook

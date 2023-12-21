@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Home from './pages/home';
 import Login from './pages/login';
 import SignUp from './pages/sing_up';
 import Container from '@mui/material/Container';
-import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Navbar from './pages/navbar';
 import Footer from './pages/footer';
 import PrivateRoute from './utils/PrivateRoute';
-import Drawer from './pages/drawer';
 import { styled } from '@mui/material/styles';
 import './App.css';
+
+import Dashboard from './components/dashboard';
+import Home from './pages/home';
 
 
 
@@ -56,12 +56,14 @@ function App() {
       <Navbar auth={auth} setAuth={setAuth} open={open} setOpen={setOpen}/>
       <Main open={open}>
         {/* <Drawer open={open} setOpen={setOpen} /> */}
+        {/* {auth && <Dashboard />} */}
         <Routes>
           <Route
             path="/"
             element={
               <PrivateRoute token={setAuth}>
-                <Home />
+                 <Dashboard />
+                {/* <Home/> */}
               </PrivateRoute>
             }
           />
@@ -72,7 +74,7 @@ function App() {
           <Route path="/*" element={<PageNotFound />} />
         </Routes>
       </Main>
-      {/* <Footer open={open}/> */}
+      <Footer open={open}/>
     </BrowserRouter>
 
 
