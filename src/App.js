@@ -12,6 +12,8 @@ import { styled } from '@mui/material/styles';
 import './App.css';
 
 import Dashboard from './components/dashboard';
+import Dash2 from './components/dash2'
+import Dash3 from './components/dash3'
 import Home from './pages/home';
 
 
@@ -62,7 +64,7 @@ function App() {
             path="/"
             element={
               <PrivateRoute token={setAuth}>
-                 <Dashboard />
+                 <Dash2 />
                 {/* <Home/> */}
               </PrivateRoute>
             }

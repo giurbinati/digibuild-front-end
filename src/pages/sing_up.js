@@ -48,6 +48,14 @@ const SignUp = () => {
         console.log(errors); // Stampa gli errori sulla console per debugging
     };
 
+    const [dblStructure, setDblStructure] = useState('');
+
+    const handleChangeDblStructure = (event) => {
+        setDblStructure(event.target.value);
+        validate('dblStructure', event.target.value)
+        console.log(errors); // Stampa gli errori sulla console per debugging
+    };
+
     const [errors, setErrors] = useState({});
 
     const handlePassVisibilty = () => {
@@ -143,6 +151,18 @@ const SignUp = () => {
                 }
                 break;
 
+            case 'dblStructure':
+                if (!value) {
+                    setErrors({
+                        ...errors,
+                        dblStructure: '*required',
+                    });
+                } else {
+                    let newObj = omit(errors, "dblStructure");
+                    setErrors(newObj);
+                }
+                break;
+
             case 'role':
                 if (!value) {
                     setErrors({
@@ -167,22 +187,16 @@ const SignUp = () => {
     const handleSubmitClick = (e) => {
         console.log("send data")
         console.log('ciao', role); // Stampa il valore di "role" sulla console
+        console.log('ciao2', dblStructure); // Stampa il valore di "role" sulla console
         e.preventDefault();
-        // Verifica se il campo "role" è vuoto
-        if (!role || typeof role !== 'string') {
-            setErrors({
-                ...errors,
-                role: '*required - must be a string',
-            });
-            return;
-        }
         if (Object.keys(errors).length === 0 && Object.keys(values).length !== 0) {
             const payload = {
                 "email": values.email,
                 "password": values.password,
                 "lastName": values.lastName,
                 "firstName": values.firstName,
-                "role": role
+                "role": role,
+                "dblStructure": dblStructure
             }
 
             UserService.sing_up(payload)
@@ -230,7 +244,7 @@ const SignUp = () => {
                 <Avatar style={{ 'background': 'linear-gradient(to right, #1A88C9, #2AB683)' }} >
                     <LockOutlinedIcon />
                 </Avatar>
-                <Paper elelvation={2} sx={{ boxShadow: "none", padding: 5 }}>
+                <Paper elevation={2} sx={{ boxShadow: "none", padding: 5 }}>
                     <form>
                         <Grid container direction="column" spacing={2} >
                             <Grid item >
@@ -323,6 +337,28 @@ const SignUp = () => {
                             </Grid>
                             <Grid item>
                                 <FormControl fullWidth variant="outlined" focused required>
+                                    <InputLabel id="demo-simple-select-label"> Pilot </InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={dblStructure}
+                                        label="dblStructure"
+                                        onChange={handleChangeDblStructure}
+                                        displayEmpty
+                                    >
+                                        <MenuItem value="" disabled>
+                                            <em>Pilot</em>
+                                        </MenuItem>
+                                        <MenuItem value="FVH">FVH</MenuItem>
+                                        <MenuItem value="IASI&SITTA">IASI&SITTA</MenuItem>
+                                    </Select>
+                                    {
+                                        errors.dblStructure && <span className="danger">{errors.dblStructure}</span>
+                                    }
+                                </FormControl>
+                            </Grid>
+                            <Grid item>
+                                <FormControl fullWidth variant="outlined" focused required>
                                     <InputLabel id="demo-simple-select-label">Role</InputLabel>
                                     <Select
                                         labelId="demo-simple-select-label"
@@ -335,13 +371,13 @@ const SignUp = () => {
                                         <MenuItem value="" disabled>
                                             <em>Role</em>
                                         </MenuItem>
-                                        <MenuItem value="Facility Manager">Facility Manager</MenuItem>
                                         <MenuItem value="Building Manager">Building Manager</MenuItem>
                                         <MenuItem value="Landlords">Landlords</MenuItem>
                                         <MenuItem value="Owner-occupiers">Owner-occupiers</MenuItem>
                                         <MenuItem value="Tenants">Tenants</MenuItem>
                                         <MenuItem value="Public authorities">Public authorities</MenuItem>
                                         <MenuItem value="policy makers">policy makers</MenuItem>
+                                        <MenuItem value="Facility Managers">Facility Managers</MenuItem>
                                     </Select>
                                     {
                                         errors.role && <span className="danger">{errors.role}</span>
@@ -351,11 +387,10 @@ const SignUp = () => {
 
 
                             <Grid item>
-                                <Button onClick={handleSubmitClick}
-                                    style={{ 'background': 'linear-gradient(to right, #1A88C9, #2AB683)' }}
-                                    disabled={!values.lastName || !values.firstName || !values.email || !values.password} type="submit" fullWidth variant="contained">
+                                <Button onClick={handleSubmitClick} type="submit" fullWidth variant="contained" style={{ 'background': 'linear-gradient(to right, #1A88C9, #2AB683)' }} disabled={!values.lastName || !values.firstName || !values.email || !values.password || !dblStructure || !role}>
                                     Sign Up
                                 </Button>
+
                             </Grid>
                             <Grid item sx={{ textAlign: "center" }}>
                                 <Typography><a href="/login">Sing In</a></Typography>

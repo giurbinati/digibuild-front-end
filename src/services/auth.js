@@ -7,6 +7,7 @@ const API_URL = config.host + "/auth/";
 class AuthService {
     constructor() {
         this.role = null;
+        this.dblStructure = null;
     }
 
     async login(data) {
@@ -18,6 +19,11 @@ class AuthService {
             if (!this.role) {
                 this.role = decodedToken.role;
                 console.log("Ruolo impostato:", this.role);
+            }
+            // Verifica se il ruolo è già stato impostato
+            if (!this.dblStructure) {
+                this.dblStructure = decodedToken.dblStructure;
+                console.log("Pilot:", this.dblStructure);
             }
     
             return response;
@@ -36,6 +42,9 @@ class AuthService {
     
     getRole() {
         return this.role;
+    }
+    getDblStructure() {
+        return this.dblStructure;
     }
 }
 
