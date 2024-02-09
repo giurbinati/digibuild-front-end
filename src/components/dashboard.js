@@ -11,13 +11,16 @@ import Home2 from '../pages/home2'
 import AuthService from '../services/auth';
 import AdministrativeInformation from '../pages/administrativeInformation'
 import GeneralBuildingInformation from '../pages/generalBuildingInformation'
-import BuildingElementInformation from '../pages/buildingElementInformation'
 import BuildingMaterialInventory from '../pages/BuildingMaterialInventory'
 import Equipmentwithdescriptionanddesign from '../pages/Equipmentwithdescriptionanddesign'
-import BuildingOperationAndUse from '../pages/buildingOperationAndUse'
 import BuildingPerformance from '../pages/buildingPerformance'
 import SmartReadiness from '../pages/smartReadiness'
 import BuildingDocumentationBIM from '../pages/buildingDocumentationBIM'
+import ConsumptiondataofenergyForecasting from '../pages/Consumptiondataofenergy(forecasting)'
+import ConsumptiondataofenergyHistorical from '../pages/Consumptiondataofenergy(historical)'
+import ConsumptiondataofenergyInvoices from '../pages/Consumptiondataofenergy(invoices)'
+import Informationonoccupancy from '../pages/Informationonoccupancy'
+import ComfortEwellbeing from '../pages/Comfort&well-being'
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -79,18 +82,37 @@ function a11yProps(index) {
 }
 
 export default function Dashboard() {
-    const [value, setValue] = useState(1);
-    const [valuesub, setValueSub] = useState(1);
+    const [value, setValue] = useState(0);
+    const [valuesub, setValueSub] = useState(0);
+    const [valueSubSub, setValueSubSub] = useState(0);
+    const [valuesub2, setValueSub2] = useState(0);
+    const [valueSubSub2, setValueSubSub2] = useState(0);
+    const [valuesub3, setValueSub3] = useState(0);
+    const [valueSubSub3, setValueSubSub3] = useState(0);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
-        /* if(value === 2 || value === 3) {
-            setValueSub(1);
-        } */
+        setValueSub(0);
+        setValueSubSub(0);
+        setValueSub2(0);
+        setValueSubSub2(0);
+        setValueSub3(0);
+        setValueSubSub3(0);
     };
 
     const handleChange1 = (event, newValue) => {
         setValueSub(newValue);
+        setValueSubSub(0);
+    };
+
+    const handleChange2 = (event, newValue) => {
+        setValueSub2(newValue);
+        setValueSubSub2(0);
+    };
+
+    const handleChange3 = (event, newValue) => {
+        setValueSub3(newValue);
+        setValueSubSub3(0);
     };
 
     const [userRole, setUserRole] = useState("");
@@ -109,130 +131,85 @@ export default function Dashboard() {
 
     return (
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Grid style={{ padding: "8px", alignItems: "center" }} container spacing={2} justifyContent="center">
-                <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    {(userDblStructure === 'FVH' && userRole === 'Building Manager') && (
-                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                            <Tab label="Building Element Information" {...a11yProps(2)} />
-                            <Tab label="Building Operation and Use" {...a11yProps(3)} />
-                            <Tab label="Building Performance" {...a11yProps(4)} />
-                            <Tab label="Building Documentation BIM" {...a11yProps(6)} />
-                        </Tabs>
-                    )}
-                    {(userDblStructure === 'FVH' && userRole === 'Landlords') && (
-                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                            <Tab label="Administrative Information" {...a11yProps(0)} />
-                            <Tab label="General Building Information" {...a11yProps(1)} />
-                            <Tab label="Building Element Information" {...a11yProps(2)} />
-                            <Tab label="Building Operation and Use" {...a11yProps(3)} />
-                            <Tab label="Building Performance" {...a11yProps(4)} />
-                            <Tab label="Smart Readiness" {...a11yProps(5)} />
-                        </Tabs>
-                    )}
-                    {(userDblStructure === 'FVH' && userRole === 'Owner-occupiers') && (
-                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                            <Tab label="Administrative Information" {...a11yProps(0)} />
-                            <Tab label="General Building Information" {...a11yProps(1)} />
-                            <Tab label="Building Element Information" {...a11yProps(2)} />
-                            <Tab label="Building Operation and Use" {...a11yProps(3)} />
-                            <Tab label="Building Performance" {...a11yProps(4)} />
-                            <Tab label="Smart Readiness" {...a11yProps(5)} />
-                        </Tabs>
-                    )}
-                    {(userDblStructure === 'FVH' && userRole === 'policy makers') && (
-                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                            <Tab label="Administrative Information" {...a11yProps(0)} />
-                            <Tab label="General Building Information" {...a11yProps(1)} />
-                        </Tabs>
-                    )}
-                    {(userDblStructure === 'FVH' && userRole === 'Public authorities') && (
-                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                            <Tab label="Administrative Information" {...a11yProps(0)} />
-                            <Tab label="General Building Information" {...a11yProps(1)} />
-                        </Tabs>
-                    )}
-                    {(userDblStructure === 'IASI&SITTA' && userRole === 'Building Manager') && (
-                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                            <Tab label="Building Element Information" {...a11yProps(0)} />
-                            <Tab label="Building Operation and Use" {...a11yProps(1)} />
-                            <Tab label="Building Performance" {...a11yProps(2)} />
-                            <Tab label="Building Documentation BIM" {...a11yProps(3)} />
-                        </Tabs>
-                    )}
-                    {(userDblStructure === 'IASI&SITTA' && userRole === 'Landlords') && (
-                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                            <Tab label="Administrative Information" {...a11yProps(0)} />
-                            <Tab label="General Building Information" {...a11yProps(1)} />
-                            <Tab label="Building Element Information" {...a11yProps(2)} />
-                            <Tab label="Building Operation and Use" {...a11yProps(3)} />
-                            <Tab label="Building Performance" {...a11yProps(4)} />
-                            <Tab label="Finance" {...a11yProps(5)} />
-                        </Tabs>
-                    )}
-                    {userDblStructure === 'IASI&SITTA' && userRole === 'Owner-occupiers' && (
-                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                            <Tab label="Administrative Information" {...a11yProps(0)} />
-                            <Tab label="General Building Information" {...a11yProps(1)} />
-                            <Tab label="Building Element Information" {...a11yProps(2)} />
-                            <Tab label="Building Operation and Use" {...a11yProps(3)} />
-                            <Tab label="Building Performance" {...a11yProps(4)} />
-                            <Tab label="Finance" {...a11yProps(5)} />
-                        </Tabs>
-                    )}
-                    {userDblStructure === 'IASI&SITTA' && userRole === 'policy makers' && (
-                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                            <Tab label="Administrative Information" {...a11yProps(0)} />
-                            <Tab label="General Building Information" {...a11yProps(1)} />
-                        </Tabs>
-                    )}
-                    {userDblStructure === 'IASI&SITTA' && userRole === 'Public authorities' && (
-                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                            <Tab label="Administrative Information" {...a11yProps(0)} />
-                            <Tab label="General Building Information" {...a11yProps(1)} />
-                        </Tabs>
-                    )}
-                </Grid>
-                <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <TabPanel value={value} index={2}>
-                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                            {/* sub dashboard historical data */}
-                            <Tabs value={valuesub} onChange={handleChange1} aria-label="basic example">
-                                <Tab label="Building Material Inventory" {...a11yProps(7)} />
-                                <Tab label="Equipment with description and design" {...a11yProps(8)} />
-                            </Tabs>
-                        </Box>
-                    </TabPanel>
-                    <CustomTabPanel value={value} index={0}>
-                        <AdministrativeInformation />
-                    </CustomTabPanel>
-                    <CustomTabPanel value={value} index={1}>
-                        <GeneralBuildingInformation />
-                    </CustomTabPanel>
-                    <CustomTabPanel value={value} index={2}>
-                        {/* <BuildingElementInformation /> */}
-                    </CustomTabPanel>
-                    <CustomTabPanel value={value} index={3}>
-                        {/*  <BuildingOperationAndUse /> */}
-                    </CustomTabPanel>
-                    <CustomTabPanel value={value} index={4}>
-                        {/* <BuildingPerformance /> */}
-                    </CustomTabPanel>
-                    <CustomTabPanel value={value} index={5}>
-                        {/* <SmartReadiness /> */}
-                    </CustomTabPanel>
-                    <CustomTabPanel value={value} index={6}>
-                        {/*  <BuildingDocumentationBIM /> */}
-                    </CustomTabPanel>
-                </Grid>
-                <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}></Grid>
-                <TabPanel value={valuesub} index={7}>
-                    <BuildingMaterialInventory />
-                </TabPanel>
-                <TabPanel value={valuesub} index={8}>
-                    <Equipmentwithdescriptionanddesign />
-                </TabPanel>
-                <Grid />
-            </Grid>
+             <Grid container spacing={2} justifyContent="center">
+                        <Grid item xs={12}>
+                            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                <Tabs value={value} onChange={handleChange} variant="fullWidth" aria-label="basic tabs example">
+                                    <Tab label="Administrative Information" {...a11yProps(0)} />
+                                    <Tab label="General Building Information" {...a11yProps(1)} />
+                                    <Tab label="Building Element Information" {...a11yProps(2)} />
+                                    <Tab label="Building Operation and Use" {...a11yProps(3)} />
+                                    <Tab label="Building Performance" {...a11yProps(4)} />
+                                    <Tab label="Building Documentation BIM" {...a11yProps(5)} />
+                                </Tabs>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <TabPanel value={value} index={0}>
+                                <AdministrativeInformation />
+                            </TabPanel>
+                        </Grid>
+                        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <TabPanel value={value} index={1}>
+                                <GeneralBuildingInformation />
+                            </TabPanel>
+                        </Grid>
+                        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <TabPanel value={value} index={2}>
+                                <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'center' }}>
+                                    <Tabs value={valuesub} onChange={handleChange1} aria-label="basic example" sx={{ '& .MuiTab-root': { margin: '0 10px' } }}>
+                                        <Tab label="Building Material Inventory" {...a11yProps(0)} />
+                                        <Tab label="Equipment with description and design" {...a11yProps(1)} />
+                                    </Tabs>
+                                </Box>
+                                <TabPanel value={valuesub} index={0}>
+                                    <BuildingMaterialInventory />
+                                </TabPanel>
+
+                                <TabPanel value={valuesub} index={1}>
+                                    <Equipmentwithdescriptionanddesign />
+                                </TabPanel>
+                            </TabPanel>
+                        </Grid>
+                        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <TabPanel value={value} index={3}>
+                                <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'center' }}>
+                                    <Tabs value={valuesub2} onChange={handleChange2} aria-label="basic example" sx={{ '& .MuiTab-root': { margin: '0 10px' } }}>
+                                        <Tab label="Consumption data of energy, water, gas, and other resources (forecasting)" style={{ backgroundColor:'yellow'}} {...a11yProps(0)} />
+                                        <Tab label="Consumption data of energy, water, gas, and other resources (invoices)"  {...a11yProps(1)} />
+                                        <Tab label="Consumption data of energy, water, gas, and other resource (historical)" style={{ backgroundColor:'yellow'}} {...a11yProps(2)} />
+                                        <Tab label="Information on occupancy" style={{ backgroundColor:'yellow'}} {...a11yProps(3)} />
+                                        <Tab label="Comfort & well-being" style={{ backgroundColor:'yellow'}} {...a11yProps(4)} />
+                                    </Tabs>
+                                </Box>
+                                <TabPanel value={valuesub2} index={0}>
+                                    <ConsumptiondataofenergyForecasting />
+                                </TabPanel>
+                                <TabPanel value={valuesub2} index={1}>
+                                    <ConsumptiondataofenergyInvoices />
+                                </TabPanel>
+                                <TabPanel value={valuesub2} index={2}>
+                                    <ConsumptiondataofenergyHistorical />
+                                </TabPanel>
+                                <TabPanel value={valuesub2} index={3}>
+                                    <Informationonoccupancy />
+                                </TabPanel>
+                                <TabPanel value={valuesub2} index={4}>
+                                    <ComfortEwellbeing />
+                                </TabPanel>
+                            </TabPanel>
+                        </Grid>
+                        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <TabPanel value={value} index={4}>
+                                <BuildingPerformance />
+                            </TabPanel>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TabPanel value={value} index={5}>
+                                <BuildingDocumentationBIM />
+                            </TabPanel>
+                        </Grid>
+                    </Grid>
         </Box>
 
     );

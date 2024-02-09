@@ -17,26 +17,19 @@ import DownloadButton from '../components/downloadButton'
 
 export default function Home({ setList, list }) {
     const [values, setValues] = useState({
-        "Unique building identifier": 0,
-        'Address': 0,
-        'Building owner': 0,
-        'DBL prepared by': 0,
-        'When was the DBL last edited': 0,
-        'Ownership type': 0,
-        'Tenancy agreement': 0,
-        'Utilities contracts': 0,
-        'Maintenance service contact': 0,
-        'Insurance documents': 0,
-        'Maintenance log': 0,
-        'Licenses': 0,
-        'Sbuilding type': 0,
-        'Building name': 0,
-        'Ownership': 0
+        "Number of occupants":  "Number",
+        "CO2 concentration": "pp2",
+        
     });
     function getRandom(max) {
         return (Math.random() * max);
     }
 
+    /* "CO2 (ppm)":  "396.456 ppm",
+        "comfort (sPMV)": "-0.06",
+        "Predicted comfort (24h)": "-0.051",
+    'Renewable energy production': "kWh/year",
+        'Behavioural insights': "Descriptive"
     useEffect(() => {
         setTimeout(() => {
             setValues({
@@ -59,7 +52,7 @@ export default function Home({ setList, list }) {
         }, 2000);
         // Update count to be 5 after timeout is scheduled
         //console.log(Object.keys(values));
-    }, [values]);
+    }, [values]); */
 
 
     const table = () => {
@@ -94,21 +87,12 @@ export default function Home({ setList, list }) {
     return (
         <Box sx={{ flexGrow: 1, minHeight: "78vh" }}>
             {/* <Box sx={{ flexGrow: 1, minHeight: "90vh" }}> */}
-            <Paper elevation={0}
-                sx={{ textAlign: "center" }} >
-                <Container maxWidth="xl">
-                    <Typography variant="h4"
-                        sx={{ color: "rgb(42, 182, 131)", fontFamily: "Poppins, Roboto", fontWeight: 700, marginTop: "1vh", padding: "1%" }}>
-                        Ownership information
-                    </Typography>
-                </Container>
-            </Paper>
             <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "1vh", padding: "2%" }}>
                 <Box /* sx={{ paddingLeft: "32px", marginTop: "32px", paddingRight: "32px" }} */>
                     <Grid container spacing={2} justifyContent="center">
-                        <Grid item>
+                        {/* <Grid item>
                             <UploadButton />
-                        </Grid>
+                        </Grid> */}
                         <Grid item>
                             <DownloadButton />
                         </Grid>

@@ -17,32 +17,32 @@ import DownloadButton from '../components/downloadButton'
 
 export default function Home({ setList, list }) {
     const [values, setValues] = useState({
-        "District heating access": 0,
-        'Year built': 0,
-        'Solar potential': 0,
-        'Soil/terrain': 0,
-        'Climate information': 0,
-        'Physical accessibility': 0,
-        'Safety manual': 0,
-        'History of any major renovations or replacements': 0,
-        'Building pictures': 0,
-        'Number of floors': 0,
-        'Historical status': 0,
-        'Building surroundings': 0,
-        'Floor area': 0,
-        'Building’s envelope': 0,
-        'Building volume': 0,
-        'Shape factor': 0,
-        'Type of construction': 0,
-        'Roof type': 0,
-        'Facade type': 0
+        "District heating access": "Linked data",
+        'Year built': "Date",
+        'Solar potential': "Linked data",
+        'Soil/terrain': "Linked data",
+        'Climate information': "Linked data",
+        'Physical accessibility': "Descriptive",
+        'Safety manual': "Descriptive",
+        'History of any major renovations or replacements': "Descriptive",
+        'Building pictures': "To be defined",
+        'Number of floors': "#",
+        'Historical status': "Descriptive",
+        'Building surroundings': "Descriptive",
+        'Floor area': "M2",
+        'Building’s envelope': "Descriptive",
+        'Building volume': "Linked data/M3",
+        'Shape factor': "Linked data",
+        'Type of construction': "Linked data",
+        'Roof type': "Descriptive",
+        'Facade type': "Descriptive"
     });
     function getRandom(max) {
         return (Math.random() * max);
     }
 
 
-    useEffect(() => {
+   /*  useEffect(() => {
         setTimeout(() => {
             setValues({
                 "District heating access": 0,
@@ -69,7 +69,7 @@ export default function Home({ setList, list }) {
         // Update count to be 5 after timeout is scheduled
         //console.log(Object.keys(values));
     }, [values]);
-
+ */
 
     const table = () => {
         return (
@@ -115,9 +115,9 @@ export default function Home({ setList, list }) {
             <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "1vh", padding: "2%" }}>
                 <Box /* sx={{ paddingLeft: "32px", marginTop: "32px", paddingRight: "32px" }} */>
                     <Grid container spacing={2} justifyContent="center">
-                        <Grid item>
+                        {/* <Grid item>
                             <UploadButton />
-                        </Grid>
+                        </Grid> */}
                         <Grid item>
                             <DownloadButton />
                         </Grid>

@@ -16,7 +16,7 @@ import { Height } from '@mui/icons-material';
 
 export default function Home({ setList, list }) {
     const [values, setValues] = useState({
-        "Unique building identifier": 0,
+        "EPC rating ": "Alphabetical (or scale)",
         'Address': 0,
         'Building owner': 0,
         'DBL prepared by': 0,
@@ -35,7 +35,7 @@ export default function Home({ setList, list }) {
     function getRandom(max) {
         return (Math.random() * max);
     }
-
+/* 
     useEffect(() => {
         setTimeout(() => {
             setValues({
@@ -58,7 +58,7 @@ export default function Home({ setList, list }) {
         }, 2000);
         // Update count to be 5 after timeout is scheduled
         //console.log(Object.keys(values));
-    }, [values]);
+    }, [values]); */
 
 
     const table = () => {
@@ -91,7 +91,7 @@ export default function Home({ setList, list }) {
 
 
     return (
-        <Container style={{ marginBottom: '40vh', marginTop: '10vh' }}>
+        <Container style={{ marginBottom: '50vh', marginTop: '10vh' }}>
       <Grid container spacing={4} columns={16} alignItems="center" justify="center" alignContent="center">
         <Grid item xs={8}>
           <Typography variant="h6" style={{ textAlign: 'center' }}>BREEAM</Typography>
@@ -111,21 +111,21 @@ export default function Home({ setList, list }) {
         <Grid item xs={8}>
           <DownloadButtonFile />
         </Grid>
-        <Grid item xs={8}>
+        {/* <Grid item xs={8}>
           <Typography variant="h6" style={{ textAlign: 'center' }}>EUB SuperHub certification</Typography>
         </Grid>
         <Grid item xs={8}>
           <DownloadButtonFile />
         </Grid>
         <Grid item xs={8}>
-          <Typography variant="h6" style={{ textAlign: 'center' }}>Information on renovation potential</Typography>
+          <Typography variant="h6" style={{ textAlign: 'center', backgroundColor:'yellow' }}>Information on renovation potential</Typography>
         </Grid>
         <Grid item xs={8}>
           <Typography variant="h6"></Typography>
         </Grid>
         <Grid item xs={8}>
-          <Typography variant="h6" style={{ textAlign: 'center' }}>Efficient and Climate Resilient Building</Typography>
-        </Grid>
+          <Typography variant="h6" style={{ textAlign: 'center', backgroundColor:'yellow' }}>Efficient and Climate Resilient Building</Typography>
+        </Grid> */}
       </Grid>
     </Container>
     );

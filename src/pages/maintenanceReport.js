@@ -17,27 +17,21 @@ import DownloadButton from '../components/downloadButton'
 
 export default function Home({ setList, list }) {
     const [values, setValues] = useState({
-        "Unique building identifier": 0,
-        'Address': 0,
-        'Building owner': 0,
-        'DBL prepared by': 0,
-        'When was the DBL last edited': 0,
-        'Ownership type': 0,
-        'Tenancy agreement': 0,
-        'Utilities contracts': 0,
-        'Maintenance service contact': 0,
-        'Insurance documents': 0,
-        'Maintenance log': 0,
-        'Licenses': 0,
-        'Sbuilding type': 0,
-        'Building name': 0,
-        'Ownership': 0
+        "Number of occupants":  "Number",
+        'Functions': "Descriptive",
+        'Measured heating consumption': "kWh/year",
+        'Measured electricity consumption ': "kWh/year",
+        'Measured hot water consumption ': "Litres/year",
+        'Dynamic heating consumption ': "kWh/year",
+        'Dynamic electricity consumption ': "kWh/year",
+        'Renewable energy production': "kWh/year",
+        'Behavioural insights': "Descriptive"
     });
     function getRandom(max) {
         return (Math.random() * max);
     }
 
-    useEffect(() => {
+    /* useEffect(() => {
         setTimeout(() => {
             setValues({
                 "Unique building identifier": getRandom(100),
@@ -60,7 +54,7 @@ export default function Home({ setList, list }) {
         // Update count to be 5 after timeout is scheduled
         //console.log(Object.keys(values));
     }, [values]);
-
+ */
 
     const table = () => {
         return (

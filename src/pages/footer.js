@@ -40,7 +40,7 @@ export default function BottomAppBar({open}) {
                         </Grid>
                         <Grid item xs={12} md={1}>
                             <Typography component="div" >
-                                <img src='/european-union.png' alt='european flag' style={{marginTop:"8px"}} ></img>
+                                <img src='/european-union.png' alt='logo' style={{ width: '50%', height: '50%' }} ></img>
                             </Typography>
                         </Grid>
                         <Grid item xs={12} md={7}>

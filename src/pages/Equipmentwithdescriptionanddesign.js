@@ -17,8 +17,8 @@ import DownloadButton from '../components/downloadButton'
 
 export default function Home({ setList, list }) {
     const [values, setValues] = useState({
-        "Unique building identifier": 0,
-        'Address': 0,
+        "To be defined": "To be defined",
+        /*'Address': 0,
         'Building owner': 0,
         'DBL prepared by': 0,
         'When was the DBL last edited': 0,
@@ -31,13 +31,13 @@ export default function Home({ setList, list }) {
         'Licenses': 0,
         'Sbuilding type': 0,
         'Building name': 0,
-        'Ownership': 0
+        'Ownership': 0 */
     });
     function getRandom(max) {
         return (Math.random() * max);
     }
 
-    useEffect(() => {
+    /* useEffect(() => {
         setTimeout(() => {
             setValues({
                 "Unique building identifier": getRandom(100),
@@ -59,7 +59,7 @@ export default function Home({ setList, list }) {
         }, 2000);
         // Update count to be 5 after timeout is scheduled
         //console.log(Object.keys(values));
-    }, [values]);
+    }, [values]); */
 
 
     const table = () => {
@@ -97,9 +97,9 @@ export default function Home({ setList, list }) {
             <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "1vh", padding: "2%" }}>
                 <Box /* sx={{ paddingLeft: "32px", marginTop: "32px", paddingRight: "32px" }} */>
                     <Grid container spacing={2} justifyContent="center">
-                        <Grid item>
+                        {/* <Grid item>
                             <UploadButton />
-                        </Grid>
+                        </Grid> */}
                         <Grid item>
                             <DownloadButton />
                         </Grid>

@@ -11,10 +11,8 @@ import Home2 from '../pages/home2'
 import AuthService from '../services/auth';
 import AdministrativeInformation from '../pages/administrativeInformation'
 import GeneralBuildingInformation from '../pages/generalBuildingInformation'
-import BuildingElementInformation from '../pages/buildingElementInformation'
 import BuildingMaterialInventory from '../pages/BuildingMaterialInventory'
 import Equipmentwithdescriptionanddesign from '../pages/Equipmentwithdescriptionanddesign'
-import BuildingOperationAndUse from '../pages/buildingOperationAndUse'
 import ConsumptiondataofenergyForecasting from '../pages/Consumptiondataofenergy(forecasting)'
 import ConsumptiondataofenergyHistorical from '../pages/Consumptiondataofenergy(historical)'
 import ConsumptiondataofenergyInvoices from '../pages/Consumptiondataofenergy(invoices)'
@@ -545,7 +543,7 @@ export default function BasicTabs() {
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={5}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'center' }}>
-                                    <Tabs value={valuesub3} onChange={handleChange3} aria-label="basic example" sx={{ '& .MuiTab-root': { margin: '0 10px' } }}>
+                                    <Tabs value={valuesub3} onChange={handleChange3} aria-label="basic example" sx={{ '& .MuiTab-root': { margin: '0 5px' } }}>
                                         <Tab label="Cost Information (invoices)" {...a11yProps(0)} />
                                         <Tab label="Savings in the operating costs (renovation)" {...a11yProps(1)} />
                                     </Tabs>

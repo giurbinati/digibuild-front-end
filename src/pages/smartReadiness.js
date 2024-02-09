@@ -36,7 +36,7 @@ export default function Home({ setList, list }) {
         return (Math.random() * max);
     }
 
-    useEffect(() => {
+    /* useEffect(() => {
         setTimeout(() => {
             setValues({
                 "Unique building identifier": getRandom(100),
@@ -58,7 +58,7 @@ export default function Home({ setList, list }) {
         }, 2000);
         // Update count to be 5 after timeout is scheduled
         //console.log(Object.keys(values));
-    }, [values]);
+    }, [values]); */
 
 
     const table = () => {
