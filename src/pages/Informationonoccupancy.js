@@ -10,6 +10,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Grid } from '@mui/material';
+import Popover from '@mui/material/Popover';
 
 import AuthService from '../services/auth';
 import UploadButton from '../components/uploadButton'
@@ -17,43 +18,23 @@ import DownloadButton from '../components/downloadButton'
 
 export default function Home({ setList, list }) {
     const [values, setValues] = useState({
-        "Number of occupants":  "Number",
-        "CO2 concentration": "pp2",
-        
+        /* "Number of occupants":  "Number", */
+        "Max number of occupants": "2500",
+        "Average occupancy rate": "33%",
+        "Utilization rate": "48%",
     });
-    function getRandom(max) {
-        return (Math.random() * max);
-    }
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [hoveredRow, setHoveredRow] = useState(null);
 
-    /* "CO2 (ppm)":  "396.456 ppm",
-        "comfort (sPMV)": "-0.06",
-        "Predicted comfort (24h)": "-0.051",
-    'Renewable energy production': "kWh/year",
-        'Behavioural insights': "Descriptive"
-    useEffect(() => {
-        setTimeout(() => {
-            setValues({
-                "Unique building identifier": getRandom(100),
-                'Address': getRandom(100),
-                'Building owner': getRandom(100),
-                'DBL prepared by': getRandom(100),
-                'When was the DBL last edited': getRandom(100),
-                'Ownership type': getRandom(100),
-                'Tenancy agreement': getRandom(100),
-                'Utilities contracts': getRandom(100),
-                'Maintenance service contact': getRandom(100),
-                'Insurance documents': getRandom(100),
-                'Maintenance log': getRandom(100),
-                'Licenses': getRandom(100),
-                'Sbuilding type': getRandom(100),
-                'Building name': getRandom(100),
-                'Ownership': getRandom(100)
-            });
-        }, 2000);
-        // Update count to be 5 after timeout is scheduled
-        //console.log(Object.keys(values));
-    }, [values]); */
+    const handlePopoverOpen = (event, index) => {
+        setAnchorEl(event.currentTarget);
+        setHoveredRow(index);
+    };
 
+    const handlePopoverClose = () => {
+        setAnchorEl(null);
+        setHoveredRow(null);
+    };
 
     const table = () => {
         return (
@@ -66,39 +47,60 @@ export default function Home({ setList, list }) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {Object.keys(values).map((row) => (
-                            <TableRow
-                                key={row}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell component="th" scope="row">
-                                    {row}
-                                </TableCell>
-                                <TableCell align="right">{values[row]}</TableCell>
-                            </TableRow>
-                        ))}
+                        {Object.keys(values).map((row, index) => {
+                            // Verifica se la riga è la prima o la terza
+                            const showPopover = index === 0 || index === 2 || index === 1;
+                            let message;
+                            if (index === 0) {
+                                message = "This parameter represents the max number of people that the building can include.";
+                            } else if (index === 1) {
+                                message = "It measures the average number of occupants in the building over a given period of time.";
+                            } else if (index === 2) {
+                                message = "This parameter is the percentage of space that is actually used in the building.";
+                            } else {
+                                message = ""; // Gestisci tutti gli altri casi
+                            }
+                            
+                            return (
+                                <TableRow
+                                    key={row}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    onMouseEnter={showPopover ? (event) => handlePopoverOpen(event, index) : null}
+                                    onMouseLeave={showPopover ? handlePopoverClose : null}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        {row}
+                                    </TableCell>
+                                    <TableCell align="right">{values[row]}</TableCell>
+                                    {showPopover && (
+                                        <Popover
+                                            open={hoveredRow === index}
+                                            anchorEl={anchorEl}
+                                            onClose={handlePopoverClose}
+                                            anchorOrigin={{
+                                                vertical: 'bottom',
+                                                horizontal: 'left',
+                                            }}
+                                            transformOrigin={{
+                                                vertical: 'top',
+                                                horizontal: 'left',
+                                            }}
+                                        >
+                                            <Typography sx={{ p: 2 }}>{message}</Typography>
+                                        </Popover>
+                                    )}
+                                </TableRow>
+                            );
+                        })}
                     </TableBody>
                 </Table>
             </TableContainer>
-        )
-    }
-
+        );
+    };
 
     return (
         <Box sx={{ flexGrow: 1, minHeight: "78vh" }}>
             {/* <Box sx={{ flexGrow: 1, minHeight: "90vh" }}> */}
-            <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "1vh", padding: "2%" }}>
-                <Box /* sx={{ paddingLeft: "32px", marginTop: "32px", paddingRight: "32px" }} */>
-                    <Grid container spacing={2} justifyContent="center">
-                        {/* <Grid item>
-                            <UploadButton />
-                        </Grid> */}
-                        <Grid item>
-                            <DownloadButton />
-                        </Grid>
-                    </Grid>
-                </Box>
-            </Container>
             <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "3vh", padding: "2%" }}>
                 <Box /* sx={{ paddingLeft: "32px", marginTop: "32px", paddingRight: "32px" }} */>
                     <Grid container spacing={2} justifyContent="center">

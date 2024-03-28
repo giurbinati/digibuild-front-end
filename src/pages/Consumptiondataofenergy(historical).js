@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
@@ -10,95 +10,464 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Grid } from '@mui/material';
+import moment from 'moment';
+import Chart from 'chart.js/auto';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import dayjs from 'dayjs';
+import Button from '@mui/material/Button';
+
 
 import AuthService from '../services/auth';
 import UploadButton from '../components/uploadButton'
 import DownloadButton from '../components/downloadButton'
+import chart from '../components/chart'
+import useEnhancedEffect from '@mui/material/utils/useEnhancedEffect';
 
 export default function Home({ setList, list }) {
+
+    const [selectedDateEletricityStart, setSelectedDateEletricityStart] = React.useState(null);
+    const [selectedDateEletricityEnd, setSelectedDateEletricityEnd] = React.useState(null);
+    const [selectedDateHeatingStart, setSelectedDateHeatingStart] = React.useState(null);
+    const [selectedDateHeatingEnd, setSelectedDateHeatingEnd] = React.useState(null);
+    const [selectedDateCoolingStart, setSelectedDateCoolingStart] = React.useState(null);
+    const [selectedDateCoolingEnd, setSelectedDateCoolingEnd] = React.useState(null);
+    const [failMessage, setFailMessage] = useState(false)
+    
+    const handleDateChangeEletricityStart = (dateEletricityStart) => {
+        setSelectedDateEletricityStart(dateEletricityStart);
+    };
+    const handleDateChangeEletrecityEnd = (dateEletricityEnd) => {
+        setSelectedDateEletricityEnd(dateEletricityEnd);
+    };
+    const handleDateChangeHeatingStart = (dateHeatingStart) => {
+        setSelectedDateHeatingStart(dateHeatingStart);
+    };
+    const handleDateChangeHeatingEnd = (dateHeatingEnd) => {
+        setSelectedDateHeatingEnd(dateHeatingEnd);
+    };
+    const handleDateChangeCoolingStart = (dateCoolingStart) => {
+        setSelectedDateCoolingStart(dateCoolingStart);
+    };
+    const handleDateChangeCoolingEnd = (dateCoolingEnd) => {
+        setSelectedDateCoolingEnd(dateCoolingEnd);
+    };
+
+
+
     const [values, setValues] = useState({
         'Measured heating consumption': "kWh/year",
         'Measured electricity consumption ': "kWh/year",
-        'Measured hot water consumption ': "Litres/year",
+        'Measured cooling consumption ': "Litres/year",
     });
-    
-    function getRandom(max) {
-        return (Math.random() * max);
-    }
 
-  /*   useEffect(() => {
-        setTimeout(() => {
-            setValues({
-                "Unique building identifier": getRandom(100),
-                'Address': getRandom(100),
-                'Building owner': getRandom(100),
-                'DBL prepared by': getRandom(100),
-                'When was the DBL last edited': getRandom(100),
-                'Ownership type': getRandom(100),
-                'Tenancy agreement': getRandom(100),
-                'Utilities contracts': getRandom(100),
-                'Maintenance service contact': getRandom(100),
-                'Insurance documents': getRandom(100),
-                'Maintenance log': getRandom(100),
-                'Licenses': getRandom(100),
-                'Sbuilding type': getRandom(100),
-                'Building name': getRandom(100),
-                'Ownership': getRandom(100)
+    const [electricityTimeStamp, setElectricityTimeStamp] = useState(null)
+    const [electricityValue, setElectricityValue] = useState(null)
+    const [heatingTimeStamp, setHeatingTimeStamp] = useState(null)
+    const [heatingValue, setHeatingValue] = useState(null)
+    const [coolingTimeStamp, setCoolingTimeStamp] = useState(null)
+    const [coolingValue, setCoolingValue] = useState(null)
+
+    const sendDateStartAndDateEndElectricityToBackend = () => { //funzione per mandare i dati al back-end per la select, menu a tendina
+        const dataFormattedStartElectricity = selectedDateEletricityStart.format('YYYYMMDDHHmm');
+        const dataFormattedEndElectricity = selectedDateEletricityEnd.format('YYYYMMDDHHmm');
+        console.log(dataFormattedEndElectricity)
+        fetch('http://localhost:8080/api/DateStartAndDateendElectricity', { //collegamento back-end
+            method: 'POST',
+            body: JSON.stringify({ dataFormattedStartElectricity, dataFormattedEndElectricity }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then((response) => response.json())
+            .catch((error) => {
+                // Gestisci gli errori se necessario
+                console.error(error);
             });
-        }, 2000);
-        // Update count to be 5 after timeout is scheduled
-        //console.log(Object.keys(values));
-    }, [values]); */
-
-
-    const table = () => {
-        return (
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead sx={{ backgroundColor: "#38ACEC", fontWeight: 'bold' }}>
-                        <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell align="right">Value</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {Object.keys(values).map((row) => (
-                            <TableRow
-                                key={row}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell component="th" scope="row">
-                                    {row}
-                                </TableCell>
-                                <TableCell align="right">{values[row]}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        )
     }
+
+    const sendDateStartAndDateEndHeatingToBackend = () => { //funzione per mandare i dati al back-end per la select, menu a tendina
+        const dataFormattedStartHeating = selectedDateHeatingStart.format('YYYYMMDDHHmm');
+        const dataFormattedEndHeating = selectedDateHeatingEnd.format('YYYYMMDDHHmm');
+        console.log(dataFormattedEndHeating)
+        fetch('http://localhost:8080/api/DateStartAndDateendHeating', { //collegamento back-end
+            method: 'POST',
+            body: JSON.stringify({ dataFormattedStartHeating, dataFormattedEndHeating }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then((response) => response.json())
+            .catch((error) => {
+                // Gestisci gli errori se necessario
+                console.error(error);
+            });
+    }
+
+    const sendDateStartAndDateEndCoolingToBackend = () => { //funzione per mandare i dati al back-end per la select, menu a tendina
+        const dataFormattedStartCooling = selectedDateCoolingStart.format('YYYYMMDDHHmm');
+        const dataFormattedEndCooling = selectedDateCoolingEnd.format('YYYYMMDDHHmm');
+        console.log(dataFormattedEndCooling)
+        fetch('http://localhost:8080/api/DateStartAndDateendCooling', { //collegamento back-end
+            method: 'POST',
+            body: JSON.stringify({ dataFormattedStartCooling, dataFormattedEndCooling }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then((response) => response.json())
+            .catch((error) => {
+                // Gestisci gli errori se necessario
+                console.error(error);
+            });
+    }
+
+    const handleSubmitClickElectricity = async () => { //funzione per riempire il charter con il bottone search
+        try {
+          /* if (selectedDateEletricityStart === '' || selectedDateEletricityEnd === '') {
+            setFailMessage(true);
+          } else {
+            setFailMessage(false); */
+            const response = await fetch("http://localhost:8080/api/historicalData", { // Utilizza l'URL corretto per la tua API
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                const responseData = await response.json();
+                console.log(responseData)
+                let tempDateTimeElectricity = [];
+                let tempValueElectricity = [];
+                let electricity = responseData.query[0]; // Assegna direttamente responseData.dataMart[0] a electricity
+
+                electricity.forEach((element) => {
+                    // Accedi agli attributi ontime e value per ciascun elemento e aggiungili agli array temporanei
+                    tempDateTimeElectricity.push(moment(element[0], "YYYYMMDDHHmm").format("YYYY-MM-DD HH:mm"));
+                    tempValueElectricity.push(element[1]);
+                });
+                setElectricityTimeStamp(tempDateTimeElectricity);
+                setElectricityValue(tempValueElectricity);
+        } catch (error) {
+          // handle network error
+          console.log(error);
+          const errorResponse = {
+            status: 503,
+            message: "ERR_NETWORK",
+          };
+          return errorResponse;
+        }
+      }
+
+      const handleSubmitClickHeating = async () => { //funzione per riempire il charter con il bottone search
+        try {
+          /* if (selectedDateEletricityStart === '' || selectedDateEletricityEnd === '') {
+            setFailMessage(true);
+          } else {
+            setFailMessage(false); */
+            const response = await fetch("http://localhost:8080/api/historicalDataHeating", { // Utilizza l'URL corretto per la tua API
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                const responseData = await response.json();
+                console.log(responseData)
+                let tempDateTimeHeating = [];
+                let tempValueHeating = [];
+                let heating = responseData.query[0]; // Assegna direttamente responseData.dataMart[0] a electricity
+
+                heating.forEach((element) => {
+                    // Accedi agli attributi ontime e value per ciascun elemento e aggiungili agli array temporanei
+                    tempDateTimeHeating.push(moment(element[0], "YYYYMMDDHHmm").format("YYYY-MM-DD HH:mm"));
+                    tempValueHeating.push(element[1]);
+                });
+                setHeatingTimeStamp(tempDateTimeHeating);
+                setHeatingValue(tempValueHeating);
+        } catch (error) {
+          // handle network error
+          console.log(error);
+          const errorResponse = {
+            status: 503,
+            message: "ERR_NETWORK",
+          };
+          return errorResponse;
+        }
+      }
+
+      const handleSubmitClickCooling = async () => { //funzione per riempire il charter con il bottone search
+        try {
+          /* if (selectedDateEletricityStart === '' || selectedDateEletricityEnd === '') {
+            setFailMessage(true);
+          } else {
+            setFailMessage(false); */
+            const response = await fetch("http://localhost:8080/api/historicalDataCooling", { // Utilizza l'URL corretto per la tua API
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                const responseData = await response.json();
+                console.log(responseData)
+                let tempDateTimeCooling = [];
+                let tempValueCooling = [];
+                let cooling = responseData.query[0]; // Assegna direttamente responseData.dataMart[0] a electricity
+                console.log(cooling)
+
+                cooling.forEach((element) => {
+                    // Accedi agli attributi ontime e value per ciascun elemento e aggiungili agli array temporanei
+                    tempDateTimeCooling.push(moment(element[0], "YYYYMMDDHHmm").format("YYYY-MM-DD HH:mm"));
+                    tempValueCooling.push(element[1]);
+                });
+                setCoolingTimeStamp(tempDateTimeCooling);
+                setCoolingValue(tempValueCooling);
+        } catch (error) {
+          // handle network error
+          console.log(error);
+          const errorResponse = {
+            status: 503,
+            message: "ERR_NETWORK",
+          };
+          return errorResponse;
+        }
+      }
+
+    //inizio codice per lo chart
+    const chartRefEletrecity = useRef(null)
+    const chartInstanceEletrecity = useRef(null)
+    useEffect(() => {
+        if (chartInstanceEletrecity.current) {
+            chartInstanceEletrecity.current.destroy();
+        }
+        const myChartRefEletrecity = chartRefEletrecity.current.getContext("2d");
+        chartInstanceEletrecity.current = new Chart(myChartRefEletrecity, {
+            type: "line",
+            data: {
+                labels: electricityTimeStamp,
+                datasets: [{
+                    label: 'Eletricity (kwh)',
+                    data: electricityValue,
+                    fill: false,
+                    backgroundColor: "white", //colore punti
+                    borderColor: 'blue', //colore linea
+                    PointBorderColour: 'red',
+                    borderWidth: 2,
+                    responsive: true
+                }]
+            }
+        })
+        return () => {
+            if (chartInstanceEletrecity.current) {
+                chartInstanceEletrecity.current.destroy();
+            }
+        }
+    }, [electricityTimeStamp, electricityValue])
+
+    const chartRefHeating = useRef(null)
+    const chartInstanceHeating = useRef(null)
+
+    useEffect(() => {
+        if (chartInstanceHeating.current) {
+            chartInstanceHeating.current.destroy();
+        }
+        const myChartRefHeating = chartRefHeating.current.getContext("2d");
+        chartInstanceHeating.current = new Chart(myChartRefHeating, {
+            type: "line",
+            data: {
+                labels: heatingTimeStamp,
+                datasets: [{
+                    label: 'Heating (kwh)',
+                    data: heatingValue,
+                    fill: false,
+                    backgroundColor: "white", //colore punti
+                    borderColor: 'blue', //colore linea
+                    PointBorderColour: 'red',
+                    borderWidth: 2,
+                    responsive: true
+                }]
+            }
+        })
+        return () => {
+            if (chartInstanceHeating.current) {
+                chartInstanceHeating.current.destroy();
+            }
+        }
+    }, [heatingTimeStamp, heatingValue])
+
+    const chartRefCooling = useRef(null)
+    const chartInstanceCooling = useRef(null)
+    useEffect(() => {
+        if (chartInstanceCooling.current) {
+            chartInstanceCooling.current.destroy();
+        }
+        const myChartRefCooling = chartRefCooling.current.getContext("2d");
+        chartInstanceCooling.current = new Chart(myChartRefCooling, {
+            type: "line",
+            data: {
+                labels: coolingTimeStamp,
+                datasets: [{
+                    label: 'DistrictCooling (kwh)',
+                    data: coolingValue,
+                    fill: false,
+                    backgroundColor: "white", //colore punti
+                    borderColor: 'blue', //colore linea
+                    PointBorderColour: 'red',
+                    borderWidth: 2,
+                    responsive: true
+                }]
+            }
+        })
+        return () => {
+            if (chartInstanceCooling.current) {
+                chartInstanceCooling.current.destroy();
+            }
+        }
+    }, [coolingTimeStamp, coolingValue])
+
+
 
 
     return (
         <Box sx={{ flexGrow: 1, minHeight: "78vh" }}>
             {/* <Box sx={{ flexGrow: 1, minHeight: "90vh" }}> */}
             <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "1vh", padding: "2%" }}>
-                <Box /* sx={{ paddingLeft: "32px", marginTop: "32px", paddingRight: "32px" }} */>
+                <Box>
                     <Grid container spacing={2} justifyContent="center">
-                       {/*  <Grid item>
-                            <UploadButton />
-                        </Grid> */}
                         <Grid item>
-                            <DownloadButton />
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DemoContainer components={['DateTimePicker']}>
+                                    <DateTimePicker
+                                        label="Start date time"
+                                        value={selectedDateEletricityStart}
+                                        onChange={handleDateChangeEletricityStart}
+                                    />
+                                </DemoContainer>
+                            </LocalizationProvider>
+                        </Grid>
+                        <Grid item>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DemoContainer components={['DateTimePicker']}>
+                                    <DateTimePicker
+                                        label="End date time"
+                                        value={selectedDateEletricityEnd}
+                                        onChange={handleDateChangeEletrecityEnd}
+                                    />
+                                </DemoContainer>
+                            </LocalizationProvider>
                         </Grid>
                     </Grid>
                 </Box>
             </Container>
-            <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "3vh", padding: "2%" }}>
-                <Box /* sx={{ paddingLeft: "32px", marginTop: "32px", paddingRight: "32px" }} */>
+            <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "1vh", padding: "2%" }}>
+                <Box /* sx={{ paddingLeft: "32px", marginTop: "32px", paddingRight: "32px" }}*/ >
                     <Grid container spacing={2} justifyContent="center">
-                        {table()}
+                        <Button variant="contained" onClick={() => { sendDateStartAndDateEndElectricityToBackend(), handleSubmitClickElectricity() }}> Search</Button> {/*qui definisco il bottone search, dove al click sono collegati le funzioni per mandare i dati al server per eseguire la query(sendSelectBackend(); sendDataStartToBackend(); sendDataEndToBackend();) e la funzione per prendere i dati dalla query e metterli sullo chart (handleSubmitClick())*/}
+                          {/* {failMessage && <p style={{ color: 'red' }}>Please, fill in the fields above.</p>} */}
+                    </Grid>
+                </Box>
+            </Container>
+            <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "3vh", padding: "2%" }}>
+                <Box /* sx={{ paddingLeft: "32px", marginTop: "32px", paddingRight: "32px" }}*/ >
+                    <Grid container spacing={2} justifyContent="center">
+                        <canvas ref={chartRefEletrecity} /* style={{ width: '200px', height: '100px' }} */ />
+                    </Grid>
+                </Box>
+            </Container>
+            
+            <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "1vh", padding: "2%" }}>
+                <Box>
+                    <Grid container spacing={2} justifyContent="center">
+                        <Grid item>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DemoContainer components={['DateTimePicker']}>
+                                    <DateTimePicker
+                                        label="Start date time"
+                                        value={selectedDateHeatingStart}
+                                        onChange={handleDateChangeHeatingStart}
+                                    />
+                                </DemoContainer>
+                            </LocalizationProvider>
+                        </Grid>
+                        <Grid item>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DemoContainer components={['DateTimePicker']}>
+                                    <DateTimePicker
+                                        label="End date time"
+                                        value={selectedDateHeatingEnd}
+                                        onChange={handleDateChangeHeatingEnd}
+                                    />
+                                </DemoContainer>
+                            </LocalizationProvider>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Container>
+            <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "1vh", padding: "2%" }}>
+                <Box /* sx={{ paddingLeft: "32px", marginTop: "32px", paddingRight: "32px" }}*/ >
+                    <Grid container spacing={2} justifyContent="center">
+                        <Button variant="contained" onClick={() => { sendDateStartAndDateEndHeatingToBackend(), handleSubmitClickHeating() }}> Search</Button> {/*qui definisco il bottone search, dove al click sono collegati le funzioni per mandare i dati al server per eseguire la query(sendSelectBackend(); sendDataStartToBackend(); sendDataEndToBackend();) e la funzione per prendere i dati dalla query e metterli sullo chart (handleSubmitClick())*/}
+                          {/* {failMessage && <p style={{ color: 'red' }}>Please, fill in the fields above.</p>} */}
+                    </Grid>
+                </Box>
+            </Container>
+            <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "3vh", padding: "2%" }}>
+                <Box /* sx={{ paddingLeft: "32px", marginTop: "32px", paddingRight: "32px" }}*/ >
+                    <Grid container spacing={2} justifyContent="center">
+                        <canvas ref={chartRefHeating} /* style={{ width: '200px', height: '100px' }} */ />
+                    </Grid>
+                </Box>
+            </Container>
+
+            <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "1vh", padding: "2%" }}>
+                <Box>
+                    <Grid container spacing={2} justifyContent="center">
+                        <Grid item>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DemoContainer components={['DateTimePicker']}>
+                                    <DateTimePicker
+                                        label="Start date time"
+                                        value={selectedDateCoolingStart}
+                                        onChange={handleDateChangeCoolingStart}
+                                    />
+                                </DemoContainer>
+                            </LocalizationProvider>
+                        </Grid>
+                        <Grid item>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DemoContainer components={['DateTimePicker']}>
+                                    <DateTimePicker
+                                        label="End date time"
+                                        value={selectedDateCoolingEnd}
+                                        onChange={handleDateChangeCoolingEnd}
+                                    />
+                                </DemoContainer>
+                            </LocalizationProvider>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Container>
+            <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "1vh", padding: "2%" }}>
+                <Box /* sx={{ paddingLeft: "32px", marginTop: "32px", paddingRight: "32px" }}*/ >
+                    <Grid container spacing={2} justifyContent="center">
+                        <Button variant="contained" onClick={() => { sendDateStartAndDateEndCoolingToBackend(), handleSubmitClickCooling() }}> Search</Button> {/*qui definisco il bottone search, dove al click sono collegati le funzioni per mandare i dati al server per eseguire la query(sendSelectBackend(); sendDataStartToBackend(); sendDataEndToBackend();) e la funzione per prendere i dati dalla query e metterli sullo chart (handleSubmitClick())*/}
+                          {/* {failMessage && <p style={{ color: 'red' }}>Please, fill in the fields above.</p>} */}
+                    </Grid>
+                </Box>
+            </Container>
+            <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "3vh", padding: "2%" }}>
+                <Box /* sx={{ paddingLeft: "32px", marginTop: "32px", paddingRight: "32px" }}*/ >
+                    <Grid container spacing={2} justifyContent="center">
+                        <canvas ref={chartRefCooling} /* style={{ width: '200px', height: '100px' }} */ />
                     </Grid>
                 </Box>
             </Container>

@@ -14,7 +14,7 @@ import './App.css';
 import Dashboard from './components/dashboard';
 import Dashboard2 from './components/dashboard2';
 import Dash2 from './components/dash2'
-import Home from './pages/home';
+
 
 
 

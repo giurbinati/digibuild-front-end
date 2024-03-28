@@ -6,13 +6,11 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 
-import Home from '../pages/home';
-import Home2 from '../pages/home2'
 import AuthService from '../services/auth';
 import AdministrativeInformation from '../pages/administrativeInformation'
 import GeneralBuildingInformation from '../pages/generalBuildingInformation'
 import BuildingMaterialInventory from '../pages/BuildingMaterialInventory'
-import Equipmentwithdescriptionanddesign from '../pages/Equipmentwithdescriptionanddesign'
+import Equipmentwithdescriptionanddesign from '../pages/buildingEnvelope'
 import BuildingPerformance from '../pages/buildingPerformance'
 import SmartReadiness from '../pages/smartReadiness'
 import BuildingDocumentationBIM from '../pages/buildingDocumentationBIM'

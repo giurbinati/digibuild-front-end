@@ -17,21 +17,16 @@ import DownloadButton from '../components/downloadButton'
 
 export default function Home({ setList, list }) {
     const [values, setValues] = useState({
-        "To be defined": "To be defined",
-        /*'Address': 0,
-        'Building owner': 0,
-        'DBL prepared by': 0,
-        'When was the DBL last edited': 0,
-        'Ownership type': 0,
-        'Tenancy agreement': 0,
-        'Utilities contracts': 0,
-        'Maintenance service contact': 0,
-        'Insurance documents': 0,
-        'Maintenance log': 0,
-        'Licenses': 0,
-        'Sbuilding type': 0,
-        'Building name': 0,
-        'Ownership': 0 */
+        'Space heating system': 'Text',
+        'Domestic hot water (DHN)': 'Text',
+        'Space cooling system': 'https://cloud2.digibuild-project.com/file/40dbd261-1465-453f-a0c4-4ae9fe735932/download',
+        'Lighting system': 'Text',
+        'Blinds': 'Text',
+        'Technical home and building management': 'Text',
+        'Building Automation and Control system (BACS)': 'Text',
+        'ON- SITE energy renovation and storage': 'Text',
+        'Battery energy storage system': 'Text',
+        
     });
     function getRandom(max) {
         return (Math.random() * max);
@@ -64,7 +59,7 @@ export default function Home({ setList, list }) {
 
     const table = () => {
         return (
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper} style={{ width: '80vh' }}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead sx={{ backgroundColor: "#38ACEC", fontWeight: 'bold' }}>
                         <TableRow>
@@ -73,21 +68,26 @@ export default function Home({ setList, list }) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {Object.keys(values).map((row) => (
+                        {Object.entries(values).map(([key, value]) => (
                             <TableRow
-                                key={row}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                key={key}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 }, height: '5vh' }}
                             >
                                 <TableCell component="th" scope="row">
-                                    {row}
+                                    {key}
                                 </TableCell>
-                                <TableCell align="right">{values[row]}</TableCell>
+                                <TableCell align="right">
+                                    {typeof value === 'string' && value.startsWith('http') ? 
+                                        <a href={value}>{value}</a> : 
+                                        value
+                                    }
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
-        )
+        );
     }
 
 
