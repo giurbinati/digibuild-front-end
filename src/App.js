@@ -64,7 +64,7 @@ function App() {
             path="/"
             element={
               <PrivateRoute token={setAuth}>
-                <Dashboard />
+                <Dashboard/>
                 {/* <Home/> */}
               </PrivateRoute>
             }

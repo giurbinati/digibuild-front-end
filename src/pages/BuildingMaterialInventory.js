@@ -10,56 +10,49 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { Box, Grid } from '@mui/material';
 import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
+import TablePagination from '@mui/material/TablePagination';
+import GetDataFVH from '../services/getDataFVH';
+import putDataFVH from '../services/putDataFVH';
 
 
 export default function EditableTable() {
 
-    const [valuesBuildingMaterialInventory, setValuesBuildingMaterialInventory] = useState({
-        "Material 1 - Type": "Descriptive",
-        "Material 1 - Location": "Physical",
-        "Material 1 - Volume": "Physical",
-        "Material 1 - Weight": "Physical",
-        "Material 1 - Embodied carbon": "Physical",
-        "Material 1 - Life span": "Physical",
-        "Material 1 - Fire resistance class": "Rating",
-        "Material 1 - Waste category": "Code",
-        "Material 1 - Certificate 1": "Linked document",
-        "Material 1 - Chemical declaration": "Linked document",
-        "Material 1 - Global Trade Item Number": "Linked document",
-        "Material 2 - Type": "Descriptive",
-        "Material 2 - Location": "Physical",
-        "Material 2 - Volume": "Physical",
-        "Material 2 - Weight": "Physical",
-        "Material 2 - Embodied carbon": "Physical",
-        "Material 2 - Life span": "Physical",
-        "Material 2 - Fire resistance class": "Rating",
-        "Material 2 - Waste category": "Code",
-        "Material 2 - Certificate 1": "Linked document",
-        "Material 2 - Chemical declaration": "Linked document",
-        "Material 2 - Global Trade Item Number": "Linked document",
-    });    
+    const [categories, setCategories] = useState([]);
+
+    useEffect(() => {
+        async function fetchCategories() {
+            try {
+                const data = await GetDataFVH.getCategories(2, 0);
+                setCategories(data);
+            } catch (error) {
+                console.error('Fetch error:', error);
+                throw error; // Rilancia l'errore per la gestione nel componente
+            }
+        }
+
+        fetchCategories();
+    }, []);
 
     const [editableRowIndex, setEditableRowIndex] = useState(null);
     const [editedValue, setEditedValue] = useState('');
 
     // Convert object to array of rows
-    const rows = Object.keys(valuesBuildingMaterialInventory).map(key => ({
+    const rows = Object.entries(categories).map(([key, value]) => ({
         name: key,
-        value: valuesBuildingMaterialInventory[key]
+        value: value,
     }));
 
     const handleEditRow = (index) => {
-        setEditableRowIndex(index);
-        setEditedValue(rows[index].value);
+        const actualIndex = page * rowsPerPage + index;
+        setEditableRowIndex(actualIndex);
+        setEditedValue(rows[actualIndex].value);
     };
 
-    const handleSave = () => {
-        // Update valuesOwnershipInformation with the edited value
-        const updatedValues = { ...valuesBuildingMaterialInventory };
-        updatedValues[rows[editableRowIndex].name] = editedValue;
-
-        setValuesBuildingMaterialInventory(updatedValues);
+    const handleSave = async () => {
+        const updatedValues = { ...categories };
+        const actualIndex = editableRowIndex;
+        updatedValues[rows[actualIndex].name] = editedValue;
+        setCategories(updatedValues);
         setEditableRowIndex(null);
         setEditedValue('');
     };
@@ -67,6 +60,69 @@ export default function EditableTable() {
     const handleValueChange = (event) => {
         setEditedValue(event.target.value);
     };
+
+    const [page, setPage] = useState(0); // Stato per la pagina corrente
+    const [rowsPerPage, setRowsPerPage] = useState(11); // Stato per il numero di righe per pagina
+
+    // Funzione per cambiare pagina
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    // Funzione per cambiare il numero di righe per pagina
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0); // Reset della pagina alla prima dopo aver cambiato il numero di righe per pagina
+    };
+
+    // Righe che verranno visualizzate nella pagina corrente
+    const rowsToShow = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
+    const handleAddMaterial = () => {
+        // Filtra i nomi dei campi per trovare quelli che iniziano con 'Material'
+        const materialKeys = Object.keys(categories).filter(key => key.startsWith('Material'));
+
+        // Trova l'ultimo numero di materiale
+        const lastMaterialIndex = materialKeys.reduce((max, key) => {
+            const match = key.match(/Material\s*(\d+)/); // Cattura solo il numero del materiale
+            return match ? Math.max(max, parseInt(match[1], 10)) : max; // Aggiorna il massimo
+        }, 0);
+
+        // Incrementa l'indice per il nuovo set di materiali
+        const newMaterialIndex = lastMaterialIndex + 1;
+
+        // Crea il nuovo set di campi per il materiale
+        const newMaterial = {
+            [`Material ${newMaterialIndex} - Type`]: "",
+            [`Material ${newMaterialIndex} - Location`]: "",
+            [`Material ${newMaterialIndex} - Volume`]: "",
+            [`Material ${newMaterialIndex} - Weight`]: "",
+            [`Material ${newMaterialIndex} - Embodied carbon`]: "",
+            [`Material ${newMaterialIndex} - Life span`]: "",
+            [`Material ${newMaterialIndex} - Fire resistance class`]: "Rating",
+            [`Material ${newMaterialIndex} - Waste category`]: "Code",
+            [`Material ${newMaterialIndex} - Certificate 1`]: "Linked document",
+            [`Material ${newMaterialIndex} - Chemical declaration`]: "Linked document",
+            [`Material ${newMaterialIndex} - Global Trade Item Number`]: "Linked document"
+        };
+
+        // Aggiorna lo stato delle categorie con il nuovo materiale
+        setCategories(prevCategories => ({ ...prevCategories, ...newMaterial }));
+    };
+
+    const handleConfirmChanges = async () => {
+        // Poi invia la richiesta PUT al backend
+        try {
+            const updatedValues = { ...categories };
+            const response = await putDataFVH.updateData(2, updatedValues, 0);
+            //console.log(response)
+
+            console.log('Aggiornamento completato con successo');
+        } catch (error) {
+            console.error('Errore durante la richiesta PUT:', error);
+        }
+    };
+
 
     const tableBuildingMaterialInventory = () => {
         return (
@@ -80,13 +136,13 @@ export default function EditableTable() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.map((row, index) => (
+                        {rowsToShow.map((row, index) => (
                             <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                 <TableCell component="th" scope="row" style={{ fontSize: '2.5ch' }}>
                                     {row.name}
                                 </TableCell>
                                 <TableCell align="right" style={{ fontSize: '2.5ch' }}>
-                                    {editableRowIndex === index ? (
+                                    {editableRowIndex === (page * rowsPerPage + index) ? (
                                         <TextField
                                             value={editedValue}
                                             onChange={handleValueChange}
@@ -106,7 +162,7 @@ export default function EditableTable() {
                                     )}
                                 </TableCell>
                                 <TableCell align="right">
-                                    {editableRowIndex === index ? (
+                                    {editableRowIndex === (page * rowsPerPage + index) ? (
                                         <Button
                                             onClick={handleSave}
                                             sx={{
@@ -132,6 +188,16 @@ export default function EditableTable() {
                         ))}
                     </TableBody>
                 </Table>
+                {/* Aggiungi la paginazione qui */}
+                <TablePagination
+                    rowsPerPageOptions={[5, 11, 22]}
+                    component="div"
+                    count={rows.length} // Numero totale di righe
+                    rowsPerPage={rowsPerPage} // Numero di righe per pagina
+                    page={page} // Pagina corrente
+                    onPageChange={handleChangePage} // Cambia pagina
+                    onRowsPerPageChange={handleChangeRowsPerPage} // Cambia righe per pagina
+                />
             </TableContainer>
         );
     };
@@ -177,7 +243,24 @@ export default function EditableTable() {
                                     marginTop: '2vh', // Aggiunto margine superiore per distanziare il pulsante dalla tabella
                                     textAlign: 'center', // Centra il testo verticalmente
                                 }}
-                            /* onClick={handleAddRow} */
+                                onClick={handleAddMaterial}
+                            >
+                                Add Material
+                            </Button>
+                            <Button
+                                variant="contained"
+                                sx={{
+                                    backgroundColor: '#057BBE',
+                                    padding: '1vh 2vh', // Padding verticale e orizzontale
+                                    minWidth: '20vh', // Larghezza minima per mantenere la dimensione minima del bottone
+                                    fontSize: '2ch',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    marginTop: '2vh', // Aggiunto margine superiore per distanziare il pulsante dalla tabella
+                                    textAlign: 'center', // Centra il testo verticalmente
+                                }}
+                                onClick={handleConfirmChanges}
                             >
                                 Confirm Changes
                             </Button>

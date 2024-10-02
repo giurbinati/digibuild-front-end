@@ -6,10 +6,16 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 
-import AuthService from '../services/auth';
 import AdministrativeInformation from '../pages/administrativeInformation'
+import AdministrativeInformationIasiSitta from '../pages/administrativeInformationIasiSitta'
 import GeneralBuildingInformation from '../pages/generalBuildingInformation'
+import GeneralBuildingInformationIasiSitta from '../pages/generalBuildingInformationIasiSitta'
 import BuildingMaterialInventory from '../pages/BuildingMaterialInventory'
+import BuildingMaterialInventoryIAsiSitta from '../pages/BuildingMaterialInventoryIasiSitta'
+import BuildingEnvelope from '../pages/buildingEnvelope'
+import BuildingEnvelopeIasiSitta from '../pages/buildingEnvelopeIasiSitta'
+import TechnicalBuildingSystem from '../pages/technicalBuildingSystem'
+import TechnicalBuildingSystemIasiSitta from '../pages/technicalBuildingSystemIasiSitta'
 import Equipmentwithdescriptionanddesign from '../pages/buildingEnvelope'
 import ConsumptiondataofenergyForecasting from '../pages/Consumptiondataofenergy(forecasting)'
 import ConsumptiondataofenergyHistorical from '../pages/Consumptiondataofenergy(historical)'
@@ -18,12 +24,14 @@ import Informationonoccupancy from '../pages/Informationonoccupancy'
 import ComfortEwellbeing from '../pages/Comfort&well-being'
 import BuildingPerformance from '../pages/documentationPerformance'
 import SmartReadiness from '../pages/smartReadiness'
-import BuildingDocumentationBIM from '../pages/buildingDocumentationBIM'
 import MaintenanceReport from '../pages/maintenanceReport'
 import BuildingPerformanceIASI from '../pages/buildingPerformanceIASI'
-import BuildingDocumentationBIMIASI from '../pages/buildingDocumentationBIMIASI'
-import CostInformationinvoices from '../pages/costInformation(invoices)'
+import CostInformationinvoices from '../pages/CostInformationHeatingAndHotWater'
 import Savingsintheoperatingcostsrenovation from '../pages/savingsintheoperatingcosts(renovation)'
+import DesignAndPlansOfTheBuilding from '../pages/DesignAndPlansOfTheBuilding'
+import Documentation from '../pages/Documentation'
+import DocumentationIasiSitta from '../pages/DocumentationIasiSitta'
+import BIM from '../pages/BIM'
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -97,12 +105,14 @@ export default function BasicTabs() {
 
     useEffect(() => {
         // Nel componente dove hai bisogno del ruolo
-        setUserRole(AuthService.getRole());
+        setUserRole(sessionStorage.getItem('ROLE'));
+        console.log(userRole)
     }, []); // Dipendenza vuota per eseguire useEffect solo una volta
 
     useEffect(() => {
-        // Nel componente dove hai bisogno della struttura
-        setUserDblStructure(AuthService.getDblStructure());
+        // Nel componente dove hai bisogno del ruolo
+        setUserDblStructure(sessionStorage.getItem('PILOT'));
+        console.log(userDblStructure)
     }, []); // Dipendenza vuota per eseguire useEffect solo una volta
 
     return (
@@ -172,13 +182,13 @@ export default function BasicTabs() {
                         </Grid>
                         <Grid item xs={12}>
                             <TabPanel value={value} index={3}>
-                                <BuildingDocumentationBIM />
+                                {/* <BuildingDocumentationBIM /> */}
                             </TabPanel>
                         </Grid>
                     </Grid>
                 </>
             )}
-            {(userDblStructure === 'FVH' && userRole === 'Landlords') && (
+            {(userDblStructure === 'FVH' && userRole === 'Landlord') && (
                 <>
                     <Grid container spacing={2} justifyContent="center">
                         <Grid item xs={12}>
@@ -392,7 +402,7 @@ export default function BasicTabs() {
                     </Grid>
                 </>
             )}
-            {(userDblStructure === 'IASI&SITTA' && userRole === 'Building Manager') && (
+            {(userDblStructure === 'IASI&SITTA' && userRole === 'Building_Manager') && (
                 <>
                     <Grid container spacing={2} justifyContent="center">
                         <Grid item xs={12}>
@@ -455,53 +465,84 @@ export default function BasicTabs() {
                                 <BuildingPerformanceIASI />
                             </TabPanel>
                         </Grid>
-                        <Grid item xs={12}>
-                            <TabPanel value={value} index={3}>
-                                <BuildingDocumentationBIMIASI />
-                            </TabPanel>
-                        </Grid>
+                        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <TabPanel value={value} index={3}>
+                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                            <Tabs value={valuesub3} onChange={handleChange3} aria-label="basic example" sx={{
+                                '& .MuiTab-root': {
+                                    flex: '1', margin: '0 10px', fontWeight: 'bold', fontSize: '2.5ch', textAlign: 'center',
+                                    '&.Mui-selected': {
+                                        color: '#41BFB9', // Colore del testo bianco
+                                    },
+                                }
+                            }}>
+                                <Tab label="Design and plans of the building" {...a11yProps(0)} />
+                                <Tab label="Documentation" {...a11yProps(1)} />
+                                <Tab label="BIM" {...a11yProps(2)} />
+                            </Tabs>
+                        </Box>
+                        <TabPanel value={valuesub3} index={0}>
+                            <DesignAndPlansOfTheBuilding />
+                        </TabPanel>
+                        <TabPanel value={valuesub3} index={1}>
+                            <DocumentationIasiSitta />
+                        </TabPanel>
+                        <TabPanel value={valuesub3} index={2}>
+                            <BIM />
+                        </TabPanel>
+                    </TabPanel>
+                </Grid>
                     </Grid>
                 </>
             )}
-            {(userDblStructure === 'IASI&SITTA' && userRole === 'Landlords') && (
+            {(userDblStructure === 'IASI&SITTA' && userRole === 'Landlord') && (
                 <>
                     <Grid container spacing={2} justifyContent="center">
                         <Grid item xs={12}>
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                 <Tabs value={value} onChange={handleChange} variant="fullWidth" aria-label="basic tabs example">
-                                <Tab label="Administrative Information" {...a11yProps(0)} />
-                            <Tab label="General Building Information" {...a11yProps(1)} />
-                            <Tab label="Building Element Information" {...a11yProps(2)} />
-                            <Tab label="Building Operation and Use" {...a11yProps(3)} />
-                            <Tab label="Building Performance" {...a11yProps(4)} />
-                            <Tab label="Finance" {...a11yProps(5)} />
+                                    <Tab label="Administrative Information" {...a11yProps(0)} />
+                                    <Tab label="General Building Information" {...a11yProps(1)} />
+                                    <Tab label="Building Element Information" {...a11yProps(2)} />
+                                    <Tab label="Building Operation and Use" {...a11yProps(3)} />
+                                    <Tab label="Building Performance" {...a11yProps(4)} />
+                                    <Tab label="Finance" {...a11yProps(5)} />
                                 </Tabs>
                             </Box>
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={0}>
-                                <AdministrativeInformation />
+                                <AdministrativeInformationIasiSitta />
                             </TabPanel>
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={1}>
-                                <GeneralBuildingInformation />
+                                <GeneralBuildingInformationIasiSitta />
                             </TabPanel>
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={2}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'center' }}>
-                                    <Tabs value={valuesub} onChange={handleChange1} aria-label="basic example" sx={{ '& .MuiTab-root': { margin: '0 10px' } }}>
+                                    <Tabs value={valuesub} onChange={handleChange1} aria-label="basic example" sx={{
+                                        '& .MuiTab-root': {
+                                            flex: '1', margin: '0 10px', fontWeight: 'bold', textAlign: 'center', fontSize: '2.5ch', '&.Mui-selected': {
+                                                color: '#41BFB9', // Colore del testo bianco
+                                            },
+                                        }
+                                    }}>
                                         <Tab label="Building Material Inventory" {...a11yProps(0)} />
-                                        <Tab label="Equipment with description and design" {...a11yProps(1)} />
+                                        <Tab label="Building envelope" {...a11yProps(1)} />
+                                        <Tab label="Technical building system" {...a11yProps(2)} />
                                     </Tabs>
                                 </Box>
                                 <TabPanel value={valuesub} index={0}>
-                                    <BuildingMaterialInventory />
+                                    <BuildingMaterialInventoryIAsiSitta />
                                 </TabPanel>
-
                                 <TabPanel value={valuesub} index={1}>
-                                    <Equipmentwithdescriptionanddesign />
+                                    <BuildingEnvelopeIasiSitta />
+                                </TabPanel>
+                                <TabPanel value={valuesub} index={2}>
+                                    <TechnicalBuildingSystemIasiSitta />
                                 </TabPanel>
                             </TabPanel>
                         </Grid>
@@ -558,18 +599,18 @@ export default function BasicTabs() {
                     </Grid>
                 </>
             )}
-             {(userDblStructure === 'IASI&SITTA' && userRole === 'Owner-occupiers') && (
+            {(userDblStructure === 'IASI&SITTA' && userRole === 'Owner-occupier') && (
                 <>
                     <Grid container spacing={2} justifyContent="center">
                         <Grid item xs={12}>
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                 <Tabs value={value} onChange={handleChange} variant="fullWidth" aria-label="basic tabs example">
-                                <Tab label="Administrative Information" {...a11yProps(0)} />
-                            <Tab label="General Building Information" {...a11yProps(1)} />
-                            <Tab label="Building Element Information" {...a11yProps(2)} />
-                            <Tab label="Building Operation and Use" {...a11yProps(3)} />
-                            <Tab label="Building Performance" {...a11yProps(4)} />
-                            <Tab label="Finance" {...a11yProps(5)} />
+                                    <Tab label="Administrative Information" {...a11yProps(0)} />
+                                    <Tab label="General Building Information" {...a11yProps(1)} />
+                                    <Tab label="Building Element Information" {...a11yProps(2)} />
+                                    <Tab label="Building Operation and Use" {...a11yProps(3)} />
+                                    <Tab label="Building Performance" {...a11yProps(4)} />
+                                    <Tab label="Finance" {...a11yProps(5)} />
                                 </Tabs>
                             </Box>
                         </Grid>
@@ -653,7 +694,7 @@ export default function BasicTabs() {
                     </Grid>
                 </>
             )}
-            {(userDblStructure === 'IASI&SITTA' && userRole === 'policy makers') && (
+            {(userDblStructure === 'IASI&SITTA' && userRole === 'policy_Maker') && (
                 <>
                     <Grid container spacing={2} justifyContent="center">
                         <Grid item xs={12}>
@@ -677,7 +718,7 @@ export default function BasicTabs() {
                     </Grid>
                 </>
             )}
-            {(userDblStructure === 'IASI&SITTA' && userRole === 'Public authorities') && (
+            {(userDblStructure === 'IASI&SITTA' && userRole === 'Public_Authority') && (
                 <>
                     <Grid container spacing={2} justifyContent="center">
                         <Grid item xs={12}>

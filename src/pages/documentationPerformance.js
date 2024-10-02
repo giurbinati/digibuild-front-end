@@ -1,25 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Container from '@mui/material/Container';
-import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import { Grid } from '@mui/material';
+import { Grid, Paper } from '@mui/material';
+import ViewPdfApiButton from '../components/viewPdfApiButton'
+import DownloadButton from '../components/downloadButton'
 
-import DownloadButtonFile from '../components/downloadButtonFile'
-import DownloadButtonEnergyPerformance from '../components/downloadButtonEnergyPerformance'
-import DownloadButtonBreeam from '../components/downloadButtonBreeam'
-import DownloadButtonSRICertificate from '../components/downloadButtonSRICertificate'
-import DownloadButtonSRIResults from '../components/downloadButtonSRIResults'
-import { Height } from '@mui/icons-material';
 
-export default function Home({ setList, list }) {
+export default function DocumentationPerformance() {
 
+  const urlBreeam = process.env.REACT_APP_API_FVH_BREEAM
+  const urlSriCertificate = process.env.REACT_APP_API_FVH_SRICERTIFICATE
+  const urlsriResult = process.env.REACT_APP_API_FVH_SRIRESULT
+  const urlEnergyPerformance = process.env.REACT_APP_API_FVH_ENERGYPERFORMANCE
 
   return (
     <Box
@@ -29,7 +22,8 @@ export default function Home({ setList, list }) {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        marginTop: '2vh'
       }}
     >
       <Container maxWidth="xl" sx={{ padding: 0 }}>
@@ -46,28 +40,28 @@ export default function Home({ setList, list }) {
         >
           <Grid container spacing={4} columns={16} alignItems="center" justify="center" alignContent="center">
             <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>BREEAM</Typography>
+              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>Breeam</Typography>
             </Grid>
             <Grid item xs={8}>
-              <DownloadButtonBreeam />
+              <ViewPdfApiButton apiUrl={urlBreeam} />
             </Grid>
             <Grid item xs={8}>
               <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>SRI Certificate</Typography>
             </Grid>
             <Grid item xs={8}>
-              <DownloadButtonSRICertificate />
+              <DownloadButton downloadUrl={urlSriCertificate} />
             </Grid>
             <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>SRI Results & certificate</Typography>
+              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>SRI Result</Typography>
             </Grid>
             <Grid item xs={8}>
-              <DownloadButtonSRIResults />
+              <DownloadButton downloadUrl={urlsriResult} />
             </Grid>
             <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>Energy performance certificate</Typography>
+              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>Energy Performance Certificate</Typography>
             </Grid>
             <Grid item xs={8}>
-              <DownloadButtonEnergyPerformance />
+              <ViewPdfApiButton apiUrl={urlEnergyPerformance} />
             </Grid>
           </Grid>
         </Paper>

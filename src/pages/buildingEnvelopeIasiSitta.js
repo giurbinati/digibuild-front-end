@@ -10,19 +10,25 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { Box, Grid } from '@mui/material';
 import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import GetDataFVH from '../services/getDataFVH'
-import putDataFVH from '../services/putDataFVH';
-import UploadButton from '../components/uploadButton';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import getDataIasiSitta from '../services/getDataIasiSitta';
+import putDataIasiSitta from '../services/putDataIasiSitta';
 
 export default function EditableTable() {
 
     const [categories, setCategories] = useState([]);
+    const [building, setBuilding] = useState('Roznovanu')
+    const [editableRowIndex, setEditableRowIndex] = useState(null);
+    const [editedValue, setEditedValue] = useState('');
 
     useEffect(() => {
         async function fetchCategories() {
             try {
-                const data = await GetDataFVH.getCategories(0);
+                const data = await getDataIasiSitta.fetchBuildingData(building, 2, 1);
                 setCategories(data);
             } catch (error) {
                 console.error('Fetch error:', error);
@@ -30,10 +36,11 @@ export default function EditableTable() {
             }
         }
         fetchCategories();
-    }, []);
+    }, [building]);
 
-    const [editableRowIndex, setEditableRowIndex] = useState(null);
-    const [editedValue, setEditedValue] = useState('');
+    const handleRadioChange = (event) => {
+        setBuilding(event.target.value);
+    };
 
     // Convert object to array of rows
     const rows = Object.keys(categories).map(key => ({
@@ -52,21 +59,24 @@ export default function EditableTable() {
         setCategories(updatedValues);
         setEditableRowIndex(null);
         setEditedValue('');
+
         // Invia la richiesta PUT al backend con l'indice dell'array e i dati aggiornati
         try {
-            const response = await putDataFVH.updateData(0, updatedValues);
+            const buildingName = building;
+            const response = await putDataIasiSitta.updateBuildingData(buildingName, 2, updatedValues, 1);
             //console.log(response)
         } catch (error) {
-            console.log(error)
+            console.log(error);
             console.error('Errore durante la richiesta PUT:', error);
         }
     };
+
 
     const handleValueChange = (event) => {
         setEditedValue(event.target.value);
     };
 
-    const tableOwnershipInformation = () => {
+    const tableBuildingEnvelope = () => {
         return (
             <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -143,27 +153,26 @@ export default function EditableTable() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
+                marginTop: '2vh'
             }}
         >
             <Container maxWidth="xl" sx={{ padding: 0 }}>
                 <Grid container direction="column" alignItems="center" spacing={3}>
-                    {/* Grid item per il Titolo */}
-                    <Grid item xs={12}>
-                        <Paper elevation={0} sx={{ textAlign: 'center' }}>
-                            <Typography
-                                variant="h4"
-                                sx={{
-                                    color: '#41BFB9',
-                                    fontFamily: 'Poppins, Roboto',
-                                    fontWeight: 'bold',
-                                    marginBottom: '1vh'
-                                }}
-                            >
-                                Ownership Information
-                            </Typography>
-                        </Paper>
-                    </Grid>
+                    <Grid item>
+                        <FormControl>
+                            <FormLabel sx={{ fontSize: '2.5ch' }} id="demo-radio-buttons-group-label">Building</FormLabel>
+                            <RadioGroup
+                                aria-labelledby="demo-radio-buttons-group-label"
+                                name="radio-buttons-group"
+                                value={building}
+                                onChange={handleRadioChange}
 
+                            >
+                                <FormControlLabel value="Roznovanu" control={<Radio />} label="Roznovanu Palace" />
+                                <FormControlLabel value="Dubet Pyramid" control={<Radio />} label="Dubet Pyramid" />
+                            </RadioGroup>
+                        </FormControl>
+                    </Grid>
                     {/* Grid item per il Paper contenente la Tabella e il Bottone */}
                     <Grid item xs={12}>
                         <Paper
@@ -177,7 +186,7 @@ export default function EditableTable() {
                                 alignItems: 'center',
                             }}
                         >
-                            {tableOwnershipInformation()}
+                            {tableBuildingEnvelope()}
                             <Button
                                 variant="contained"
                                 sx={{
@@ -198,8 +207,8 @@ export default function EditableTable() {
                         </Paper>
                     </Grid>
                 </Grid>
-                <UploadButton/>
             </Container>
         </Box>
     );
-};
+}
+

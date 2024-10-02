@@ -1,20 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { Grid, Paper } from '@mui/material';
 import ViewPdfApiButton from '../components/viewPdfApiButton'
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 
 
-export default function Documentation() {
+export default function DocumentationIasiSitta() {
 
   const urlLCA = process.env.REACT_APP_API_FVH_LCA
   const urlVentilation = process.env.REACT_APP_API_FVH_VENTILATION
   const urlElectricity = process.env.REACT_APP_API_FVH_ELECTRICITY
-  const urlGeneralBuildingInformation = process.env.REACT_APP_API_FVH_GENERALBUILDINGINFORMATION
-  const urlWalls = process.env.REACT_APP_API_FVH_ConstructioninformationOuterWalls
-  const urlAirConditioner = process.env.REACT_APP_API_FVH_airconditionerTUWV0611A
 
+  const [building, setBuilding] = useState('Roznovanu');
+
+  const handleRadioChange = (event) => {
+    setBuilding(event.target.value);
+  };
 
   return (
     <Box
@@ -29,6 +36,22 @@ export default function Documentation() {
       }}
     >
       <Container maxWidth="xl" sx={{ padding: 0 }}>
+        <Grid container direction="column" alignItems="center" spacing={3}>
+
+          <FormControl>
+            <FormLabel sx={{ fontSize: '2.5ch' }} id="demo-radio-buttons-group-label">Building</FormLabel>
+            <RadioGroup
+              aria-labelledby="demo-radio-buttons-group-label"
+              name="radio-buttons-group"
+              value={building}
+              onChange={handleRadioChange}
+
+            >
+              <FormControlLabel value="Roznovanu" control={<Radio />} label="Roznovanu Palace" />
+              <FormControlLabel value="Dubet Pyramid" control={<Radio />} label="Dubet Pyramid" />
+            </RadioGroup>
+          </FormControl>
+        </Grid>
         <Paper
           sx={{
             backgroundColor: 'rgba(147, 208, 167, 0.4)',
@@ -42,12 +65,6 @@ export default function Documentation() {
         >
           <Grid container spacing={4} columns={16} alignItems="center" justify="center" alignContent="center">
             <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>General building information-FVH pilot</Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <ViewPdfApiButton apiUrl={urlGeneralBuildingInformation} />
-            </Grid>
-            <Grid item xs={8}>
               <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>Electricity Affected Areas</Typography>
             </Grid>
             <Grid item xs={8}>
@@ -60,22 +77,10 @@ export default function Documentation() {
               <ViewPdfApiButton apiUrl={urlVentilation} />
             </Grid>
             <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>LCA Assesment (building phase) 2020</Typography>
+              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>DHS Schema</Typography>
             </Grid>
             <Grid item xs={8}>
               <ViewPdfApiButton apiUrl={urlLCA} />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>Construction information - Outer Walls</Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <ViewPdfApiButton apiUrl={urlWalls} />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>air_conditioner-TUWV0611A</Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <ViewPdfApiButton apiUrl={urlAirConditioner} />
             </Grid>
           </Grid>
         </Paper>

@@ -6,37 +6,16 @@ import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 // Import styles
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
-function PdfViewer() {
-
+function PdfViewer({ pdfUrl }) {
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
   const [data, setData] = useState(null);
-  const [error, setError] = useState(null); // Per la gestione degli errori
   const [loading, setLoading] = useState(false); // Per la gestione del caricamento
 
-  const handleOpenPdf = async () => {
+  const handleOpenPdf = () => {
     setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch('https://cloud2.digibuild-project.com/file/e01d79ec-3d3b-4347-837c-a360e6051245/download', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/pdf',
-        },
-      });
-
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        setData(url);
-      } else {
-        setError('Errore durante il download del PDF');
-      }
-    } catch (error) {
-      setError('Errore durante il caricamento del PDF');
-    } finally {
-      setLoading(false);
-    }
+    setData(pdfUrl);
+    setLoading(false);
   };
 
   return (
@@ -61,8 +40,6 @@ function PdfViewer() {
           {loading ? 'Loading...' : 'View PDF'}
         </Button>
       )}
-
-      {error && <p style={{ color: 'red' }}>{error}</p>} {/* Mostra un messaggio di errore */}
 
       {data && (
         <div style={{ border: '1px solid rgba(0, 0, 0, 0.3)', height: '50vh', width: '80vh', overflow: 'auto' }}>

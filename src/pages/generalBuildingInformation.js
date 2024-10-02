@@ -13,38 +13,34 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import GetDataFVH from '../services/getDataFVH';
+import putDataFVH from '../services/putDataFVH';
+
 
 export default function EditableTable() {
 
-    const [valuesDesignAndPlansOfTheBuilding, setValuesDesignAndPlansOfTheBuilding] = useState({
-        "District heating access": "Linked data",
-        "Year built": "2020",
-        "Solar potential": "Linked data",
-        "Soil/terrain": "Linked data",
-        "Climate information": "Linked data",
-        "Physical accessibility": "Accessible (by wheelchairs etc.)",
-        "Safety manual": "Fire Safety manual",
-        "History of any major renovations or replacements": "No (major renovations)",
-        "Building pictures": "To be defined",
-        "Number of floors": "7",
-        "Historical status": "Building without historic value",
-        "Building surroundings": "Urban",
-        "Floor area": "35629 m2",
-        "Building’s envelope": "Concrete, structural Insulated panels",
-        "Building volume": "209300 m3",
-        "Shape factor": "Linked data",
-        "Type of construction": "Linked data",
-        "Roof type": "Standard Insulated Roof with Asphalt Shingles",
-        "Facade type": "Brick",
-    });
-
+    const [categories, setCategories] = useState([]);
     const [editableRowIndex, setEditableRowIndex] = useState(null);
     const [editedValue, setEditedValue] = useState('');
 
+    useEffect(() => {
+        async function fetchCategories() {
+            try {
+                const data = await GetDataFVH.getCategories(1);
+                setCategories(data);
+            } catch (error) {
+                console.error('Fetch error:', error);
+                throw error; // Rilancia l'errore per la gestione nel componente
+            }
+        }
+
+        fetchCategories();
+    }, []);
+
     // Convert object to array of rows
-    const rows = Object.keys(valuesDesignAndPlansOfTheBuilding).map(key => ({
+    const rows = Object.keys(categories).map(key => ({
         name: key,
-        value: valuesDesignAndPlansOfTheBuilding[key]
+        value: categories[key]
     }));
 
     const handleEditRow = (index) => {
@@ -52,14 +48,20 @@ export default function EditableTable() {
         setEditedValue(rows[index].value);
     };
 
-    const handleSave = () => {
-        // Update valuesOwnershipInformation with the edited value
-        const updatedValues = { ...valuesDesignAndPlansOfTheBuilding };
+    const handleSave = async () => {
+        const updatedValues = { ...categories };
         updatedValues[rows[editableRowIndex].name] = editedValue;
-
-        setValuesDesignAndPlansOfTheBuilding(updatedValues);
+        setCategories(updatedValues);
         setEditableRowIndex(null);
         setEditedValue('');
+        // Invia la richiesta PUT al backend con l'indice dell'array e i dati aggiornati
+        try {
+            const response = await putDataFVH.updateData(1, updatedValues);
+            //console.log(response)
+        } catch (error) {
+            console.log(error)
+            console.error('Errore durante la richiesta PUT:', error);
+        }
     };
 
     const handleValueChange = (event) => {

@@ -15,15 +15,12 @@ import AuthService from '../services/auth';
 import UploadButton from '../components/uploadButton'
 import DownloadButton from '../components/downloadButton'
 
-export default function Home({ setList, list }) {
+export default function Home() {
     const [values, setValues] = useState({
         'Measured heating consumption': "kWh/year",
         'Measured electricity consumption ': "kWh/year",
         'Measured hot water consumption ': "Litres/year",
     });
-    function getRandom(max) {
-        return (Math.random() * max);
-    }
 
 
     const table = () => {

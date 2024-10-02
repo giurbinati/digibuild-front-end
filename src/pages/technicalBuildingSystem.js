@@ -10,44 +10,34 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { Box, Grid } from '@mui/material';
 import Container from '@mui/material/Container';
-
-function createData(name, value) {
-    return { name, value };
-}
-
-const initialRows = [
-    createData('Space heating system', 'District heating'),
-    createData('Domestic hot water (DHN)', 'District heating'),
-    createData('Space cooling system', 'https://cloud2.digibuild-project.com/file/40dbd261-1465-453f-a0c4-4ae9fe735932/download'),
-    createData('Lighting system', 'KNX controlled LEDs'),
-    createData('Blinds', 'Roll-Down or Roll-Up Shutters'),
-    createData('Technical home and building management', 'Schneider'),
-    createData('Building Automation and Control system (BACS)', 'KNX based control'),
-    createData('ON- SITE energy renovation and storage', 'No significant storage'),
-    createData('Battery energy storage system', 'No significant storage')
-];
+import GetDataFVH from '../services/getDataFVH';
+import putDataFVH from '../services/putDataFVH';
 
 export default function EditableTable() {
 
-    const [valuesTechnicalBuilding, setValuesTechnicalBuilding] = useState({
-        "Space heating system": "District heating",
-        "Domestic hot water (DHN)": "District heating",
-        "Space cooling system": "https://cloud2.digibuild-project.com/file/40dbd261-1465-453f-a0c4-4ae9fe735932/download",
-        "Lighting system": "KNX controlled LEDs",
-        "Blinds": "Roll-Down or Roll-Up Shutters",
-        "Technical home and building management": "Schneider",
-        "Building Automation and Control system (BACS)": "KNX based control",
-        "ON-SITE energy renovation and storage": "No significant storage",
-        "Battery energy storage system": "No significant storage"
-    });
+    const [categories, setCategories] = useState([]);
+
+    useEffect(() => {
+        async function fetchCategories() {
+            try {
+                const data = await GetDataFVH.getCategories(2, 2);
+                setCategories(data);
+            } catch (error) {
+                console.error('Fetch error:', error);
+                throw error; // Rilancia l'errore per la gestione nel componente
+            }
+        }
+
+        fetchCategories();
+    }, []);
 
     const [editableRowIndex, setEditableRowIndex] = useState(null);
     const [editedValue, setEditedValue] = useState('');
 
     // Convert object to array of rows
-    const rows = Object.keys(valuesTechnicalBuilding).map(key => ({
+    const rows = Object.keys(categories).map(key => ({
         name: key,
-        value: valuesTechnicalBuilding[key]
+        value: categories[key]
     }));
 
     const handleEditRow = (index) => {
@@ -55,14 +45,20 @@ export default function EditableTable() {
         setEditedValue(rows[index].value);
     };
 
-    const handleSave = () => {
-        // Update valuesOwnershipInformation with the edited value
-        const updatedValues = { ...valuesTechnicalBuilding };
+    const handleSave = async () => {
+        const updatedValues = { ...categories };
         updatedValues[rows[editableRowIndex].name] = editedValue;
-
-        setValuesTechnicalBuilding(updatedValues);
+        setCategories(updatedValues);
         setEditableRowIndex(null);
         setEditedValue('');
+        // Invia la richiesta PUT al backend con l'indice dell'array e i dati aggiornati
+        try {
+            const response = await putDataFVH.updateData(2, updatedValues, 2);
+            //console.log(response)
+        } catch (error) {
+            console.log(error)
+            console.error('Errore durante la richiesta PUT:', error);
+        }
     };
 
     const handleValueChange = (event) => {

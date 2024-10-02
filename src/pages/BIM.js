@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Container from '@mui/material/Container';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { Grid } from '@mui/material';
 
 import VisualizationGBXML from '../components/VisualizationGBXML';
-import DownloadButtonBIM from '../components/downloadButtonBIM'
-export default function Home({ setList, list }) {
+import DownloadButton from '../components/downloadButton'
+
+export default function BIM() {
+
+    const bim = process.env.REACT_APP_API_FVH_BIM
 
     return (
         <Box
@@ -32,7 +33,7 @@ export default function Home({ setList, list }) {
                 <Box>
                     <Grid container spacing={2} justifyContent="center">
                         <Grid item>
-                            <DownloadButtonBIM />
+                            <DownloadButton downloadUrl={bim} />
                         </Grid>
                     </Grid>
                 </Box>

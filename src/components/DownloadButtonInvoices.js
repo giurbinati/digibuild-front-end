@@ -11,32 +11,14 @@ function PdfViewer() {
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
   const [data, setData] = useState(null);
-  const [error, setError] = useState(null); // Per la gestione degli errori
   const [loading, setLoading] = useState(false); // Per la gestione del caricamento
 
-  const handleOpenPdf = async () => {
+  const handleOpenPdf = () => {
     setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch('https://cloud2.digibuild-project.com/file/5e9e51bb-d355-44f4-a7c3-64fdf5377e16/download', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/pdf',
-        },
-      });
-
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        setData(url);
-      } else {
-        setError('Errore durante il download del PDF');
-      }
-    } catch (error) {
-      setError('Errore durante il caricamento del PDF');
-    } finally {
-      setLoading(false);
-    }
+    // Poiché il PDF è in locale nella cartella 'public', possiamo creare l'URL direttamente
+    const url = `${process.env.PUBLIC_URL}/heatingHotWaterPeriod 23.02.2022-25.03.2022.pdf`;
+    setData(url);
+    setLoading(false);
   };
 
   return (
@@ -61,8 +43,6 @@ function PdfViewer() {
           {loading ? 'Loading...' : 'View PDF'}
         </Button>
       )}
-
-      {error && <p style={{ color: 'red' }}>{error}</p>} {/* Mostra un messaggio di errore */}
 
       {data && (
         <div style={{ border: '1px solid rgba(0, 0, 0, 0.3)', height: '50vh', width: '80vh', overflow: 'auto' }}>

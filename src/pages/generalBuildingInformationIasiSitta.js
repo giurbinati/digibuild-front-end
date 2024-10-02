@@ -1,28 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import * as React from 'react';
+import { useState, useEffect } from 'react';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { Box, Grid } from '@mui/material';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import GetDataFVH from '../services/getDataFVH'
-import putDataFVH from '../services/putDataFVH';
-import UploadButton from '../components/uploadButton';
+import TextField from '@mui/material/TextField';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import getDataIasiSitta from '../services/getDataIasiSitta';
+import putDataIasiSitta from '../services/putDataIasiSitta';
 
 export default function EditableTable() {
 
     const [categories, setCategories] = useState([]);
+    const [building, setBuilding] = useState('Roznovanu')
+    const [editableRowIndex, setEditableRowIndex] = useState(null);
+    const [editedValue, setEditedValue] = useState('');
 
     useEffect(() => {
         async function fetchCategories() {
             try {
-                const data = await GetDataFVH.getCategories(0);
+                const data = await getDataIasiSitta.fetchBuildingData(building, 1);
                 setCategories(data);
             } catch (error) {
                 console.error('Fetch error:', error);
@@ -30,10 +39,11 @@ export default function EditableTable() {
             }
         }
         fetchCategories();
-    }, []);
+    }, [building]);
 
-    const [editableRowIndex, setEditableRowIndex] = useState(null);
-    const [editedValue, setEditedValue] = useState('');
+    const handleRadioChange = (event) => {
+        setBuilding(event.target.value);
+    };
 
     // Convert object to array of rows
     const rows = Object.keys(categories).map(key => ({
@@ -52,21 +62,24 @@ export default function EditableTable() {
         setCategories(updatedValues);
         setEditableRowIndex(null);
         setEditedValue('');
+
         // Invia la richiesta PUT al backend con l'indice dell'array e i dati aggiornati
         try {
-            const response = await putDataFVH.updateData(0, updatedValues);
+            const buildingName = building;
+            const response = await putDataIasiSitta.updateBuildingData(buildingName, 1, updatedValues);
             //console.log(response)
         } catch (error) {
-            console.log(error)
+            console.log(error);
             console.error('Errore durante la richiesta PUT:', error);
         }
     };
+
 
     const handleValueChange = (event) => {
         setEditedValue(event.target.value);
     };
 
-    const tableOwnershipInformation = () => {
+    const tableDesignAndPlansOfTheBuilding = () => {
         return (
             <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -159,12 +172,25 @@ export default function EditableTable() {
                                     marginBottom: '1vh'
                                 }}
                             >
-                                Ownership Information
+                                Design and plans of the building
                             </Typography>
                         </Paper>
                     </Grid>
+                    <Grid item>
+                        <FormControl>
+                            <FormLabel sx={{ fontSize: '2.5ch' }} id="demo-radio-buttons-group-label">Building</FormLabel>
+                            <RadioGroup
+                                aria-labelledby="demo-radio-buttons-group-label"
+                                name="radio-buttons-group"
+                                value={building}
+                                onChange={handleRadioChange}
 
-                    {/* Grid item per il Paper contenente la Tabella e il Bottone */}
+                            >
+                                <FormControlLabel value="Roznovanu" control={<Radio />} label="Roznovanu Palace" />
+                                <FormControlLabel value="Dubet Pyramid" control={<Radio />} label="Dubet Pyramid" />
+                            </RadioGroup>
+                        </FormControl>
+                    </Grid>
                     <Grid item xs={12}>
                         <Paper
                             sx={{
@@ -177,7 +203,7 @@ export default function EditableTable() {
                                 alignItems: 'center',
                             }}
                         >
-                            {tableOwnershipInformation()}
+                            {tableDesignAndPlansOfTheBuilding()}
                             <Button
                                 variant="contained"
                                 sx={{
@@ -191,15 +217,14 @@ export default function EditableTable() {
                                     marginTop: '2vh', // Aggiunto margine superiore per distanziare il pulsante dalla tabella
                                     textAlign: 'center', // Centra il testo verticalmente
                                 }}
-                            /* onClick={handleAddRow} */
+                            // onClick={handleAddRow} // Non è necessario in questo contesto
                             >
                                 Confirm Changes
                             </Button>
                         </Paper>
                     </Grid>
                 </Grid>
-                <UploadButton/>
             </Container>
         </Box>
     );
-};
+}

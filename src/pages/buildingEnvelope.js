@@ -10,28 +10,34 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { Box, Grid } from '@mui/material';
 import Container from '@mui/material/Container';
+import GetDataFVH from '../services/getDataFVH';
+import putDataFVH from '../services/putDataFVH';
 
 export default function EditableTable() {
 
-    const [valuesBuildingEnvelope, setValuesBuildingEnvelope] = useState({
-        "Infiltration rate": "0",
-        "Internal heat capacity": "0",
-        "Thermal bridging": "0",
-        "Walls": "https://cloud2.digibuild-project.com/file/06915f0f-7256-42af-a3cc-875554f0d772/download",
-        "Floor (bottom)": "0",
-        "Roof type": "Standard Insulated Roof with Asphalt Shingles",
-        "Windows type": "Triple-Pane Low-E Windows with Improved Sealing",
-        "Skylights": "0",
-        "Door/s": "0"
-    });
+    const [categories, setCategories] = useState([]);
+
+    useEffect(() => {
+        async function fetchCategories() {
+            try {
+                const data = await GetDataFVH.getCategories(2, 1);
+                setCategories(data);
+            } catch (error) {
+                console.error('Fetch error:', error);
+                throw error; // Rilancia l'errore per la gestione nel componente
+            }
+        }
+
+        fetchCategories();
+    }, []);
 
     const [editableRowIndex, setEditableRowIndex] = useState(null);
     const [editedValue, setEditedValue] = useState('');
 
     // Convert object to array of rows
-    const rows = Object.keys(valuesBuildingEnvelope).map(key => ({
+    const rows = Object.keys(categories).map(key => ({
         name: key,
-        value: valuesBuildingEnvelope[key]
+        value: categories[key]
     }));
 
     const handleEditRow = (index) => {
@@ -39,14 +45,20 @@ export default function EditableTable() {
         setEditedValue(rows[index].value);
     };
 
-    const handleSave = () => {
-        // Update valuesOwnershipInformation with the edited value
-        const updatedValues = { ...valuesBuildingEnvelope };
+    const handleSave = async () => {
+        const updatedValues = { ...categories };
         updatedValues[rows[editableRowIndex].name] = editedValue;
-
-        setValuesBuildingEnvelope(updatedValues);
+        setCategories(updatedValues);
         setEditableRowIndex(null);
         setEditedValue('');
+        // Invia la richiesta PUT al backend con l'indice dell'array e i dati aggiornati
+        try {
+            const response = await putDataFVH.updateData(2, updatedValues, 1);
+            //console.log(response)
+        } catch (error) {
+            console.log(error)
+            console.error('Errore durante la richiesta PUT:', error);
+        }
     };
 
     const handleValueChange = (event) => {
@@ -120,7 +132,7 @@ export default function EditableTable() {
             </TableContainer>
         );
     };
-    
+
     return (
         <Box
             sx={{

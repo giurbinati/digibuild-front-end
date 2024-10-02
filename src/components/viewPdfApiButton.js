@@ -6,8 +6,7 @@ import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 // Import styles
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
-function PdfViewer() {
-
+function PdfViewerApi({ apiUrl }) {
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
   const [data, setData] = useState(null);
@@ -18,15 +17,18 @@ function PdfViewer() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('https://cloud2.digibuild-project.com/file/3f067aa2-3c27-495b-871c-edbb7ef71f8b/download', {
+      console.log(apiUrl)
+      const response = await fetch(apiUrl, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/pdf',
         },
       });
+      console.log(response)
 
       if (response.ok) {
         const blob = await response.blob();
+        console.log(blob)
         const url = URL.createObjectURL(blob);
         setData(url);
       } else {
@@ -77,4 +79,4 @@ function PdfViewer() {
   );
 }
 
-export default PdfViewer;
+export default PdfViewerApi;
