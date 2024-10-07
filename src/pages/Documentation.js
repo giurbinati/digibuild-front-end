@@ -3,18 +3,19 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { Grid, Paper } from '@mui/material';
-import ViewPdfApiButton from '../components/viewPdfApiButton'
-
+import ViewPdfApiButton from '../components/viewPdfApiButton';
+import UploadButton from '../components/uploadButton';
 
 export default function Documentation() {
-
-  const urlLCA = process.env.REACT_APP_API_FVH_LCA
-  const urlVentilation = process.env.REACT_APP_API_FVH_VENTILATION
-  const urlElectricity = process.env.REACT_APP_API_FVH_ELECTRICITY
-  const urlGeneralBuildingInformation = process.env.REACT_APP_API_FVH_GENERALBUILDINGINFORMATION
-  const urlWalls = process.env.REACT_APP_API_FVH_ConstructioninformationOuterWalls
-  const urlAirConditioner = process.env.REACT_APP_API_FVH_airconditionerTUWV0611A
-
+  // Array di documenti con i nomi dei file
+  const documents = [
+    { title: 'General building information-FVH pilot', filename: 'General builing information', type: 'pdf' },
+    { title: 'Electricity Affected Areas', filename: 'Electricity', type: 'pdf' },
+    { title: 'Ventilation Affected Areas', filename: 'Ventilation', type: 'pdf' },
+    { title: 'LCA Assesment (building phase) 2020?', filename: 'LCA', type: 'pdf' },
+    { title: 'Construction information - Outer Walls', filename: 'Construction information - Outer Walls', type: 'pdf' },
+    { title: 'air_conditioner-TUWV0611A', filename: 'air_conditioner', type: 'pdf' }
+  ];
 
   return (
     <Box
@@ -33,53 +34,41 @@ export default function Documentation() {
           sx={{
             backgroundColor: 'rgba(147, 208, 167, 0.4)',
             padding: '2%',
-            width: 'auto', // Cambia '1000px' a 'auto' per una larghezza flessibile
-            maxWidth: '100%', // Massima larghezza consentita è 100% del container
+            width: 'auto',
+            maxWidth: '100%',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
           }}
         >
-          <Grid container spacing={4} columns={16} alignItems="center" justify="center" alignContent="center">
-            <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>General building information-FVH pilot</Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <ViewPdfApiButton apiUrl={urlGeneralBuildingInformation} />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>Electricity Affected Areas</Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <ViewPdfApiButton apiUrl={urlElectricity} />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>Ventilation Affected Areas</Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <ViewPdfApiButton apiUrl={urlVentilation} />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>LCA Assesment (building phase) 2020</Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <ViewPdfApiButton apiUrl={urlLCA} />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>Construction information - Outer Walls</Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <ViewPdfApiButton apiUrl={urlWalls} />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>air_conditioner-TUWV0611A</Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <ViewPdfApiButton apiUrl={urlAirConditioner} />
-            </Grid>
+          <Grid container spacing={4} columns={16} alignItems="center" justifyContent="center">
+            {documents.map((doc, index) => (
+              <Grid container item key={index} spacing={2} alignItems="center" justifyContent="center">
+                {/* Title */}
+                <Grid item xs={12} sm={4}>
+                  <Typography variant="h6" align="center" style={{ fontSize: '3ch' }}>
+                    {doc.title}
+                  </Typography>
+                </Grid>
+
+                {/* View or Download Button */}
+                <Grid item xs={12} sm={4}>
+                  {doc.type === 'pdf' ? (
+                    <ViewPdfApiButton filename={doc.filename} />
+                  ) : (
+                    <DownloadButton filename={doc.filename} />
+                  )}
+                </Grid>
+
+                {/* Upload Button */}
+                <Grid item xs={12} sm={4}>
+                  <UploadButton fileType={doc.type} keyword={doc.filename} />
+                </Grid>
+              </Grid>
+            ))}
           </Grid>
         </Paper>
       </Container>
     </Box>
   );
-};
+}

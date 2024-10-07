@@ -3,6 +3,16 @@ import { Grid, Typography, Paper } from '@mui/material';
 import ViewPdfApiButton from './viewPdfApiButton'; // Assumo che il componente del bottone sia già creato
 
 const TextWithButtons = ({ urls }) => {
+
+    const documents = [
+        { title: 'Section A', filename: 'General builing information', type: 'pdf' },
+        { title: 'Section B', filename: 'Electricity', type: 'pdf' },
+        { title: 'Section C', filename: 'Ventilation', type: 'pdf' },
+        { title: 'LCA Assesment (building phase) 2020?', filename: 'LCA', type: 'pdf' },
+        { title: 'Construction information - Outer Walls', filename: 'Construction information - Outer Walls', type: 'pdf' },
+        { title: 'air_conditioner-TUWV0611A', filename: 'air_conditioner', type: 'pdf' }
+      ];
+
     return (
         <Paper
             sx={{

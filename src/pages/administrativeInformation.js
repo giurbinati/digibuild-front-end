@@ -198,7 +198,6 @@ export default function EditableTable() {
                         </Paper>
                     </Grid>
                 </Grid>
-                <UploadButton/>
             </Container>
         </Box>
     );

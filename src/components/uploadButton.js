@@ -1,55 +1,84 @@
 import React, { useState } from 'react';
+import UploadFileFVH from '../services/uploadFileFVH';
+import { Button, Grid, Typography } from '@mui/material';
 
-const UploadButton = () => {
-  // Funzione che gestisce l'upload del file
-  const [uploadStatus, setUploadStatus] = useState("");
-  const uploadFileService = async (file) => {
-    const formData = new FormData();
-    formData.append("file", file); // Aggiunge il file a FormData
+const UploadButton = ({ fileType, keyword }) => {
+  const [error, setError] = useState(null); // Stato per l'errore
+  const [showViewer, setShowViewer] = useState(false); // Stato per mostrare o nascondere l'errore
 
-    try {
-        const response = await fetch("http://localhost:8080/upload", {
-            method: "POST",
-            body: formData
-        });
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
 
-        if (!response.ok) {
-            throw new Error("Errore durante l'upload del file");
-        }
+    if (file) {
+      const fileExtension = file.name.split('.').pop().toLowerCase();
+      const isFileTypeValid = (fileType === 'pdf' && fileExtension === 'pdf');
+      const isKeywordInFilename = file.name.toLowerCase().includes(keyword.toLowerCase());
 
-        const data = await response.json();
-        setUploadStatus("Upload completato con successo!");
-        console.log("Upload completato:", data);
-    } catch (error) {
-        setUploadStatus("Errore durante l'upload del file.");
-        console.error("Errore:", error);
+      if (!isFileTypeValid) {
+        setError(`Error: The file must be a ${fileType.toUpperCase()}.`);
+        setShowViewer(true); // Mostra il messaggio di errore
+        return;
+      }
+
+      if (!isKeywordInFilename) {
+        setError(`Error: The file name must contain the keyword '${keyword}'.`);
+        setShowViewer(true); // Mostra il messaggio di errore
+        return;
+      }
+
+      try {
+        const result = await UploadFileFVH.uploadFile(file);
+        console.log('File uploaded successfully:', result);
+        setError(null); // Resetta l'errore se l'upload ha successo
+        setShowViewer(false); // Nasconde l'errore se l'upload ha successo
+      } catch (error) {
+        console.error('Error during file upload:', error);
+        setError('Error: There was an error uploading the file.');
+        setShowViewer(true); // Mostra il messaggio di errore
+      }
     }
-};
-
-// Funzione che gestisce la selezione del file
-const handleFileChange = async (event) => {
-    const files = event.target.files;
-    if (files.length > 0) {
-        const file = files[0];
-        console.log('File selezionato:', file.name);
-
-        // Chiama il servizio di upload
-        await uploadFileService(file);
-    }
-};
+  };
 
   return (
     <div>
-      <input
-        type="file"
-        id="file-upload"
-        style={{ display: 'none' }} // Nascondi l'input file
-        onChange={handleFileChange}
-        accept="*"
-      />
-      <label htmlFor="file-upload" style={{ cursor: 'pointer', padding: '10px', backgroundColor: '#007bff', color: '#fff', borderRadius: '5px' }}>
-        Carica un documento
-      </label>
+        <input
+          type="file"
+          id="file-upload"
+          onChange={handleFileChange}
+          accept="*"
+          style={{ display: 'none' }}
+        />
+        <label htmlFor="file-upload">
+          <Button
+            component="span"
+            sx={{
+              backgroundColor: '#057BBE',
+              padding: '1vh 2vh',
+              minWidth: '20vh',
+              width:'20vh',
+              fontSize: '2ch',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: '2vh',
+              textAlign: 'center',
+              color:'white',
+              cursor: 'pointer',
+              '&:hover': {
+                backgroundColor: '#046AA0',
+              },
+            }}
+          >
+            Upload File
+          </Button>
+        </label>
+      
+      {/* Mostra il messaggio di errore se c'è un errore e showViewer è true */}
+      {showViewer && error && (
+          <Typography variant="body1" color="error" sx={{ marginTop: 2 }}>
+            {error}
+          </Typography>
+      )}
     </div>
   );
 };

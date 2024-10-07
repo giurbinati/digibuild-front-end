@@ -147,13 +147,13 @@ export default function Dashboard() {
     useEffect(() => {
         // Nel componente dove hai bisogno del ruolo
         setUserRole(sessionStorage.getItem('ROLE'));
-        console.log('dash', userRole)
+        //console.log('dash', userRole)
     }, []); // Dipendenza vuota per eseguire useEffect solo una volta
 
     useEffect(() => {
         // Nel componente dove hai bisogno del ruolo
         setPilot(sessionStorage.getItem('PILOT'));
-        console.log('pilot', pilot)
+        //console.log('pilot', pilot)
     }, []); // Dipendenza vuota per eseguire useEffect solo una volta
 
     return (

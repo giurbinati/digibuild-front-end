@@ -1,27 +1,50 @@
-import React from 'react';
-import { Line } from 'react-chartjs-2';
+import React, { useEffect, useRef } from 'react';
+import Chart from 'chart.js/auto';
+import { Box, Container, Grid } from '@mui/material';
 
-const LineChart = () => {
-  // Dati del grafico
-  const data = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [
-      {
-        label: 'My First Dataset',
-        data: [65, 59, 80, 81, 56, 55, 40],
-        fill: false,
-        borderColor: 'rgb(75, 192, 192)',
-        tension: 0.1,
-      },
-    ],
-  };
+const LineChart = ({ labels, data }) => {
+    const chartRef = useRef(null);
+    const chartInstance = useRef(null);
 
-  return (
-    <div>
-      <h2>Line Chart Example</h2>
-      <Line data={data} />
-    </div>
-  );
+    useEffect(() => {
+        // Destroy previous chart instance if it exists
+        if (chartInstance.current) {
+            chartInstance.current.destroy();
+        }
+
+        // Create a new chart instance
+        const myChartRef = chartRef.current.getContext("2d");
+        chartInstance.current = new Chart(myChartRef, {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Electricity (kWh)',
+                    data: data,
+                    fill: false,
+                    backgroundColor: "white",
+                    borderColor: 'blue',
+                    borderWidth: 2,
+                    responsive: true
+                }]
+            }
+        });
+
+        // Cleanup chart instance on component unmount
+        return () => {
+            if (chartInstance.current) {
+                chartInstance.current.destroy();
+            }
+        };
+    }, [labels, data]);
+
+    return (
+        <Container maxWidth="xl" sx={{ padding: "2%", height: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Box sx={{ width: '100%', height: '100%', maxWidth: '1400px' }}>
+                <canvas ref={chartRef} width={1400} height={1000} style={{ width: '100%', height: '100%' }} />
+            </Box>
+        </Container>
+    );
 };
 
 export default LineChart;
