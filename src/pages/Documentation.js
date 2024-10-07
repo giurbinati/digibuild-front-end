@@ -42,8 +42,8 @@ export default function Documentation() {
           }}
         >
           <Grid container spacing={4} columns={16} alignItems="center" justifyContent="center">
-            {documents.map((doc, index) => (
-              <Grid container item key={index} spacing={2} alignItems="center" justifyContent="center">
+            {documents.map((doc) => (
+              <Grid container item key={doc.filename} spacing={2} alignItems="center" justifyContent="center">
                 {/* Title */}
                 <Grid item xs={12} sm={4}>
                   <Typography variant="h6" align="center" style={{ fontSize: '3ch' }}>

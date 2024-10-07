@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 
+const config = {
+  host: process.env.REACT_APP_API_HOST,
+  timer: parseInt(process.env.REACT_APP_TIMER)
+};
+
+const API_URL_DATE_DownloadFileFVH = config.host + "/last_record";
+
 function DownloadButton({ filename }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -10,11 +17,8 @@ function DownloadButton({ filename }) {
     setError(null);
 
     try {
-      // Costruisci l'URL dell'API del backend
-      const fullUrl = `http://localhost:8080/last_record`;
-
       // Esegui una richiesta POST per ottenere il file più recente dal backend
-      const response = await fetch(fullUrl, {
+      const response = await fetch(API_URL_DATE_DownloadFileFVH, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -37,10 +41,10 @@ function DownloadButton({ filename }) {
         document.body.removeChild(link);
         URL.revokeObjectURL(url); // Rilascia la memoria dell'URL temporaneo
       } else {
-        setError('Errore durante il download del file.');
+        setError('Error while downloading the file.');
       }
     } catch (err) {
-      setError('Errore durante la richiesta al server.');
+      setError('Error during the request to the server.');
     } finally {
       setLoading(false);
     }

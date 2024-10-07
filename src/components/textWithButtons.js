@@ -1,17 +1,11 @@
 import React from 'react';
 import { Grid, Typography, Paper } from '@mui/material';
-import ViewPdfApiButton from './viewPdfApiButton'; // Assumo che il componente del bottone sia già creato
+import ViewPdfButton from './viewPdfApiButton'; 
+import UploadButton from './uploadButton';
 
-const TextWithButtons = ({ urls }) => {
-
-    const documents = [
-        { title: 'Section A', filename: 'General builing information', type: 'pdf' },
-        { title: 'Section B', filename: 'Electricity', type: 'pdf' },
-        { title: 'Section C', filename: 'Ventilation', type: 'pdf' },
-        { title: 'LCA Assesment (building phase) 2020?', filename: 'LCA', type: 'pdf' },
-        { title: 'Construction information - Outer Walls', filename: 'Construction information - Outer Walls', type: 'pdf' },
-        { title: 'air_conditioner-TUWV0611A', filename: 'air_conditioner', type: 'pdf' }
-      ];
+export default function TextWithButtons({ documents, floor }) {
+    // Filtra i documenti per il piano specificato
+    const filteredDocuments = documents.filter(doc => doc.floor === floor.toString());
 
     return (
         <Paper
@@ -25,36 +19,21 @@ const TextWithButtons = ({ urls }) => {
                 alignItems: 'center',
             }}
         >
-            <Grid container spacing={4} columns={16} alignItems="center" justify="center" alignContent="center">
-                <Grid item xs={8}>
-                    <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>
-                        Section A
-                    </Typography>
-                </Grid>
-                <Grid item xs={8}>
-                    <ViewPdfApiButton apiUrl={urls.urlSectionA} />
-                </Grid>
-
-                <Grid item xs={8}>
-                    <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>
-                        Section B
-                    </Typography>
-                </Grid>
-                <Grid item xs={8}>
-                    <ViewPdfApiButton apiUrl={urls.urlSectionB} />
-                </Grid>
-
-                <Grid item xs={8}>
-                    <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>
-                        Section C
-                    </Typography>
-                </Grid>
-                <Grid item xs={8}>
-                    <ViewPdfApiButton apiUrl={urls.urlSectionC} />
-                </Grid>
+            <Grid container spacing={4}>
+                {filteredDocuments.map((doc, index) => (
+                    <Grid item xs={12} key={index} container justifyContent="space-between" alignItems="center">
+                        <Grid item xs={4}>
+                            <Typography variant="h6">{doc.title}</Typography>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <ViewPdfButton filename={doc.filename} />
+                        </Grid>
+                        <Grid item xs={4}>
+                            <UploadButton fileType={doc.type} keyword={doc.filename} />
+                        </Grid>
+                    </Grid>
+                ))}
             </Grid>
         </Paper>
     );
-};
-
-export default TextWithButtons;
+}

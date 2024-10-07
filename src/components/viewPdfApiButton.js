@@ -6,6 +6,13 @@ import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
 
+const config = {
+  host: process.env.REACT_APP_API_HOST,
+  timer: parseInt(process.env.REACT_APP_TIMER)
+};
+
+const API_URL_DATE_ViewPDFFVH = config.host + "/last_record";
+
 function PdfViewerApi({ filename }) {
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
@@ -18,7 +25,7 @@ function PdfViewerApi({ filename }) {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:8080/last_record', {
+      const response = await fetch(API_URL_DATE_ViewPDFFVH, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -32,10 +39,10 @@ function PdfViewerApi({ filename }) {
         setData(url); // Imposta l'URL per visualizzare il PDF
         setShowViewer(true); // Mostra il visualizzatore
       } else {
-        setError('Errore durante il download del PDF');
+        setError('Error while downloading the PDF');
       }
     } catch (error) {
-      setError('Errore durante il caricamento del PDF');
+      setError('Error while loading PDF');
     } finally {
       setLoading(false);
     }
