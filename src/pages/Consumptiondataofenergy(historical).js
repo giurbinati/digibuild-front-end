@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Container from '@mui/material/Container';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { Grid } from '@mui/material';
 import moment from 'moment';
@@ -10,15 +8,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import dayjs from 'dayjs';
 import Button from '@mui/material/Button';
-
-
-import AuthService from '../services/auth';
-import UploadButton from '../components/uploadButton'
-import DownloadButton from '../components/downloadButton'
-import chart from '../components/chart'
-import useEnhancedEffect from '@mui/material/utils/useEnhancedEffect';
 
 const config = {
     host: process.env.REACT_APP_API_HOST,

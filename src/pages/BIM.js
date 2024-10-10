@@ -5,10 +5,11 @@ import { Grid } from '@mui/material';
 
 import VisualizationGBXML from '../components/VisualizationGBXML';
 import DownloadButton from '../components/downloadButton'
+import UploadButton from '../components/uploadButton';
 
 export default function BIM() {
 
-    const bim = process.env.REACT_APP_API_FVH_BIM
+    const documents = { title: 'BIM', filename: 'BIM', type: 'document' };
 
     return (
         <Box
@@ -24,16 +25,17 @@ export default function BIM() {
         >
             <Container maxWidth="xl" sx={{ padding: 0 }}>
                 <Box>
-                    <Grid container spacing={2} justifyContent="center">
-                        <VisualizationGBXML />
-                    </Grid>
-                </Box>
-            </Container>
-            <Container maxWidth="xl" sx={{ marginBottom: "3vh", padding: "2%" }}>
-                <Box>
-                    <Grid container spacing={2} justifyContent="center">
+                    <Grid container spacing={2} direction="column" alignItems="center">
                         <Grid item>
-                            <DownloadButton downloadUrl={bim} />
+                            <VisualizationGBXML />
+                        </Grid>
+                        <Grid item container justifyContent="center" alignItems="center" spacing={2} sx={{ marginTop: "2vh" }}>
+                            <Grid item>
+                                <DownloadButton filename={documents.filename} />
+                            </Grid>
+                            <Grid item>
+                                <UploadButton keyword={documents.filename} />
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Box>

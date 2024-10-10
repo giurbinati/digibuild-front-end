@@ -38,10 +38,11 @@ const UploadButton = ({ fileType, keyword }) => {
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
+    console.log(file)
 
     if (file) {
       const fileExtension = file.name.split('.').pop().toLowerCase();
-      const isFileTypeValid = (fileType === 'pdf' && fileExtension === 'pdf');
+      const isFileTypeValid = fileType ? (fileType === 'pdf' && fileExtension === 'pdf') : true;
       const isKeywordInFilename = file.name.toLowerCase().includes(keyword.toLowerCase());
 
       if (!isFileTypeValid) {

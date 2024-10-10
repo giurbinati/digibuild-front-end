@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import { Box, Container, Grid } from '@mui/material';
 import InputLabel from '@mui/material/InputLabel';
@@ -7,31 +7,51 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import getDataForecastingFVH from '../services/getDataForecastingFVH';
 import Chart from '../components/chart'
+import CircularProgress from '@mui/material/CircularProgress';
 import { Button } from '@mui/material';
+import { Alert } from '@mui/material';
 
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
-        },
-    },
-};
 
 export default function Home() {
-    const [dataForecasting, setDataForecasting] = useState()
     const [section, setSection] = useState('');
     const [floor, setFloor] = useState('');
     const [room, setRoom] = useState('');
+    const [timeStampTotal, setTimeStampTotal] = useState([]);
+    const [valueTotal, setValueTotal] = useState([]);
+    const [timeStampSection, setTimeStampSection] = useState([]);
+    const [valueSection, setValueSection] = useState([]);
+    const [valueSectionA, setValueSectionA] = useState([]);
+    const [valueSectionB, setValueSectionB] = useState([]);
+    const [valueSectionC, setValueSectionC] = useState([]);
     const [timeStamp, setTimeStamp] = useState([]);
     const [value, setValue] = useState([]);
-    const [errorMessage, setErrorMessage] = useState(''); // State for error message
+    const [errorMessage, setErrorMessage] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [loadingTotal, setLoadingTotal] = useState(false);
+    const [loadingSection, setLoadingSection] = useState(false);
+    const [errorTotal, setErrorTotal] = useState(null);
+    const [errorSection, setErrorSection] = useState(null);
+    const [error, setError] = useState(null);
+
+    console.log('YourComponent mounted');
+
+    useEffect(() => {
+        // Log quando il componente viene montato
+        console.log('useEffect triggered');
+
+        // Log per verificare se il componente viene smontato
+        return () => {
+            console.log('YourComponent unmounted');
+        };
+    }, []);
 
     const handleChangeSection = (event) => {
-        setSection(event.target.value);
+        const selectedSection = event.target.value; // Get the selected value
+        setSection(selectedSection);
+        // If "None" is selected, reset the floor state
+        if (selectedSection === '') {
+            setFloor(''); // Reset floor to None
+        }
     };
     const handleChangeFloor = (event) => {
         setFloor(event.target.value);
@@ -50,10 +70,70 @@ export default function Home() {
         'JKC6.2', 'JKC7.1', 'JKC7.2'
     ];
 
+    // Funzioni di fetch aggiornate
+    const fetchDataForecastingTotal = async () => {
+        try {
+            const data = await getDataForecastingFVH.GetDataForecasting();
+            console.log('1', data);
+            console.log('2', data.Total);
+            const dataTotal = data.Total.Total;
+            const timestamps = dataTotal.map(item => item.timestamp); // Ottieni tutte le chiavi (i timestamp)
+            const values = dataTotal.map(item => item.value); // Ottieni tutti i valori
+            // Aggiorna gli stati per il grafico
+            setTimeStampTotal(timestamps);
+            setValueTotal(values);
+        } catch (error) {
+            console.error('Fetch error:', error);
+            setErrorTotal('An error occurred while loading data in Total.'); // Imposta il messaggio di errore
+        } finally {
+            setLoadingTotal(false); // Set loading to false after fetching
+        }
+    };
+
+    const fetchDataForecastingSection = async () => {
+        try {
+            const data = await getDataForecastingFVH.GetDataForecasting();
+            console.log('3', data);
+            console.log('4', data.Sections);
+            const timestamps = data.Sections.A.map(item => item.timestamp); // Ottieni tutte le chiavi (i timestamp)
+            const valuesA = data.Sections.A.map(item => item.value);  // Valori di A
+            const valuesB = data.Sections.B.map(item => item.value);  // Valori di B
+            const valuesC = data.Sections.C.map(item => item.value);  // Valori di C
+            // Aggiorna gli stati per il grafico
+            setTimeStampSection(timestamps);
+            setValueSection([
+                { label: 'Dataset 1', data: valuesA },
+                { label: 'Dataset 2', data: valuesB },
+                { label: 'Dataset 3', data: valuesC }
+            ]);
+            setValueSectionA(valuesA);
+            setValueSectionB(valuesB);
+            setValueSectionC(valuesC);
+        } catch (error) {
+            console.error('Fetch error:', error);
+            setErrorSection('An error occurred while loading data in Section.');
+        } finally {
+            setLoadingSection(false); // Set loading to false after fetching
+        }
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoadingTotal(true); // Attiva il caricamento per il totale
+            setLoadingSection(true); // Attiva il caricamento per le sezioni
+
+            // Esegui le due chiamate in parallelo
+            fetchDataForecastingTotal(); // Non usare await
+            fetchDataForecastingSection(); // Non usare await
+        };
+
+        fetchData();
+    }, []);
+
     async function fetchDataForecasting() {
         try {
+            setLoading(true);
             const data = await getDataForecastingFVH.GetDataForecasting(section, floor, room);
-            setDataForecasting(data);
             const timestamps = data.map(item => Object.keys(item)[0]); // Ottieni tutte le chiavi (i timestamp)
             const values = data.map(item => Object.values(item)[0]); // Ottieni tutti i valori
             // Aggiorna gli stati per il grafico
@@ -61,8 +141,12 @@ export default function Home() {
             setValue(values);
         } catch (error) {
             console.error('Fetch error:', error);
+            setError('An error occurred while loading data in Floor.')
             throw error; // Rilancia l'errore per la gestione nel componente
+        } finally {
+            setLoading(false); // Set loading to false after fetching
         }
+
     }
     const handleSearchClick = () => {
         // Validate selections
@@ -86,7 +170,65 @@ export default function Home() {
             }}
         >
             <Container maxWidth="xl" sx={{ padding: 0 }}>
-                {/* Grid item per il Paper contenente la Tabella e il Bottone */}
+                {/* Grid item per i nuovi due Chart in una singola riga */}
+                <Grid container spacing={4} justifyContent="center" sx={{ marginBottom: '3vh' }}>
+                    <Grid item xs={12} sm={6} sx={{ position: 'relative' }}>
+                        {loadingTotal && (
+                            <CircularProgress
+                                size={120}
+                                sx={{
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    transform: 'translate(-50%, -50%)',
+                                    zIndex: 1,
+                                }}
+                            />
+                        )}
+                        <Chart
+                            labels={timeStampTotal}
+                            data={valueTotal}
+                            datasetLabel={'Energy consumption (Kw)'}
+                            chartTitle="Total"
+                        />
+                        {errorTotal && (
+                            <Grid item xs={12}>
+                                <Alert severity="error" onClose={() => setErrorTotal(null)}>
+                                    {errorTotal}
+                                </Alert>
+                            </Grid>
+                        )}
+                    </Grid>
+                    <Grid item xs={12} sm={6} sx={{ position: 'relative' }}>
+                        {/* Spinner per il caricamento dentro il grafico a destra */}
+                        {loadingSection && (
+                            <CircularProgress
+                                size={120}
+                                sx={{
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    transform: 'translate(-50%, -50%)',
+                                    zIndex: 1,
+                                }}
+                            />
+                        )}
+                        <Chart
+                            labels={timeStampSection}
+                            data={valueSection}
+                            datasetLabel={'Energy consumption (Kw)'}
+                            chartTitle="Section"
+                        />
+                        {errorSection && (
+                            <Grid item xs={12}>
+                                <Alert severity="error" onClose={() => setErrorSection(null)}>
+                                    {errorSection}
+                                </Alert>
+                            </Grid>
+                        )}
+                    </Grid>
+                </Grid>
+                {/* Sezione delle Select */}
                 <Grid container spacing={8} justifyContent="center">
                     {/* Section Select */}
                     <Grid item xs={12} sm={2}>
@@ -100,6 +242,7 @@ export default function Home() {
                                     label="Section"
                                     onChange={handleChangeSection}
                                 >
+                                    <MenuItem value="">None</MenuItem>
                                     <MenuItem value={'A'}>A</MenuItem>
                                     <MenuItem value={'B'}>B</MenuItem>
                                     <MenuItem value={'C'}>C</MenuItem>
@@ -121,6 +264,7 @@ export default function Home() {
                                     onChange={handleChangeFloor}
                                     disabled={!section}
                                 >
+                                    <MenuItem value="">None</MenuItem>
                                     <MenuItem value={'0'}>0</MenuItem>
                                     <MenuItem value={'1'}>1</MenuItem>
                                     <MenuItem value={'2'}>2</MenuItem>
@@ -133,48 +277,31 @@ export default function Home() {
                             </FormControl>
                         </Box>
                     </Grid>
-                    {/*  <Grid item xs={12} sm={2}>
-                        <Box sx={{ minWidth: 120 }}>
-                            <FormControl fullWidth>
-                                <InputLabel id="room-select-label">Room</InputLabel>
-                                <Select
-                                    labelId="room-select-label"
-                                    id="room-select"
-                                    value={room}
-                                    label="Room"
-                                    onChange={handleChangeRoom}
-                                    MenuProps={MenuProps}
-                                >
-                                    {roomOptions.map((option) => (
-                                        <MenuItem key={option} value={option}>
-                                            {option}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </Grid> */}
                 </Grid>
             </Container>
+
             <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "1vh", padding: "2%" }}>
-                <Box /* sx={{ paddingLeft: "32px", marginTop: "32px", paddingRight: "32px" }}*/ >
+                <Box>
                     <Grid container direction="column" alignItems="center">
                         <Grid item xs={12}>
                             <Button
                                 variant="contained"
                                 sx={{
                                     backgroundColor: '#057BBE',
-                                    padding: '1vh 2vh', // Padding verticale e orizzontale
-                                    minWidth: '20vh', // Larghezza minima per mantenere la dimensione minima del bottone
+                                    padding: '1vh 2vh',
+                                    minWidth: '20vh',
                                     fontSize: '2ch',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    marginTop: '2vh', // Aggiunto margine superiore per distanziare il pulsante dalla tabella
-                                    textAlign: 'center', // Centra il testo verticalmente
+                                    marginTop: '2vh',
+                                    textAlign: 'center',
                                     marginBottom: '3vh',
                                 }}
-                                onClick={handleSearchClick}> Search</Button>
+                                onClick={handleSearchClick}
+                            >
+                                Search
+                            </Button>
                             {errorMessage && (
                                 <Grid item xs={12}>
                                     <Typography color="error" variant="body1" sx={{ marginTop: '1vh', color: 'red' }}>
@@ -183,8 +310,34 @@ export default function Home() {
                                 </Grid>
                             )}
                         </Grid>
-                        <Grid item xs={12}>
-                            <Chart labels={timeStamp} data={value} />
+                        <Grid item xs={12} sx={{ position: 'relative', width: '100%' }}>
+                            {/* Spinner per caricamento dentro il grafico */}
+                            {loading && (
+                                <CircularProgress
+                                    size={120}
+                                    sx={{
+                                        position: 'absolute',
+                                        top: '50%',
+                                        left: '50%',
+                                        transform: 'translate(-50%, -50%)',
+                                        zIndex: 1,
+                                    }}
+                                />
+                            )}
+                            <Chart
+                                labels={timeStamp}
+                                data={value}
+                                datasetLabel={'Energy consumption (Kw)'}
+                                chartTitle="Floor"
+                                style={{ position: 'relative' }}
+                            />
+                            {error && (
+                                <Grid item xs={12}>
+                                    <Alert severity="error" onClose={() => setError(null)}>
+                                        {error}
+                                    </Alert>
+                                </Grid>
+                            )}
                         </Grid>
                     </Grid>
                 </Box>
