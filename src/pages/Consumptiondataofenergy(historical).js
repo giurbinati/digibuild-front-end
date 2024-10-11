@@ -50,14 +50,6 @@ export default function Home({ setList, list }) {
         setSelectedDateCoolingEnd(dateCoolingEnd);
     };
 
-
-
-    const [values, setValues] = useState({
-        'Measured heating consumption': "kWh/year",
-        'Measured electricity consumption ': "kWh/year",
-        'Measured cooling consumption ': "Litres/year",
-    });
-
     const [electricityTimeStamp, setElectricityTimeStamp] = useState(null)
     const [electricityValue, setElectricityValue] = useState(null)
     const [heatingTimeStamp, setHeatingTimeStamp] = useState(null)

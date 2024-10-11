@@ -4,7 +4,6 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { Grid, Paper } from '@mui/material';
 import ViewPdfApiButton from '../components/viewPdfApiButton'
-import DownloadButtonInvoices from '../components/DownloadButtonInvoices';
 export default function CostInformationHeatingAndHotWater() {
 
   return (

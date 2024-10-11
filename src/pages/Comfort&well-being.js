@@ -12,10 +12,6 @@ import TableRow from '@mui/material/TableRow';
 import { Grid } from '@mui/material';
 import Popover from '@mui/material/Popover';
 
-import AuthService from '../services/auth';
-import UploadButton from '../components/uploadButton'
-import DownloadButton from '../components/downloadButton'
-
 export default function Home({ setList, list }) {
     const [values, setValues] = useState({
         "Comfort level(sPMV)": "-0.06",

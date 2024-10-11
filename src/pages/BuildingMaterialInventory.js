@@ -14,9 +14,7 @@ import TablePagination from '@mui/material/TablePagination';
 import GetDataFVH from '../services/getDataFVH';
 import putDataFVH from '../services/putDataFVH';
 
-
 export default function EditableTable() {
-
     const [categories, setCategories] = useState([]);
 
     useEffect(() => {
@@ -26,20 +24,19 @@ export default function EditableTable() {
                 setCategories(data);
             } catch (error) {
                 console.error('Fetch error:', error);
-                throw error; // Rilancia l'errore per la gestione nel componente
+                throw error;
             }
         }
-
         fetchCategories();
     }, []);
 
     const [editableRowIndex, setEditableRowIndex] = useState(null);
     const [editedValue, setEditedValue] = useState('');
 
-    // Convert object to array of rows
-    const rows = Object.entries(categories).map(([key, value]) => ({
+    const rows = Object.keys(categories).map(key => ({
         name: key,
-        value: value,
+        value: categories[key].value,
+        type: categories[key].type
     }));
 
     const handleEditRow = (index) => {
@@ -51,7 +48,7 @@ export default function EditableTable() {
     const handleSave = async () => {
         const updatedValues = { ...categories };
         const actualIndex = editableRowIndex;
-        updatedValues[rows[actualIndex].name] = editedValue;
+        updatedValues[rows[actualIndex].name].value = editedValue; // Update value correctly
         setCategories(updatedValues);
         setEditableRowIndex(null);
         setEditedValue('');
@@ -61,146 +58,125 @@ export default function EditableTable() {
         setEditedValue(event.target.value);
     };
 
-    const [page, setPage] = useState(0); // Stato per la pagina corrente
-    const [rowsPerPage, setRowsPerPage] = useState(11); // Stato per il numero di righe per pagina
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(11);
 
-    // Funzione per cambiare pagina
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
-    // Funzione per cambiare il numero di righe per pagina
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0); // Reset della pagina alla prima dopo aver cambiato il numero di righe per pagina
+        setPage(0);
     };
 
-    // Righe che verranno visualizzate nella pagina corrente
     const rowsToShow = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     const handleAddMaterial = () => {
-        // Filtra i nomi dei campi per trovare quelli che iniziano con 'Material'
+        // Filter keys starting with 'Material'
         const materialKeys = Object.keys(categories).filter(key => key.startsWith('Material'));
 
-        // Trova l'ultimo numero di materiale
+        // Find the last material index
         const lastMaterialIndex = materialKeys.reduce((max, key) => {
-            const match = key.match(/Material\s*(\d+)/); // Cattura solo il numero del materiale
-            return match ? Math.max(max, parseInt(match[1], 10)) : max; // Aggiorna il massimo
+            const match = key.match(/Material\s*(\d+)/);
+            return match ? Math.max(max, parseInt(match[1], 10)) : max;
         }, 0);
 
-        // Incrementa l'indice per il nuovo set di materiali
         const newMaterialIndex = lastMaterialIndex + 1;
 
-        // Crea il nuovo set di campi per il materiale
         const newMaterial = {
-            [`Material ${newMaterialIndex} - Type`]: "",
-            [`Material ${newMaterialIndex} - Location`]: "",
-            [`Material ${newMaterialIndex} - Volume`]: "",
-            [`Material ${newMaterialIndex} - Weight`]: "",
-            [`Material ${newMaterialIndex} - Embodied carbon`]: "",
-            [`Material ${newMaterialIndex} - Life span`]: "",
-            [`Material ${newMaterialIndex} - Fire resistance class`]: "Rating",
-            [`Material ${newMaterialIndex} - Waste category`]: "Code",
-            [`Material ${newMaterialIndex} - Certificate 1`]: "Linked document",
-            [`Material ${newMaterialIndex} - Chemical declaration`]: "Linked document",
-            [`Material ${newMaterialIndex} - Global Trade Item Number`]: "Linked document"
+            [`Material ${newMaterialIndex} - Type`]: { value: "", type: "Descriptive" },
+            [`Material ${newMaterialIndex} - Location`]: { value: "", type: "Physical" },
+            [`Material ${newMaterialIndex} - Volume`]: { value: "", type: "Physical" },
+            [`Material ${newMaterialIndex} - Weight`]: { value: "", type: "Physical" },
+            [`Material ${newMaterialIndex} - Embodied carbon`]: { value: "", type: "Physical" },
+            [`Material ${newMaterialIndex} - Life span`]: { value: "", type: "Physical" },
+            [`Material ${newMaterialIndex} - Fire resistance class`]: { value: "Rating", type: "Rating" },
+            [`Material ${newMaterialIndex} - Waste category`]: { value: "Code", type: "Code" },
+            [`Material ${newMaterialIndex} - Certificate 1`]: { value: "Linked document", type: "Linked document" },
+            [`Material ${newMaterialIndex} - Chemical declaration`]: { value: "Linked document", type: "Linked document" },
+            [`Material ${newMaterialIndex} - Global Trade Item Number`]: { value: "Linked document", type: "Linked document" }
         };
 
-        // Aggiorna lo stato delle categorie con il nuovo materiale
         setCategories(prevCategories => ({ ...prevCategories, ...newMaterial }));
     };
 
     const handleConfirmChanges = async () => {
-        // Poi invia la richiesta PUT al backend
         try {
             const updatedValues = { ...categories };
             const response = await putDataFVH.updateData(2, updatedValues, 0);
-            //console.log(response)
-
             console.log('Aggiornamento completato con successo');
         } catch (error) {
             console.error('Errore durante la richiesta PUT:', error);
         }
     };
 
-
-    const tableBuildingMaterialInventory = () => {
-        return (
-            <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead sx={{ backgroundColor: '#41BFB9', fontWeight: 'bold' }}>
-                        <TableRow>
-                            <TableCell style={{ fontSize: '2.5ch' }}>Name</TableCell>
-                            <TableCell align="right" style={{ fontSize: '2.5ch' }}>Value</TableCell>
-                            <TableCell align="right" style={{ fontSize: '2.5ch' }}>Actions</TableCell>
+    const tableBuildingMaterialInventory = () => (
+        <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead sx={{ backgroundColor: '#41BFB9', fontWeight: 'bold' }}>
+                    <TableRow>
+                        <TableCell style={{ fontSize: '2.5ch' }}>Name</TableCell>
+                        <TableCell align="right" style={{ fontSize: '2.5ch' }}>Value</TableCell>
+                        <TableCell align="right" style={{ fontSize: '2.5ch' }}>Type of Data</TableCell>
+                        <TableCell align="right" style={{ fontSize: '2.5ch' }}>Actions</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {rowsToShow.map((row, index) => (
+                        <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                            <TableCell component="th" scope="row" style={{ fontSize: '2.5ch' }}>
+                                {row.name}
+                            </TableCell>
+                            <TableCell align="right" style={{ fontSize: '2.5ch' }}>
+                                {editableRowIndex === (page * rowsPerPage + index) ? (
+                                    <TextField
+                                        value={editedValue}
+                                        onChange={handleValueChange}
+                                        sx={{
+                                            '& .MuiInputBase-root': { fontSize: '2.5ch' },
+                                            '& .MuiInputLabel-root': { fontSize: '2.5ch' },
+                                        }}
+                                    />
+                                ) : (
+                                    row.value
+                                )}
+                            </TableCell>
+                            <TableCell align="right" style={{ fontSize: '2.5ch' }}>
+                                {row.type}
+                            </TableCell>
+                            <TableCell align="right">
+                                {editableRowIndex === (page * rowsPerPage + index) ? (
+                                    <Button
+                                        onClick={handleSave}
+                                        sx={{ color: '#41BFB9', fontSize: '2.5ch' }}
+                                    >
+                                        Save
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        sx={{ color: '#41BFB9', fontSize: '2.5ch' }}
+                                        onClick={() => handleEditRow(index)}
+                                    >
+                                        Edit
+                                    </Button>
+                                )}
+                            </TableCell>
                         </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {rowsToShow.map((row, index) => (
-                            <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                <TableCell component="th" scope="row" style={{ fontSize: '2.5ch' }}>
-                                    {row.name}
-                                </TableCell>
-                                <TableCell align="right" style={{ fontSize: '2.5ch' }}>
-                                    {editableRowIndex === (page * rowsPerPage + index) ? (
-                                        <TextField
-                                            value={editedValue}
-                                            onChange={handleValueChange}
-                                            sx={{
-                                                '& .MuiInputBase-root': {
-                                                    fontSize: '2.5ch' // Dimensione del carattere all'interno del TextField
-                                                },
-                                                '& .MuiInputLabel-root': {
-                                                    fontSize: '2.5ch' // Dimensione del carattere dell'etichetta
-                                                },
-                                            }}
-                                        />
-                                    ) : row.value.startsWith('http') ? (
-                                        <a href={row.value} target="_blank" rel="noopener noreferrer" style={{ fontSize: '2.5ch' }}>{row.value}</a>
-                                    ) : (
-                                        row.value
-                                    )}
-                                </TableCell>
-                                <TableCell align="right">
-                                    {editableRowIndex === (page * rowsPerPage + index) ? (
-                                        <Button
-                                            onClick={handleSave}
-                                            sx={{
-                                                color: '#41BFB9',
-                                                fontSize: '2.5ch'
-                                            }}
-                                        >
-                                            Save
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            sx={{
-                                                color: '#41BFB9',
-                                                fontSize: '2.5ch'
-                                            }}
-                                            onClick={() => handleEditRow(index)}
-                                        >
-                                            Edit
-                                        </Button>
-                                    )}
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-                {/* Aggiungi la paginazione qui */}
-                <TablePagination
-                    rowsPerPageOptions={[5, 11, 22]}
-                    component="div"
-                    count={rows.length} // Numero totale di righe
-                    rowsPerPage={rowsPerPage} // Numero di righe per pagina
-                    page={page} // Pagina corrente
-                    onPageChange={handleChangePage} // Cambia pagina
-                    onRowsPerPageChange={handleChangeRowsPerPage} // Cambia righe per pagina
-                />
-            </TableContainer>
-        );
-    };
+                    ))}
+                </TableBody>
+            </Table>
+            <TablePagination
+                rowsPerPageOptions={[5, 11, 22]}
+                component="div"
+                count={rows.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+        </TableContainer>
+    );
 
     return (
         <Box
@@ -216,7 +192,6 @@ export default function EditableTable() {
         >
             <Container maxWidth="xl" sx={{ padding: 0 }}>
                 <Grid container direction="column" alignItems="center" spacing={3}>
-                    {/* Grid item per il Paper contenente la Tabella e il Bottone */}
                     <Grid item xs={12}>
                         <Paper
                             sx={{
@@ -234,31 +209,25 @@ export default function EditableTable() {
                                 variant="contained"
                                 sx={{
                                     backgroundColor: '#057BBE',
-                                    padding: '1vh 2vh', // Padding verticale e orizzontale
-                                    minWidth: '20vh', // Larghezza minima per mantenere la dimensione minima del bottone
-                                    fontSize: '2ch',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    marginTop: '2vh', // Aggiunto margine superiore per distanziare il pulsante dalla tabella
-                                    textAlign: 'center', // Centra il testo verticalmente
+                                    padding: '1vh 2vh',
+                                    minWidth: '180px',
+                                    color: 'white',
+                                    marginTop: '2vh',
+                                    fontSize: '2.5ch'
                                 }}
                                 onClick={handleAddMaterial}
                             >
-                                Add Material
+                                Add New Material
                             </Button>
                             <Button
                                 variant="contained"
                                 sx={{
                                     backgroundColor: '#057BBE',
-                                    padding: '1vh 2vh', // Padding verticale e orizzontale
-                                    minWidth: '20vh', // Larghezza minima per mantenere la dimensione minima del bottone
-                                    fontSize: '2ch',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    marginTop: '2vh', // Aggiunto margine superiore per distanziare il pulsante dalla tabella
-                                    textAlign: 'center', // Centra il testo verticalmente
+                                    padding: '1vh 2vh',
+                                    minWidth: '180px',
+                                    color: 'white',
+                                    marginTop: '2vh',
+                                    fontSize: '2.5ch'
                                 }}
                                 onClick={handleConfirmChanges}
                             >

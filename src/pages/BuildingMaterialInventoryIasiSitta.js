@@ -21,14 +21,6 @@ import putDataIasiSitta from '../services/putDataIasiSitta';
 
 
 export default function EditableTable() {
-
-    const config = {
-        host: process.env.REACT_APP_API_HOST,
-        timer: parseInt(process.env.REACT_APP_TIMER)
-    };
-
-    const API_URL_DATE_PutDataIasiSitta = config.host + "/putcategoriesservicesiasisitta";
-
     const [categories, setCategories] = useState([]);
     const [building, setBuilding] = useState('Roznovanu')
     const [editableRowIndex, setEditableRowIndex] = useState(null);
@@ -52,10 +44,10 @@ export default function EditableTable() {
         setPage(0);
     };
 
-    // Convert object to array of rows
-    const rows = Object.entries(categories).map(([key, value]) => ({
+    const rows = Object.keys(categories).map(key => ({
         name: key,
-        value: value,
+        value: categories[key].value,
+        type: categories[key].type
     }));
 
     const handleEditRow = (index) => {
@@ -123,17 +115,17 @@ export default function EditableTable() {
 
         // Crea il nuovo set di campi per il materiale
         const newMaterial = {
-            [`Material ${newMaterialIndex} - Type`]: "",
-            [`Material ${newMaterialIndex} - Location`]: "",
-            [`Material ${newMaterialIndex} - Volume`]: "",
-            [`Material ${newMaterialIndex} - Weight`]: "",
-            [`Material ${newMaterialIndex} - Embodied carbon`]: "",
-            [`Material ${newMaterialIndex} - Life span`]: "",
-            [`Material ${newMaterialIndex} - Fire resistance class`]: "Rating",
-            [`Material ${newMaterialIndex} - Waste category`]: "Code",
-            [`Material ${newMaterialIndex} - Certificate 1`]: "Linked document",
-            [`Material ${newMaterialIndex} - Chemical declaration`]: "Linked document",
-            [`Material ${newMaterialIndex} - Global Trade Item Number`]: "Linked document"
+            [`Material ${newMaterialIndex} - Type`]: { value: "", type: "Descriptive" },
+            [`Material ${newMaterialIndex} - Location`]: { value: "", type: "Physical" },
+            [`Material ${newMaterialIndex} - Volume`]: { value: "", type: "Physical" },
+            [`Material ${newMaterialIndex} - Weight`]: { value: "", type: "Physical" },
+            [`Material ${newMaterialIndex} - Embodied carbon`]: { value: "", type: "Physical" },
+            [`Material ${newMaterialIndex} - Life span`]: { value: "", type: "Physical" },
+            [`Material ${newMaterialIndex} - Fire resistance class`]: { value: "Rating", type: "Rating" },
+            [`Material ${newMaterialIndex} - Waste category`]: { value: "Code", type: "Code" },
+            [`Material ${newMaterialIndex} - Certificate 1`]: { value: "Linked document", type: "Linked document" },
+            [`Material ${newMaterialIndex} - Chemical declaration`]: { value: "Linked document", type: "Linked document" },
+            [`Material ${newMaterialIndex} - Global Trade Item Number`]: { value: "Linked document", type: "Linked document" }
         };
 
         // Aggiorna lo stato delle categorie con il nuovo materiale
@@ -148,6 +140,7 @@ export default function EditableTable() {
                         <TableRow>
                             <TableCell style={{ fontSize: '2.5ch' }}>Name</TableCell>
                             <TableCell align="right" style={{ fontSize: '2.5ch' }}>Value</TableCell>
+                            <TableCell align="right" style={{ fontSize: '2.5ch' }}>Type of Data</TableCell>
                             <TableCell align="right" style={{ fontSize: '2.5ch' }}>Actions</TableCell>
                         </TableRow>
                     </TableHead>
@@ -171,11 +164,12 @@ export default function EditableTable() {
                                                 },
                                             }}
                                         />
-                                    ) : row.value.startsWith('http') ? (
-                                        <a href={row.value} target="_blank" rel="noopener noreferrer" style={{ fontSize: '2.5ch' }}>{row.value}</a>
                                     ) : (
                                         row.value
                                     )}
+                                </TableCell>
+                                <TableCell align="right" style={{ fontSize: '2.5ch' }}>
+                                    {row.type}
                                 </TableCell>
                                 <TableCell align="right">
                                     {editableRowIndex === (page * rowsPerPage + index) ? (

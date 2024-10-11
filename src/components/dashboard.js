@@ -402,7 +402,7 @@ export default function Dashboard() {
                                         }}>
                                         <Tab label="Consumption data of energy (forecasting)" {...a11yProps(0)} />
                                         <Tab label="Consumption data of energy, water, gas, and other resources (invoices)" {...a11yProps(1)} />
-                                        <Tab label="Consumption data of energy" {...a11yProps(2)} />
+                                        <Tab label="Consumption data of energy and chiller(historical)" {...a11yProps(2)} />
                                         <Tab label="Maintenance report" {...a11yProps(3)} />
                                     </Tabs>
                                 </Box>

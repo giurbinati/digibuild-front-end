@@ -23,7 +23,6 @@ import ConsumptiondataofenergyInvoices from '../pages/Consumptiondataofenergy(in
 import Informationonoccupancy from '../pages/Informationonoccupancy'
 import ComfortEwellbeing from '../pages/Comfort&well-being'
 import BuildingPerformance from '../pages/documentationPerformance'
-import SmartReadiness from '../pages/smartReadiness'
 import MaintenanceReport from '../pages/maintenanceReport'
 import BuildingPerformanceIASI from '../pages/buildingPerformanceIASI'
 import CostInformationinvoices from '../pages/CostInformationHeatingAndHotWater'
@@ -265,7 +264,7 @@ export default function BasicTabs() {
                         </Grid>
                         <Grid item xs={12}>
                             <TabPanel value={value} index={5}>
-                                <SmartReadiness />
+                                {/* <SmartReadiness /> */}
                             </TabPanel>
                         </Grid>
                     </Grid>
@@ -348,7 +347,7 @@ export default function BasicTabs() {
                         </Grid>
                         <Grid item xs={12}>
                             <TabPanel value={value} index={5}>
-                                <SmartReadiness />
+                               {/*  <SmartReadiness /> */}
                             </TabPanel>
                         </Grid>
                     </Grid>

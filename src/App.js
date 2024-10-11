@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Login from './pages/login';
-import SignUp from './pages/sing_up';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -12,7 +11,6 @@ import { styled } from '@mui/material/styles';
 import './App.css';
 
 import Dashboard from './components/dashboard';
-import Dashboard2 from './components/dashboard2';
 import Dash2 from './components/dash2'
 
 
