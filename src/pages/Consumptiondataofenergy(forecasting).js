@@ -79,18 +79,33 @@ export default function Home() {
             const dataTotal = data.Total.Total;
             const timestamps = dataTotal.map(item => item.timestamp); // Ottieni tutte le chiavi (i timestamp)
             const values = dataTotal.map(item => item.value); // Ottieni tutti i valori
+            const valuesA = data.Sections.A.map(item => item.value);  // Valori di A
+            const valuesB = data.Sections.B.map(item => item.value);  // Valori di B
+            const valuesC = data.Sections.C.map(item => item.value);  // Valori di C
+            setValueSection([
+                { label: 'Dataset 1', data: valuesA },
+                { label: 'Dataset 2', data: valuesB },
+                { label: 'Dataset 3', data: valuesC }
+            ]);
+            setValueSectionA(valuesA);
+            setValueSectionB(valuesB);
+            setValueSectionC(valuesC);
             // Aggiorna gli stati per il grafico
             setTimeStampTotal(timestamps);
+            setTimeStampSection(timestamps);
             setValueTotal(values);
         } catch (error) {
             console.error('Fetch error:', error);
             setErrorTotal('An error occurred while loading data in Total.'); // Imposta il messaggio di errore
+            setErrorSection('An error occurred while loading data in Section.');
         } finally {
             setLoadingTotal(false); // Set loading to false after fetching
+            setLoadingSection(false); // Set loading to false after fetching
         }
     };
 
-    const fetchDataForecastingSection = async () => {
+    // non necessaria
+   /*  const fetchDataForecastingSection = async () => {
         try {
             const data = await getDataForecastingFVH.GetDataForecasting();
             console.log('3', data);
@@ -115,7 +130,7 @@ export default function Home() {
         } finally {
             setLoadingSection(false); // Set loading to false after fetching
         }
-    };
+    }; */
 
     useEffect(() => {
         const fetchData = async () => {
@@ -124,7 +139,7 @@ export default function Home() {
 
             // Esegui le due chiamate in parallelo
             fetchDataForecastingTotal(); // Non usare await
-            fetchDataForecastingSection(); // Non usare await
+            //fetchDataForecastingSection(); // Non usare await
         };
 
         fetchData();
