@@ -8,7 +8,7 @@ const config = {
 
 const API_URL_DATE_UploadFileFVH = config.host + "/upload";
 
-const UploadButton = ({ fileType, keyword }) => {
+const UploadButton = ({ fileType, keyword, pilot }) => {
   const [error, setError] = useState(null);
   const [uploadStatus, setUploadStatus] = useState("");
 
@@ -16,6 +16,8 @@ const UploadButton = ({ fileType, keyword }) => {
   const uploadFileService = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("pilot", pilot);
+    console.log(pilot)
 
     try {
       const response = await fetch(API_URL_DATE_UploadFileFVH, {
@@ -38,18 +40,10 @@ const UploadButton = ({ fileType, keyword }) => {
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
-    console.log(file)
+    console.log(file);
 
     if (file) {
-      const fileExtension = file.name.split('.').pop().toLowerCase();
-      const isFileTypeValid = fileType ? (fileType === 'pdf' && fileExtension === 'pdf') : true;
       const isKeywordInFilename = file.name.toLowerCase().includes(keyword.toLowerCase());
-
-      if (!isFileTypeValid) {
-        setError(`Error: The file must be a ${fileType.toUpperCase()}.`);
-        return;
-      }
-
       if (!isKeywordInFilename) {
         setError(`Error: The file name must contain the keyword '${keyword}'.`);
         return;
@@ -92,7 +86,7 @@ const UploadButton = ({ fileType, keyword }) => {
           Upload File
         </Button>
       </label>
-      
+
       {error && (
         <Typography variant="body1" color="error" sx={{ marginTop: 2 }}>
           {error}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -8,12 +8,22 @@ import DownloadButton from '../components/downloadButton';
 import UploadButton from '../components/uploadButton';
 
 export default function DocumentationPerformance() {
+  const [pilot, setPilot] = useState(null);
+
   const documents = [
     { title: 'Breeam', filename: 'breeam', type: 'pdf' },
     { title: 'SRI Certificate', filename: 'sri_certificate', type: 'document' },
     { title: 'SRI Result', filename: 'SRI_FVH_Results', type: 'document' },
     { title: 'Energy Performance Certificate', filename: 'Energy Performance Certificate', type: 'pdf' }
   ];
+
+  useEffect(() => {
+    const storedPilot = sessionStorage.getItem("PILOT");
+    if (storedPilot) {
+      setPilot(storedPilot);
+      console.log(pilot)
+    }
+  }, []);
 
   return (
     <Box
@@ -52,15 +62,15 @@ export default function DocumentationPerformance() {
                 {/* View or Download Button */}
                 <Grid item xs={12} sm={4}>
                   {doc.type === 'pdf' ? (
-                    <ViewPdfApiButton filename={doc.filename} />
+                    <ViewPdfApiButton filename={doc.filename} pilot={pilot} />
                   ) : (
-                    <DownloadButton filename={doc.filename} />
+                    <DownloadButton filename={doc.filename} pilot={pilot}  />
                   )}
                 </Grid>
 
                 {/* Upload Button */}
                 <Grid item xs={12} sm={4}>
-                  <UploadButton fileType={doc.type} keyword={doc.filename} />
+                  <UploadButton fileType={doc.type} keyword={doc.filename} pilot={pilot} />
                 </Grid>
               </Grid>
             ))}

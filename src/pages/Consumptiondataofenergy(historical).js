@@ -396,7 +396,6 @@ export default function Home({ setList, list }) {
                     </Grid>
                 </Box>
             </Container>
-
             <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "1vh", padding: "2%" }}>
                 <Box>
                     <Grid container spacing={2} justifyContent="center">

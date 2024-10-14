@@ -13,7 +13,7 @@ const config = {
 
 const API_URL_DATE_ViewPDFFVH = config.host + "/last_record";
 
-function PdfViewerApi({ filename }) {
+function PdfViewerApi({ filename, pilot }) {
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
   const [data, setData] = useState(null);
@@ -30,7 +30,7 @@ function PdfViewerApi({ filename }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ filename }), // Passa il filename come JSON
+        body: JSON.stringify({ filename, pilot }), // Passa il filename come JSON
       });
 
       if (response.ok) {

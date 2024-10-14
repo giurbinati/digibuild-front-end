@@ -30,6 +30,12 @@ const API_URL_ElectricityRoznovanu = config.host + "/historicalDataElectricityRo
 const API_URL_ChillerRoznovanu = config.host + "/historicalDataChillerRoznovanuPalace";
 
 export default function Home() {
+    const [loadingElectricityDubet, setLoadingElectricityDubet] = useState(false);
+    const [loadingElectricityRoznovanu, setLoadingElectricityRoznovanu] = useState(false);
+    const [loadingChiller, setLoadingChiller] = useState(false);
+    const [errorElectricityDubet, setErrorElectricityDubet] = useState(null);
+    const [errorElectricityRoznovanu, setErrorElectricityRoznovanu] = useState(null);
+    const [errorChiller, setErrorChiller] = useState(null);
     const [building, setBuilding] = useState('Roznovanu Palace');
 
     const handleRadioChange = (event) => {
@@ -70,6 +76,7 @@ export default function Home() {
     const [chillerValue, setChillerValue] = useState(null)
 
     const sendDateStartAndDateEndElectricityDubetPyramidToBackend = () => { //funzione per mandare i dati al back-end per la select, menu a tendina
+        setLoadingElectricityDubet(true);
         const dataFormattedStartElectricity = selectedDateEletricityStartDubetPyramid.format('YYYYMMDDHHmm');
         const dataFormattedEndElectricity = selectedDateEletricityEndDubetPyramid.format('YYYYMMDDHHmm');
         //console.log(dataFormattedEndElectricity)
@@ -89,6 +96,7 @@ export default function Home() {
     }
 
     const sendDateStartAndDateEndElectricityRoznovanuToBackend = () => { //funzione per mandare i dati al back-end per la select, menu a tendina
+        setLoadingElectricityRoznovanu(true);
         const dataFormattedStartElectricityRoznovanu = selectedDateElectricityStartRoznovanu.format('YYYYMMDDHHmm');
         const dataFormattedEndElectricityRoznovanu = selectedDateElectricityEndRoznovanu.format('YYYYMMDDHHmm');
         console.log(dataFormattedEndElectricityRoznovanu)
@@ -107,6 +115,7 @@ export default function Home() {
     }
 
     const sendDateStartAndDateEndChillerRoznovanuToBackend = () => { //funzione per mandare i dati al back-end per la select, menu a tendina
+        setLoadingChiller(true);
         const dataFormattedStartChillerRoznovanu = selectedDateChillerStartRoznovanu.format('YYYYMMDDHHmm');
         const dataFormattedEndChillerRoznovanu = selectedDateChillerEndRoznovanu.format('YYYYMMDDHHmm');
         console.log(dataFormattedEndChillerRoznovanu)
@@ -155,11 +164,14 @@ export default function Home() {
         } catch (error) {
             // handle network error
             console.log(error);
+            setErrorElectricityDubet('An error occurred while loading data in Total.')
             const errorResponse = {
                 status: 503,
                 message: "ERR_NETWORK",
             };
             return errorResponse;
+        } finally {
+            setLoadingElectricityDubet(false); // Set loading to false after fetching
         }
     }
 
@@ -193,11 +205,14 @@ export default function Home() {
         } catch (error) {
             // handle network error
             console.log(error);
+            setErrorElectricityRoznovanu('An error occurred while loading data in Total.')
             const errorResponse = {
                 status: 503,
                 message: "ERR_NETWORK",
             };
             return errorResponse;
+        } finally {
+            setLoadingElectricityRoznovanu(false); // Set loading to false after fetching
         }
     }
 
@@ -232,11 +247,14 @@ export default function Home() {
         } catch (error) {
             // handle network error
             console.log(error);
+            setErrorChiller('An error occurred while loading data in Total.')
             const errorResponse = {
                 status: 503,
                 message: "ERR_NETWORK",
             };
             return errorResponse;
+        } finally {
+            setLoadingChiller(false); // Set loading to false after fetching
         }
     }
 
@@ -314,6 +332,13 @@ export default function Home() {
                                     datasetLabel={'Energy consumption (Kw)'}
                                     chartTitle="Electricity"
                                 />
+                                {errorElectricityDubet && (
+                                    <Grid item xs={12}>
+                                        <Alert severity="error" onClose={() => setErrorElectricityDubet(null)}>
+                                            {errorElectricityDubet}
+                                        </Alert>
+                                    </Grid>
+                                )}
                             </Grid>
                         </Box>
                     </Container>
@@ -374,6 +399,13 @@ export default function Home() {
                                     datasetLabel={'Energy consumption (Kw)'}
                                     chartTitle="Electricity"
                                 />
+                                {errorElectricityRoznovanu && (
+                                    <Grid item xs={12}>
+                                        <Alert severity="error" onClose={() => setErrorElectricityRoznovanu(null)}>
+                                            {errorElectricityRoznovanu}
+                                        </Alert>
+                                    </Grid>
+                                )}
                             </Grid>
                         </Box>
                     </Container>
@@ -430,6 +462,13 @@ export default function Home() {
                                     datasetLabel={'Energy consumption (Kw)'}
                                     chartTitle="Chiller"
                                 />
+                                {errorChiller && (
+                                    <Grid item xs={12}>
+                                        <Alert severity="error" onClose={() => setErrorChiller(null)}>
+                                            {errorChiller}
+                                        </Alert>
+                                    </Grid>
+                                )}
                             </Grid>
                         </Box>
                     </Container>

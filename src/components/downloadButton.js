@@ -8,7 +8,7 @@ const config = {
 
 const API_URL_DATE_DownloadFileFVH = config.host + "/last_record";
 
-function DownloadButton({ filename }) {
+function DownloadButton({ filename, pilot }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -23,7 +23,7 @@ function DownloadButton({ filename }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ filename })  // Invia il filename al backend
+        body: JSON.stringify({ filename, pilot })  // Invia il filename al backend
       });
 
       if (response.ok) {
