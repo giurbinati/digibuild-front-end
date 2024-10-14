@@ -77,15 +77,17 @@ export default function Home() {
             console.log('1', data);
             console.log('2', data.Total);
             const dataTotal = data.Total.Total;
-            const timestamps = dataTotal.map(item => item.timestamp); // Ottieni tutte le chiavi (i timestamp)
-            const values = dataTotal.map(item => item.value); // Ottieni tutti i valori
-            const valuesA = data.Sections.A.map(item => item.value);  // Valori di A
-            const valuesB = data.Sections.B.map(item => item.value);  // Valori di B
-            const valuesC = data.Sections.C.map(item => item.value);  // Valori di C
+            
+            const timestamps = dataTotal.map(item =>  Object.keys(item)[0]); // Ottieni tutte le chiavi (i timestamp)
+            const values = dataTotal.map(item => Object.values(item)[0]); // Ottieni tutti i valori
+            const valuesA = data.Sections.A.map(item => Object.values(item)[0]);  // Valori di A
+            const valuesB = data.Sections.B.map(item => Object.values(item)[0]);  // Valori di B
+            const valuesC = data.Sections.C.map(item => Object.values(item)[0]);  // Valori di C
+            console.log(timestamps)
             setValueSection([
-                { label: 'Dataset 1', data: valuesA },
-                { label: 'Dataset 2', data: valuesB },
-                { label: 'Dataset 3', data: valuesC }
+                { label: 'Dataset A', data: valuesA },
+                { label: 'Dataset B', data: valuesB },
+                { label: 'Dataset C', data: valuesC }
             ]);
             setValueSectionA(valuesA);
             setValueSectionB(valuesB);
@@ -188,7 +190,7 @@ export default function Home() {
                 {/* Grid item per i nuovi due Chart in una singola riga */}
                 <Grid container spacing={4} justifyContent="center" sx={{ marginBottom: '3vh' }}>
                     <Grid item xs={12} sm={6} sx={{ position: 'relative' }}>
-                        {loadingTotal && (
+                        {loadingTotal ? (
                             <CircularProgress
                                 size={120}
                                 sx={{
@@ -199,13 +201,16 @@ export default function Home() {
                                     zIndex: 1,
                                 }}
                             />
-                        )}
-                        <Chart
+                        ):(
+                            <Chart
                             labels={timeStampTotal}
                             data={valueTotal}
                             datasetLabel={'Energy consumption (Kw)'}
                             chartTitle="Total"
                         />
+                        )
+                        }
+                      
                         {errorTotal && (
                             <Grid item xs={12}>
                                 <Alert severity="error" onClose={() => setErrorTotal(null)}>
@@ -216,7 +221,7 @@ export default function Home() {
                     </Grid>
                     <Grid item xs={12} sm={6} sx={{ position: 'relative' }}>
                         {/* Spinner per il caricamento dentro il grafico a destra */}
-                        {loadingSection && (
+                        {loadingSection ? (
                             <CircularProgress
                                 size={120}
                                 sx={{
@@ -227,13 +232,14 @@ export default function Home() {
                                     zIndex: 1,
                                 }}
                             />
-                        )}
+                        ):(
                         <Chart
                             labels={timeStampSection}
                             data={valueSection}
                             datasetLabel={'Energy consumption (Kw)'}
                             chartTitle="Section"
-                        />
+                        />)}
+                        
                         {errorSection && (
                             <Grid item xs={12}>
                                 <Alert severity="error" onClose={() => setErrorSection(null)}>
@@ -327,7 +333,7 @@ export default function Home() {
                         </Grid>
                         <Grid item xs={12} sx={{ position: 'relative', width: '100%' }}>
                             {/* Spinner per caricamento dentro il grafico */}
-                            {loading && (
+                            {loading ? (
                                 <CircularProgress
                                     size={120}
                                     sx={{
@@ -338,14 +344,15 @@ export default function Home() {
                                         zIndex: 1,
                                     }}
                                 />
-                            )}
+                            ):(
                             <Chart
                                 labels={timeStamp}
                                 data={value}
                                 datasetLabel={'Energy consumption (Kw)'}
                                 chartTitle="Floor"
                                 style={{ position: 'relative' }}
-                            />
+                            />)}
+                            
                             {error && (
                                 <Grid item xs={12}>
                                     <Alert severity="error" onClose={() => setError(null)}>
