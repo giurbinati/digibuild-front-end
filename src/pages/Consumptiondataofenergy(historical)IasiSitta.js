@@ -326,12 +326,25 @@ export default function Home() {
                     <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "3vh", padding: "2%" }}>
                         <Box>
                             <Grid container spacing={2} justifyContent="center">
-                                <Chart
-                                    labels={electricityDubetPyramidTimeStamp}
-                                    data={electricityDubetPyramidValue}
-                                    datasetLabel={'Energy consumption (Kw)'}
-                                    chartTitle="Electricity"
-                                />
+                                {loadingElectricityDubet ? (
+                                    <CircularProgress
+                                        size={120}
+                                        sx={{
+                                            position: 'absolute',
+                                            top: '50%',
+                                            left: '50%',
+                                            transform: 'translate(-50%, -50%)',
+                                            zIndex: 1,
+                                        }}
+                                    />
+                                ) : (
+                                    <Chart
+                                        labels={electricityDubetPyramidTimeStamp}
+                                        data={electricityDubetPyramidValue}
+                                        datasetLabel={'Energy consumption (Kw)'}
+                                        chartTitle="Electricity"
+                                    />
+                                )}
                                 {errorElectricityDubet && (
                                     <Grid item xs={12}>
                                         <Alert severity="error" onClose={() => setErrorElectricityDubet(null)}>
@@ -393,12 +406,25 @@ export default function Home() {
                     <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "3vh", padding: "2%" }}>
                         <Box>
                             <Grid container spacing={2} justifyContent="center">
-                                <Chart
-                                    labels={electricityRoznovanuTimeStamp}
-                                    data={electricityRoznovanuValue}
-                                    datasetLabel={'Energy consumption (Kw)'}
-                                    chartTitle="Electricity"
-                                />
+                                {loadingElectricityDubet ? (
+                                    <CircularProgress
+                                        size={120}
+                                        sx={{
+                                            position: 'absolute',
+                                            top: '50%',
+                                            left: '50%',
+                                            transform: 'translate(-50%, -50%)',
+                                            zIndex: 1,
+                                        }}
+                                    />
+                                ) : (
+                                    <Chart
+                                        labels={electricityRoznovanuTimeStamp}
+                                        data={electricityRoznovanuValue}
+                                        datasetLabel={'Energy consumption (Kw)'}
+                                        chartTitle="Electricity"
+                                    />
+                                )}
                                 {errorElectricityRoznovanu && (
                                     <Grid item xs={12}>
                                         <Alert severity="error" onClose={() => setErrorElectricityRoznovanu(null)}>
@@ -456,12 +482,25 @@ export default function Home() {
                     <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "3vh", padding: "2%" }}>
                         <Box>
                             <Grid container spacing={2} justifyContent="center">
-                                <Chart
-                                    labels={chillerTimeStamp}
-                                    data={chillerValue}
-                                    datasetLabel={'Energy consumption (Kw)'}
-                                    chartTitle="Chiller"
-                                />
+                                {loadingElectricityDubet ? (
+                                    <CircularProgress
+                                        size={120}
+                                        sx={{
+                                            position: 'absolute',
+                                            top: '50%',
+                                            left: '50%',
+                                            transform: 'translate(-50%, -50%)',
+                                            zIndex: 1,
+                                        }}
+                                    />
+                                ) : (
+                                    <Chart
+                                        labels={chillerTimeStamp}
+                                        data={chillerValue}
+                                        datasetLabel={'Energy consumption (Kw)'}
+                                        chartTitle="Chiller"
+                                    />
+                                )}
                                 {errorChiller && (
                                     <Grid item xs={12}>
                                         <Alert severity="error" onClose={() => setErrorChiller(null)}>

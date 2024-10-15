@@ -2,20 +2,20 @@ import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 import { Box, Container } from '@mui/material';
 
-const LineChart = ({ labels, data, datasetLabel, datasets, chartTitle }) => {
+const LineChart = ({ labels, data, datasetLabel, datasets, chartTitle, yAxisUnit }) => {
     const chartRef = useRef(null);
     const chartInstance = useRef(null);
 
     useEffect(() => {
-        // Distruggi l'istanza precedente del grafico se esiste
+        // Destroy the previous chart instance if it exists
         if (chartInstance.current) {
             chartInstance.current.destroy();
         }
 
-        // Crea una nuova istanza del grafico
+        // Create a new chart instance
         const myChartRef = chartRef.current.getContext("2d");
 
-        // Se datasets non è passato, crea un dataset da data e datasetLabel
+        // Create datasets
         const chartDatasets = datasets ? datasets.map(dataset => ({
             label: dataset.label || 'Dataset',
             data: dataset.data || [],
@@ -35,7 +35,7 @@ const LineChart = ({ labels, data, datasetLabel, datasets, chartTitle }) => {
         chartInstance.current = new Chart(myChartRef, {
             type: "line",
             data: {
-                labels: labels || [], // Passa array vuoto se non ci sono label
+                labels: labels || [], // Pass an empty array if no labels
                 datasets: chartDatasets
             },
             options: {
@@ -55,17 +55,30 @@ const LineChart = ({ labels, data, datasetLabel, datasets, chartTitle }) => {
                             bottom: 20
                         }
                     }
+                },
+                scales: {
+                    y: {
+                        title: {
+                            display: true,
+                            text: `${yAxisUnit}`, // Use the yAxisUnit prop
+                            font: {
+                                size: 14,
+                                weight: 'bold',
+                                color: '#333' // Optional: Change the color of the title
+                            }
+                        }
+                    }
                 }
             }
         });
 
-        // Cleanup dell'istanza del grafico al dismount del componente
+        // Cleanup the chart instance on component unmount
         return () => {
             if (chartInstance.current) {
                 chartInstance.current.destroy();
             }
         };
-    }, [labels, data, datasetLabel, datasets, chartTitle]);
+    }, [labels, data, datasetLabel, datasets, chartTitle, yAxisUnit]);
 
     return (
         <Container maxWidth="xl" sx={{ padding: "2%", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

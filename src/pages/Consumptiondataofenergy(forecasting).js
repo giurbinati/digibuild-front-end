@@ -16,15 +16,11 @@ export default function Home() {
     const [section, setSection] = useState('');
     const [floor, setFloor] = useState('');
     const [room, setRoom] = useState('');
-    const [timeStampTotal, setTimeStampTotal] = useState([]);
     const [valueTotal, setValueTotal] = useState([]);
-    const [timeStampSection, setTimeStampSection] = useState([]);
     const [valueSection, setValueSection] = useState([]);
-    const [valueSectionA, setValueSectionA] = useState([]);
-    const [valueSectionB, setValueSectionB] = useState([]);
-    const [valueSectionC, setValueSectionC] = useState([]);
-    const [timeStamp, setTimeStamp] = useState([]);
-    const [value, setValue] = useState([]);
+    const [valueFloor, setValueFloor] = useState(null);
+    const [timeStamp, setTimeStamp] = useState(null);
+    const [timeStampFloor, setTimeStampFloor] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
     const [loading, setLoading] = useState(false);
     const [loadingTotal, setLoadingTotal] = useState(false);
@@ -32,18 +28,6 @@ export default function Home() {
     const [errorTotal, setErrorTotal] = useState(null);
     const [errorSection, setErrorSection] = useState(null);
     const [error, setError] = useState(null);
-
-    console.log('YourComponent mounted');
-
-    useEffect(() => {
-        // Log quando il componente viene montato
-        console.log('useEffect triggered');
-
-        // Log per verificare se il componente viene smontato
-        return () => {
-            console.log('YourComponent unmounted');
-        };
-    }, []);
 
     const handleChangeSection = (event) => {
         const selectedSection = event.target.value; // Get the selected value
@@ -77,25 +61,35 @@ export default function Home() {
             console.log('1', data);
             console.log('2', data.Total);
             const dataTotal = data.Total.Total;
-            
-            const timestamps = dataTotal.map(item =>  Object.keys(item)[0]); // Ottieni tutte le chiavi (i timestamp)
+            const timestamps = dataTotal.map(item => Object.keys(item)[0]); // Ottieni tutte le chiavi (i timestamp)
             const values = dataTotal.map(item => Object.values(item)[0]); // Ottieni tutti i valori
             const valuesA = data.Sections.A.map(item => Object.values(item)[0]);  // Valori di A
             const valuesB = data.Sections.B.map(item => Object.values(item)[0]);  // Valori di B
             const valuesC = data.Sections.C.map(item => Object.values(item)[0]);  // Valori di C
-            console.log(timestamps)
             setValueSection([
-                { label: 'Dataset A', data: valuesA },
-                { label: 'Dataset B', data: valuesB },
-                { label: 'Dataset C', data: valuesC }
+                {
+                    label: 'Section A',
+                    data: valuesA,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)'
+                },
+                {
+                    label: 'Section B',
+                    data: valuesB,
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)'
+                },
+                {
+                    label: 'Section C',
+                    data: valuesC,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)'
+                }
             ]);
-            setValueSectionA(valuesA);
-            setValueSectionB(valuesB);
-            setValueSectionC(valuesC);
             // Aggiorna gli stati per il grafico
-            setTimeStampTotal(timestamps);
-            setTimeStampSection(timestamps);
+            setTimeStamp(timestamps);
             setValueTotal(values);
+            console.log('4', valueSection)
         } catch (error) {
             console.error('Fetch error:', error);
             setErrorTotal('An error occurred while loading data in Total.'); // Imposta il messaggio di errore
@@ -106,36 +100,10 @@ export default function Home() {
         }
     };
 
-    // non necessaria
-   /*  const fetchDataForecastingSection = async () => {
-        try {
-            const data = await getDataForecastingFVH.GetDataForecasting();
-            console.log('3', data);
-            console.log('4', data.Sections);
-            const timestamps = data.Sections.A.map(item => item.timestamp); // Ottieni tutte le chiavi (i timestamp)
-            const valuesA = data.Sections.A.map(item => item.value);  // Valori di A
-            const valuesB = data.Sections.B.map(item => item.value);  // Valori di B
-            const valuesC = data.Sections.C.map(item => item.value);  // Valori di C
-            // Aggiorna gli stati per il grafico
-            setTimeStampSection(timestamps);
-            setValueSection([
-                { label: 'Dataset 1', data: valuesA },
-                { label: 'Dataset 2', data: valuesB },
-                { label: 'Dataset 3', data: valuesC }
-            ]);
-            setValueSectionA(valuesA);
-            setValueSectionB(valuesB);
-            setValueSectionC(valuesC);
-        } catch (error) {
-            console.error('Fetch error:', error);
-            setErrorSection('An error occurred while loading data in Section.');
-        } finally {
-            setLoadingSection(false); // Set loading to false after fetching
-        }
-    }; */
-
     useEffect(() => {
         const fetchData = async () => {
+            setErrorTotal('');
+            setErrorSection('')
             setLoadingTotal(true); // Attiva il caricamento per il totale
             setLoadingSection(true); // Attiva il caricamento per le sezioni
 
@@ -143,34 +111,55 @@ export default function Home() {
             fetchDataForecastingTotal(); // Non usare await
             //fetchDataForecastingSection(); // Non usare await
         };
-
         fetchData();
     }, []);
 
     async function fetchDataForecasting() {
         try {
-            setLoading(true);
             const data = await getDataForecastingFVH.GetDataForecasting(section, floor, room);
-            const timestamps = data.map(item => Object.keys(item)[0]); // Ottieni tutte le chiavi (i timestamp)
-            const values = data.map(item => Object.values(item)[0]); // Ottieni tutti i valori
-            // Aggiorna gli stati per il grafico
-            setTimeStamp(timestamps);
-            setValue(values);
+            console.log(data);
+            const datasets = {};
+            const keys = Object.keys(data);
+            const colors = [
+                'rgba(255, 0, 0, 1)',
+                'rgba(0, 0, 255, 1)',
+                'rgba(0, 0, 0, 1)',
+                'rgba(0, 128, 0, 1)',
+                'rgba(255, 192, 203, 1)',
+                'rgba(255, 255, 0, 1)',
+                'rgba(128, 128, 128, 1)',
+                'rgba(128, 0, 128, 1)'
+            ];
+
+            keys.forEach((key, index) => {
+                const values = data[key].map(item => Object.values(item)[0]);
+                datasets[`Floor ${index}`] = {
+                    label: `Floor ${index}`,
+                    data: values,
+                    borderColor: colors[index % colors.length],
+                    backgroundColor: colors[index % colors.length].replace('1)', '0.2)'),
+                };
+            });
+
+            setValueFloor(Object.values(datasets));
+            setTimeStampFloor(timeStamp)
         } catch (error) {
             console.error('Fetch error:', error);
-            setError('An error occurred while loading data in Floor.')
-            throw error; // Rilancia l'errore per la gestione nel componente
+            setError('An error occurred while loading data in Floor.');
+            throw error;
         } finally {
-            setLoading(false); // Set loading to false after fetching
+            setLoading(false);
         }
-
     }
+
+
     const handleSearchClick = () => {
         // Validate selections
-        if (floor == '' && section == '') {
-            setErrorMessage('Please select at least one of Section or Floor.'); // Set error message
+        if (section == '') {
+            setErrorMessage('Please select at least one of Section.'); // Set error message
         } else {
             setErrorMessage(''); // Clear error message
+            setLoading(true);
             fetchDataForecasting(); // Call fetch function if validation passes
         }
     };
@@ -201,16 +190,16 @@ export default function Home() {
                                     zIndex: 1,
                                 }}
                             />
-                        ):(
+                        ) : (
                             <Chart
-                            labels={timeStampTotal}
-                            data={valueTotal}
-                            datasetLabel={'Energy consumption (Kw)'}
-                            chartTitle="Total"
-                        />
-                        )
-                        }
-                      
+                                labels={timeStamp}
+                                data={valueTotal}
+                                datasetLabel={'Energy consumption (Kw)'}
+                                chartTitle="Total"
+                                yAxisUnit="kW"
+                            />
+                        )}
+
                         {errorTotal && (
                             <Grid item xs={12}>
                                 <Alert severity="error" onClose={() => setErrorTotal(null)}>
@@ -219,8 +208,8 @@ export default function Home() {
                             </Grid>
                         )}
                     </Grid>
+
                     <Grid item xs={12} sm={6} sx={{ position: 'relative' }}>
-                        {/* Spinner per il caricamento dentro il grafico a destra */}
                         {loadingSection ? (
                             <CircularProgress
                                 size={120}
@@ -232,14 +221,16 @@ export default function Home() {
                                     zIndex: 1,
                                 }}
                             />
-                        ):(
-                        <Chart
-                            labels={timeStampSection}
-                            data={valueSection}
-                            datasetLabel={'Energy consumption (Kw)'}
-                            chartTitle="Section"
-                        />)}
-                        
+                        ) : (
+                            <Chart
+                                labels={timeStamp}
+                                datasets={valueSection}
+                                datasetLabel={''}
+                                chartTitle="Section"
+                                yAxisUnit="kW"
+                            />
+                        )}
+
                         {errorSection && (
                             <Grid item xs={12}>
                                 <Alert severity="error" onClose={() => setErrorSection(null)}>
@@ -249,122 +240,97 @@ export default function Home() {
                         )}
                     </Grid>
                 </Grid>
-                {/* Sezione delle Select */}
-                <Grid container spacing={8} justifyContent="center">
-                    {/* Section Select */}
-                    <Grid item xs={12} sm={2}>
-                        <Box sx={{ minWidth: 120, marginTop: '3vh' }}>
-                            <FormControl fullWidth>
-                                <InputLabel id="section-select-label">Section</InputLabel>
-                                <Select
-                                    labelId="section-select-label"
-                                    id="section-select"
-                                    value={section}
-                                    label="Section"
-                                    onChange={handleChangeSection}
-                                >
-                                    <MenuItem value="">None</MenuItem>
-                                    <MenuItem value={'A'}>A</MenuItem>
-                                    <MenuItem value={'B'}>B</MenuItem>
-                                    <MenuItem value={'C'}>C</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </Grid>
 
-                    {/* Floor Select */}
-                    <Grid item xs={12} sm={2}>
-                        <Box sx={{ minWidth: 120, marginTop: '3vh' }}>
-                            <FormControl fullWidth>
-                                <InputLabel id="floor-select-label">Floor</InputLabel>
-                                <Select
-                                    labelId="floor-select-label"
-                                    id="floor-select"
-                                    value={floor}
-                                    label="Floor"
-                                    onChange={handleChangeFloor}
-                                    disabled={!section}
-                                >
-                                    <MenuItem value="">None</MenuItem>
-                                    <MenuItem value={'0'}>0</MenuItem>
-                                    <MenuItem value={'1'}>1</MenuItem>
-                                    <MenuItem value={'2'}>2</MenuItem>
-                                    <MenuItem value={'3'}>3</MenuItem>
-                                    <MenuItem value={'4'}>4</MenuItem>
-                                    <MenuItem value={'5'}>5</MenuItem>
-                                    <MenuItem value={'6'}>6</MenuItem>
-                                    <MenuItem value={'7'}>7</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </Grid>
-                </Grid>
-            </Container>
-
-            <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "1vh", padding: "2%" }}>
-                <Box>
+                {!loadingTotal && !loadingSection && ( // Condizione per visualizzare le Select, il Bottone e il Grafico
                     <Grid container direction="column" alignItems="center">
+                        {/* Section Select */}
                         <Grid item xs={12}>
-                            <Button
-                                variant="contained"
-                                sx={{
-                                    backgroundColor: '#057BBE',
-                                    padding: '1vh 2vh',
-                                    minWidth: '20vh',
-                                    fontSize: '2ch',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    marginTop: '2vh',
-                                    textAlign: 'center',
-                                    marginBottom: '3vh',
-                                }}
-                                onClick={handleSearchClick}
-                            >
-                                Search
-                            </Button>
-                            {errorMessage && (
-                                <Grid item xs={12}>
-                                    <Typography color="error" variant="body1" sx={{ marginTop: '1vh', color: 'red' }}>
-                                        {errorMessage}
-                                    </Typography>
-                                </Grid>
-                            )}
+                            <Box sx={{ minWidth: 120, marginTop: '3vh' }}>
+                                <FormControl fullWidth>
+                                    <InputLabel id="section-select-label">Section</InputLabel>
+                                    <Select
+                                        labelId="section-select-label"
+                                        id="section-select"
+                                        value={section}
+                                        label="Section"
+                                        onChange={handleChangeSection}
+                                    >
+                                        <MenuItem value="">None</MenuItem>
+                                        <MenuItem value={'A'}>A</MenuItem>
+                                        <MenuItem value={'B'}>B</MenuItem>
+                                        <MenuItem value={'C'}>C</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Box>
                         </Grid>
-                        <Grid item xs={12} sx={{ position: 'relative', width: '100%' }}>
-                            {/* Spinner per caricamento dentro il grafico */}
-                            {loading ? (
-                                <CircularProgress
-                                    size={120}
-                                    sx={{
-                                        position: 'absolute',
-                                        top: '50%',
-                                        left: '50%',
-                                        transform: 'translate(-50%, -50%)',
-                                        zIndex: 1,
-                                    }}
-                                />
-                            ):(
-                            <Chart
-                                labels={timeStamp}
-                                data={value}
-                                datasetLabel={'Energy consumption (Kw)'}
-                                chartTitle="Floor"
-                                style={{ position: 'relative' }}
-                            />)}
-                            
-                            {error && (
-                                <Grid item xs={12}>
-                                    <Alert severity="error" onClose={() => setError(null)}>
-                                        {error}
-                                    </Alert>
+                        <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "1vh", padding: "2%" }}>
+                            <Box>
+                                <Grid container direction="column" alignItems="center">
+                                    <Grid item xs={12}>
+                                        <Button
+                                            variant="contained"
+                                            sx={{
+                                                backgroundColor: '#057BBE',
+                                                padding: '1vh 2vh',
+                                                minWidth: '20vh',
+                                                fontSize: '2ch',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                marginTop: '2vh',
+                                                textAlign: 'center',
+                                                marginBottom: '3vh',
+                                            }}
+                                            onClick={handleSearchClick}
+                                        >
+                                            Search
+                                        </Button>
+                                        {errorMessage && (
+                                            <Grid item xs={12}>
+                                                <Typography color="error" variant="body1" sx={{ marginTop: '1vh', color: 'red' }}>
+                                                    {errorMessage}
+                                                </Typography>
+                                            </Grid>
+                                        )}
+                                    </Grid>
+                                    <Grid item xs={12} sx={{ position: 'relative', width: '100%' }}>
+                                        {/* Condizione per visualizzare il caricamento o il grafico */}
+                                        {loading ? (
+                                            <CircularProgress
+                                                size={120}
+                                                sx={{
+                                                    position: 'absolute',
+                                                    top: '50%',
+                                                    left: '50%',
+                                                    transform: 'translate(-50%, -50%)',
+                                                    zIndex: 1,
+                                                }}
+                                            />
+                                        ) : (
+                                            <Chart
+                                                labels={timeStampFloor}
+                                                datasets={valueFloor} // This can be empty
+                                                datasetLabel={''}
+                                                chartTitle="Floor"
+                                                yAxisUnit="kW"
+                                                style={{ position: 'relative' }}
+                                            />
+                                        )}
+
+                                        {error && (
+                                            <Grid item xs={12}>
+                                                <Alert severity="error" onClose={() => setError(null)}>
+                                                    {error}
+                                                </Alert>
+                                            </Grid>
+                                        )}
+                                    </Grid>
                                 </Grid>
-                            )}
-                        </Grid>
+                            </Box>
+                        </Container>
                     </Grid>
-                </Box>
+                )}
             </Container>
         </Box>
     );
-
 }
