@@ -156,7 +156,9 @@ export default function Home() {
     const handleSearchClick = () => {
         // Validate selections
         if (section == '') {
+            setValueFloor(null);
             setErrorMessage('Please select at least one of Section.'); // Set error message
+
         } else {
             setErrorMessage(''); // Clear error message
             setLoading(true);
@@ -285,14 +287,15 @@ export default function Home() {
                                         >
                                             Search
                                         </Button>
-                                        {errorMessage && (
-                                            <Grid item xs={12}>
-                                                <Typography color="error" variant="body1" sx={{ marginTop: '1vh', color: 'red' }}>
-                                                    {errorMessage}
-                                                </Typography>
-                                            </Grid>
-                                        )}
                                     </Grid>
+                                    {errorMessage && (
+                                        <Grid item xs={12}>
+                                            <Typography color="error" variant="body1" sx={{ marginTop: '1vh', color: 'red' }}>
+                                                {errorMessage}
+                                            </Typography>
+                                        </Grid>
+                                    )}
+
                                     <Grid item xs={12} sx={{ position: 'relative', width: '100%' }}>
                                         {/* Condizione per visualizzare il caricamento o il grafico */}
                                         {loading ? (
@@ -305,10 +308,15 @@ export default function Home() {
                                                     justifyContent: 'center',
                                                     alignItems: 'center',
                                                 }}
+<<<<<<< Updated upstream
                                             >
                                                 <CircularProgress size={120} />
                                             </Box>
                                         ) : (
+=======
+                                            />
+                                        ) : (valueFloor && (
+>>>>>>> Stashed changes
                                             <Chart
                                                 labels={timeStampFloor}
                                                 datasets={valueFloor} // This can be empty
@@ -316,7 +324,7 @@ export default function Home() {
                                                 chartTitle="Floor"
                                                 yAxisUnit="kW"
                                                 style={{ position: 'relative' }}
-                                            />
+                                            />)
                                         )}
 
                                         {error && (
