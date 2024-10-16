@@ -308,15 +308,10 @@ export default function Home() {
                                                     justifyContent: 'center',
                                                     alignItems: 'center',
                                                 }}
-<<<<<<< Updated upstream
                                             >
                                                 <CircularProgress size={120} />
                                             </Box>
-                                        ) : (
-=======
-                                            />
                                         ) : (valueFloor && (
->>>>>>> Stashed changes
                                             <Chart
                                                 labels={timeStampFloor}
                                                 datasets={valueFloor} // This can be empty
