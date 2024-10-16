@@ -9,15 +9,10 @@ const API_URL_DATE_Forecasting = config.host + "/forecastingdatafvh";
 
 class GetDataForecastingFVH {
 
-    // Method to get the token from session storage
-    getToken() {
-        return sessionStorage.getItem("ACCESS_TOKEN_NAME");
-    }
-
     // Method to handle GET requests with authorization
     async GetDataForecasting(section, floor, room) {
         try {
-            const token = this.getToken();
+            const token = sessionStorage.getItem("ACCESS_TOKEN_NAME")
 
             if (!token) {
                 throw new Error("Token not found in session storage");

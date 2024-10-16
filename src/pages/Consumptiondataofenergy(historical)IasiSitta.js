@@ -22,14 +22,12 @@ const config = {
     timer: parseInt(process.env.REACT_APP_TIMER)
 };
 
-const API_URL_DATE_EletricityDubetPyramid = config.host + "/DateStartAndDateendElectricityDubetPyramid";
-const API_URL_DATE_ElectricityRoznovanu = config.host + "/DateStartAndDateendElectricityRoznovanuPalace";
-const API_URL_DATE_ChillerRoznovanu = config.host + "/DateStartAndDateendChillerRoznovanuPalace";
 const API_URL_EletricityDubetPyramid = config.host + "/historicalDataElectricityDubetPyramid";
 const API_URL_ElectricityRoznovanu = config.host + "/historicalDataElectricityRoznovanuPalace";
 const API_URL_ChillerRoznovanu = config.host + "/historicalDataChillerRoznovanuPalace";
 
-export default function Home() {
+export default function ConsumptionDataOfEnergyHistoricalIasiSitta() {
+
     const [loadingElectricityDubet, setLoadingElectricityDubet] = useState(false);
     const [loadingElectricityRoznovanu, setLoadingElectricityRoznovanu] = useState(false);
     const [loadingChiller, setLoadingChiller] = useState(false);
@@ -37,17 +35,22 @@ export default function Home() {
     const [errorElectricityRoznovanu, setErrorElectricityRoznovanu] = useState(null);
     const [errorChiller, setErrorChiller] = useState(null);
     const [building, setBuilding] = useState('Roznovanu Palace');
+    const [electricityDubetPyramidTimeStamp, setElectricityDubetPyramidTimeStamp] = useState(null)
+    const [electricityDubetPyramidValue, setElectricityDubetPyramidValue] = useState(null)
+    const [electricityRoznovanuTimeStamp, setElectricityRoznovanuTimeStamp] = useState(null)
+    const [electricityRoznovanuValue, setElectricityRoznovanuValue] = useState(null)
+    const [chillerTimeStamp, setChillerTimeStamp] = useState(null)
+    const [chillerValue, setChillerValue] = useState(null)
+    const [selectedDateEletricityStartDubetPyramid, setSelectedDateEletricityStartDubetPyramid] = useState(null);
+    const [selectedDateEletricityEndDubetPyramid, setSelectedDateEletricityEndDubetPyramid] = useState(null);
+    const [selectedDateElectricityStartRoznovanu, setSelectedDateElectricityStartRoznovanu] = useState(null);
+    const [selectedDateElectricityEndRoznovanu, setSelectedDateElectricityEndRoznovanu] = useState(null);
+    const [selectedDateChillerStartRoznovanu, setSelectedDateChillerStartRoznovanu] = useState(null);
+    const [selectedDateChillerEndRoznovanu, setSelectedDateChillerEndRoznovanu] = useState(null);
 
     const handleRadioChange = (event) => {
         setBuilding(event.target.value);
     };
-
-    const [selectedDateEletricityStartDubetPyramid, setSelectedDateEletricityStartDubetPyramid] = React.useState(null);
-    const [selectedDateEletricityEndDubetPyramid, setSelectedDateEletricityEndDubetPyramid] = React.useState(null);
-    const [selectedDateElectricityStartRoznovanu, setSelectedDateElectricityStartRoznovanu] = React.useState(null);
-    const [selectedDateElectricityEndRoznovanu, setSelectedDateElectricityEndRoznovanu] = React.useState(null);
-    const [selectedDateChillerStartRoznovanu, setSelectedDateChillerStartRoznovanu] = React.useState(null);
-    const [selectedDateChillerEndRoznovanu, setSelectedDateChillerEndRoznovanu] = React.useState(null);
 
     const handleDateChangeEletricityStartDubetPyramid = (dateEletricityStartDubetPyramid) => {
         setSelectedDateEletricityStartDubetPyramid(dateEletricityStartDubetPyramid);
@@ -68,195 +71,150 @@ export default function Home() {
         setSelectedDateChillerEndRoznovanu(dateChillerEndRoznovanu);
     };
 
-    const [electricityDubetPyramidTimeStamp, setElectricityDubetPyramidTimeStamp] = useState(null)
-    const [electricityDubetPyramidValue, setElectricityDubetPyramidValue] = useState(null)
-    const [electricityRoznovanuTimeStamp, setElectricityRoznovanuTimeStamp] = useState(null)
-    const [electricityRoznovanuValue, setElectricityRoznovanuValue] = useState(null)
-    const [chillerTimeStamp, setChillerTimeStamp] = useState(null)
-    const [chillerValue, setChillerValue] = useState(null)
-
-    const sendDateStartAndDateEndElectricityDubetPyramidToBackend = () => { //funzione per mandare i dati al back-end per la select, menu a tendina
-        setLoadingElectricityDubet(true);
-        const dataFormattedStartElectricity = selectedDateEletricityStartDubetPyramid.format('YYYYMMDDHHmm');
-        const dataFormattedEndElectricity = selectedDateEletricityEndDubetPyramid.format('YYYYMMDDHHmm');
-        //console.log(dataFormattedEndElectricity)
-        //console.log(API_URL_DATE_EletricityDubetPyramid)
-        fetch(API_URL_DATE_EletricityDubetPyramid, { //collegamento back-end
-            method: 'POST',
-            body: JSON.stringify({ dataFormattedStartElectricity, dataFormattedEndElectricity }),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then((response) => response.json())
-            .catch((error) => {
-                // Gestisci gli errori se necessario
-                console.error(error);
-            });
-    }
-
-    const sendDateStartAndDateEndElectricityRoznovanuToBackend = () => { //funzione per mandare i dati al back-end per la select, menu a tendina
-        setLoadingElectricityRoznovanu(true);
-        const dataFormattedStartElectricityRoznovanu = selectedDateElectricityStartRoznovanu.format('YYYYMMDDHHmm');
-        const dataFormattedEndElectricityRoznovanu = selectedDateElectricityEndRoznovanu.format('YYYYMMDDHHmm');
-        console.log(dataFormattedEndElectricityRoznovanu)
-        fetch(API_URL_DATE_ElectricityRoznovanu, { //collegamento back-end
-            method: 'POST',
-            body: JSON.stringify({ dataFormattedStartElectricityRoznovanu, dataFormattedEndElectricityRoznovanu }),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then((response) => response.json())
-            .catch((error) => {
-                // Gestisci gli errori se necessario
-                console.error(error);
-            });
-    }
-
-    const sendDateStartAndDateEndChillerRoznovanuToBackend = () => { //funzione per mandare i dati al back-end per la select, menu a tendina
-        setLoadingChiller(true);
-        const dataFormattedStartChillerRoznovanu = selectedDateChillerStartRoznovanu.format('YYYYMMDDHHmm');
-        const dataFormattedEndChillerRoznovanu = selectedDateChillerEndRoznovanu.format('YYYYMMDDHHmm');
-        console.log(dataFormattedEndChillerRoznovanu)
-        fetch(API_URL_DATE_ChillerRoznovanu, { //collegamento back-end
-            method: 'POST',
-            body: JSON.stringify({ dataFormattedStartChillerRoznovanu, dataFormattedEndChillerRoznovanu }),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then((response) => response.json())
-            .catch((error) => {
-                // Gestisci gli errori se necessario
-                console.error(error);
-            });
-    }
-
-    const handleSubmitClickElectricityDubetPyramid = async () => { //funzione per riempire il charter con il bottone search
+    const handleSubmitClickElectricityDubetPyramid = async () => {
         try {
+            setLoadingElectricityDubet(true);
+            const dataFormattedStartElectricity = selectedDateEletricityStartDubetPyramid.format('YYYYMMDDHHmm');
+            const dataFormattedEndElectricity = selectedDateEletricityEndDubetPyramid.format('YYYYMMDDHHmm');
             const token = sessionStorage.getItem("ACCESS_TOKEN_NAME");
-            //console.log(token)
-            console.log(API_URL_EletricityDubetPyramid)
-            const response = await fetch(API_URL_EletricityDubetPyramid, { // Utilizza l'URL corretto per la tua API
-                method: "GET",
+
+            const response = await fetch(API_URL_EletricityDubetPyramid, {
+                method: 'POST',
+                body: JSON.stringify({
+                    dataFormattedStartElectricity,
+                    dataFormattedEndElectricity
+                }),
                 headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${token}`, // Aggiungi il token nel campo Authorization
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
             });
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }
+
             const responseData = await response.json();
-            console.log(responseData)
+            console.log(responseData);
             let tempDateTimeElectricityDubetPyramid = [];
             let tempValueElectricityDubetPyramid = [];
-            let electricityDubetPyramid = responseData.query[0]; // Assegna direttamente responseData.dataMart[0] a electricity
+            let electricityDubetPyramid = responseData.query[0];
 
             electricityDubetPyramid.forEach((element) => {
-                // Accedi agli attributi ontime e value per ciascun elemento e aggiungili agli array temporanei
                 tempDateTimeElectricityDubetPyramid.push(moment(element[0], "YYYYMMDDHHmm").format("YYYY-MM-DD HH:mm"));
                 tempValueElectricityDubetPyramid.push(element[1]);
             });
+
             setElectricityDubetPyramidTimeStamp(tempDateTimeElectricityDubetPyramid);
             setElectricityDubetPyramidValue(tempValueElectricityDubetPyramid);
-        } catch (error) {
-            // handle network error
-            console.log(error);
-            setErrorElectricityDubet('An error occurred while loading data in Total.')
-            const errorResponse = {
-                status: 503,
-                message: "ERR_NETWORK",
-            };
-            return errorResponse;
-        } finally {
-            setLoadingElectricityDubet(false); // Set loading to false after fetching
-        }
-    }
 
-    const handleSubmitClickElectricityRoznovanu = async () => { //funzione per riempire il charter con il bottone search
+        } catch (error) {
+            console.log(error);
+            setErrorElectricityDubet('An error occurred while loading historical data electricity.');
+        } finally {
+            setLoadingElectricityDubet(false);
+        }
+    };
+
+    const handleSubmitClickElectricityRoznovanu = async () => {
         try {
+            setLoadingElectricityRoznovanu(true);
+            const dataFormattedStartElectricityRoznovanu = selectedDateElectricityStartRoznovanu.format('YYYYMMDDHHmm');
+            const dataFormattedEndElectricityRoznovanu = selectedDateElectricityEndRoznovanu.format('YYYYMMDDHHmm');
             const token = sessionStorage.getItem("ACCESS_TOKEN_NAME");
-            console.log(token)
-            const response = await fetch(API_URL_ElectricityRoznovanu, { // Utilizza l'URL corretto per la tua API
-                method: "GET",
+
+            const response = await fetch(API_URL_ElectricityRoznovanu, {
+                method: 'POST',
+                body: JSON.stringify({
+                    dataFormattedStartElectricityRoznovanu,
+                    dataFormattedEndElectricityRoznovanu,
+                }),
                 headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${token}`, // Aggiungi il token nel campo Authorization
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
             });
+
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }
+
             const responseData = await response.json();
-            console.log(responseData)
+            console.log(responseData);
+
             let tempDateTimeElectricityRoznovanu = [];
             let tempValueElectricityRoznovanu = [];
-            let ElectricityRoznovanu = responseData.query[0]; // Assegna direttamente responseData.dataMart[0] a electricity
+            let ElectricityRoznovanu = responseData.query[0];
 
             ElectricityRoznovanu.forEach((element) => {
-                // Accedi agli attributi ontime e value per ciascun elemento e aggiungili agli array temporanei
                 tempDateTimeElectricityRoznovanu.push(moment(element[0], "YYYYMMDDHHmm").format("YYYY-MM-DD HH:mm"));
                 tempValueElectricityRoznovanu.push(element[1]);
             });
+
             setElectricityRoznovanuTimeStamp(tempDateTimeElectricityRoznovanu);
             setElectricityRoznovanuValue(tempValueElectricityRoznovanu);
+
         } catch (error) {
-            // handle network error
             console.log(error);
-            setErrorElectricityRoznovanu('An error occurred while loading data in Total.')
+            setErrorElectricityRoznovanu('An error occurred while loading historical data electricity.');
             const errorResponse = {
                 status: 503,
                 message: "ERR_NETWORK",
             };
             return errorResponse;
-        } finally {
-            setLoadingElectricityRoznovanu(false); // Set loading to false after fetching
-        }
-    }
 
-    const handleSubmitClickChillerRoznovanu = async () => { //funzione per riempire il charter con il bottone search
+        } finally {
+            setLoadingElectricityRoznovanu(false);
+        }
+    };
+
+    const handleSubmitClickChillerRoznovanu = async () => {
         try {
+            setLoadingChiller(true);
+            const dataFormattedStartChillerRoznovanu = selectedDateChillerStartRoznovanu.format('YYYYMMDDHHmm');
+            const dataFormattedEndChillerRoznovanu = selectedDateChillerEndRoznovanu.format('YYYYMMDDHHmm');
             const token = sessionStorage.getItem("ACCESS_TOKEN_NAME");
-            console.log(token)
-            const response = await fetch(API_URL_ChillerRoznovanu, { // Utilizza l'URL corretto per la tua API
-                method: "GET",
+            const response = await fetch(API_URL_ChillerRoznovanu, {
+                method: 'POST',
+                body: JSON.stringify({
+                    dataFormattedStartChillerRoznovanu,
+                    dataFormattedEndChillerRoznovanu,
+                }),
                 headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${token}`, // Aggiungi il token nel campo Authorization
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
             });
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }
+
             const responseData = await response.json();
-            console.log(responseData)
+            console.log(responseData);
             let tempDateTimeChillerRoznovanu = [];
             let tempValueChillerRoznovanu = [];
-            let chillerRoznovanu = responseData.query[0]; // Assegna direttamente responseData.dataMart[0] a electricity
-            console.log(cooling)
+            let chillerRoznovanu = responseData.query[0];
 
             chillerRoznovanu.forEach((element) => {
-                // Accedi agli attributi ontime e value per ciascun elemento e aggiungili agli array temporanei
                 tempDateTimeChillerRoznovanu.push(moment(element[0], "YYYYMMDDHHmm").format("YYYY-MM-DD HH:mm"));
                 tempValueChillerRoznovanu.push(element[1]);
             });
+
             setChillerTimeStamp(tempDateTimeChillerRoznovanu);
             setChillerValue(tempValueChillerRoznovanu);
+
         } catch (error) {
-            // handle network error
             console.log(error);
-            setErrorChiller('An error occurred while loading data in Total.')
+            setErrorChiller('An error occurred while loading historical data chiller.');
             const errorResponse = {
                 status: 503,
                 message: "ERR_NETWORK",
             };
             return errorResponse;
+
         } finally {
-            setLoadingChiller(false); // Set loading to false after fetching
+            setLoadingChiller(false);
         }
-    }
+    };
 
 
     return (
@@ -315,7 +273,7 @@ export default function Home() {
                                 <Button
                                     variant="contained"
                                     sx={{ backgroundColor: '#057BBE', padding: '1vh 2vh', minWidth: '20vh', fontSize: '2ch' }}
-                                    onClick={() => { sendDateStartAndDateEndElectricityDubetPyramidToBackend(), handleSubmitClickElectricityDubetPyramid() }}
+                                    onClick={() => { handleSubmitClickElectricityDubetPyramid() }}
                                 >
                                     Search
                                 </Button>
@@ -327,22 +285,25 @@ export default function Home() {
                         <Box>
                             <Grid container spacing={2} justifyContent="center">
                                 {loadingElectricityDubet ? (
-                                    <CircularProgress
-                                        size={120}
+                                    <Box
                                         sx={{
-                                            position: 'absolute',
-                                            top: '50%',
-                                            left: '50%',
-                                            transform: 'translate(-50%, -50%)',
-                                            zIndex: 1,
+                                            position: 'relative',
+                                            width: '100%',
+                                            height: '400px',
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
                                         }}
-                                    />
+                                    >
+                                        <CircularProgress size={120} />
+                                    </Box>
                                 ) : (
                                     <Chart
                                         labels={electricityDubetPyramidTimeStamp}
                                         data={electricityDubetPyramidValue}
                                         datasetLabel={'Energy consumption (Kw)'}
                                         chartTitle="Electricity"
+                                        yAxisUnit="kW"
                                     />
                                 )}
                                 {errorElectricityDubet && (
@@ -395,7 +356,7 @@ export default function Home() {
                                 <Button
                                     variant="contained"
                                     sx={{ backgroundColor: '#057BBE', padding: '1vh 2vh', minWidth: '20vh', fontSize: '2ch' }}
-                                    onClick={() => { sendDateStartAndDateEndElectricityRoznovanuToBackend(), handleSubmitClickElectricityRoznovanu() }}
+                                    onClick={() => { handleSubmitClickElectricityRoznovanu() }}
                                 >
                                     Search
                                 </Button>
@@ -406,23 +367,26 @@ export default function Home() {
                     <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "3vh", padding: "2%" }}>
                         <Box>
                             <Grid container spacing={2} justifyContent="center">
-                                {loadingElectricityDubet ? (
-                                    <CircularProgress
-                                        size={120}
+                                {loadingElectricityRoznovanu ? (
+                                    <Box
                                         sx={{
-                                            position: 'absolute',
-                                            top: '50%',
-                                            left: '50%',
-                                            transform: 'translate(-50%, -50%)',
-                                            zIndex: 1,
+                                            position: 'relative',
+                                            width: '100%',
+                                            height: '400px',
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
                                         }}
-                                    />
+                                    >
+                                        <CircularProgress size={120} />
+                                    </Box>
                                 ) : (
                                     <Chart
                                         labels={electricityRoznovanuTimeStamp}
                                         data={electricityRoznovanuValue}
                                         datasetLabel={'Energy consumption (Kw)'}
                                         chartTitle="Electricity"
+                                        yAxisUnit="kW"
                                     />
                                 )}
                                 {errorElectricityRoznovanu && (
@@ -471,7 +435,7 @@ export default function Home() {
                                 <Button
                                     variant="contained"
                                     sx={{ backgroundColor: '#057BBE', padding: '1vh 2vh', minWidth: '20vh', fontSize: '2ch' }}
-                                    onClick={() => { sendDateStartAndDateEndChillerRoznovanuToBackend(), handleSubmitClickChillerRoznovanu() }}
+                                    onClick={() => { handleSubmitClickChillerRoznovanu() }}
                                 >
                                     Search
                                 </Button>
@@ -482,23 +446,26 @@ export default function Home() {
                     <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "3vh", padding: "2%" }}>
                         <Box>
                             <Grid container spacing={2} justifyContent="center">
-                                {loadingElectricityDubet ? (
-                                    <CircularProgress
-                                        size={120}
+                                {loadingChiller ? (
+                                    <Box
                                         sx={{
-                                            position: 'absolute',
-                                            top: '50%',
-                                            left: '50%',
-                                            transform: 'translate(-50%, -50%)',
-                                            zIndex: 1,
+                                            position: 'relative',
+                                            width: '100%',
+                                            height: '400px',
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
                                         }}
-                                    />
+                                    >
+                                        <CircularProgress size={120} />
+                                    </Box>
                                 ) : (
                                     <Chart
                                         labels={chillerTimeStamp}
                                         data={chillerValue}
                                         datasetLabel={'Energy consumption (Kw)'}
                                         chartTitle="Chiller"
+                                        yAxisUnit="kW"
                                     />
                                 )}
                                 {errorChiller && (

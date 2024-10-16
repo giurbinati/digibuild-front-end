@@ -296,16 +296,18 @@ export default function Home() {
                                     <Grid item xs={12} sx={{ position: 'relative', width: '100%' }}>
                                         {/* Condizione per visualizzare il caricamento o il grafico */}
                                         {loading ? (
-                                            <CircularProgress
-                                                size={120}
+                                            <Box
                                                 sx={{
-                                                    position: 'absolute',
-                                                    top: '50%',
-                                                    left: '50%',
-                                                    transform: 'translate(-50%, -50%)',
-                                                    zIndex: 1,
+                                                    position: 'relative',
+                                                    width: '100%',
+                                                    height: '400px',
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
                                                 }}
-                                            />
+                                            >
+                                                <CircularProgress size={120} />
+                                            </Box>
                                         ) : (
                                             <Chart
                                                 labels={timeStampFloor}
