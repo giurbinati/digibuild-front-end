@@ -195,8 +195,8 @@ const Login = () => {
 								<TextField
 									type="email"
 									fullWidth
-									label="Email"
-									placeholder="Enter your email"
+									label="Username"
+									placeholder="Enter your username"
 									variant="outlined"
 									focused
 									required

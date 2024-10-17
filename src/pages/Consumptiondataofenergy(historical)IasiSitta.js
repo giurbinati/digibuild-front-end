@@ -16,6 +16,7 @@ import FormLabel from '@mui/material/FormLabel';
 import Chart from '../components/chart'
 import CircularProgress from '@mui/material/CircularProgress';
 import { Alert } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const config = {
     host: process.env.REACT_APP_API_HOST,
@@ -27,6 +28,7 @@ const API_URL_ElectricityRoznovanu = config.host + "/historicalDataElectricityRo
 const API_URL_ChillerRoznovanu = config.host + "/historicalDataChillerRoznovanuPalace";
 
 export default function ConsumptionDataOfEnergyHistoricalIasiSitta() {
+    const navigate = useNavigate()
 
     const [loadingElectricityDubet, setLoadingElectricityDubet] = useState(false);
     const [loadingElectricityRoznovanu, setLoadingElectricityRoznovanu] = useState(false);
@@ -89,12 +91,23 @@ export default function ConsumptionDataOfEnergyHistoricalIasiSitta() {
                     'Authorization': `Bearer ${token}`,
                 },
             });
+            if (response.status === 401) {
+                logout();
+                return;
+            }
+
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }
 
             const responseData = await response.json();
             console.log(responseData);
+
+            // Controllo specifico per il caso in cui la query restituisce [null]
+            if (responseData.query[0] === null) {
+                setErrorElectricityDubet('There is no data for this time interval.');
+                return;
+            }
             let tempDateTimeElectricityDubetPyramid = [];
             let tempValueElectricityDubetPyramid = [];
             let electricityDubetPyramid = responseData.query[0];
@@ -134,12 +147,23 @@ export default function ConsumptionDataOfEnergyHistoricalIasiSitta() {
                 },
             });
 
+            if (response.status === 401) {
+                logout();
+                return;
+            }
+
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }
 
             const responseData = await response.json();
             console.log(responseData);
+
+            // Controllo specifico per il caso in cui la query restituisce [null]
+            if (responseData.query[0] === null) {
+                setErrorElectricityRoznovanu('There is no data for this time interval.');
+                return;
+            }
 
             let tempDateTimeElectricityRoznovanu = [];
             let tempValueElectricityRoznovanu = [];
@@ -184,12 +208,23 @@ export default function ConsumptionDataOfEnergyHistoricalIasiSitta() {
                     'Authorization': `Bearer ${token}`,
                 },
             });
+            if (response.status === 401) {
+                logout();
+                return;
+            }
+
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }
 
             const responseData = await response.json();
             console.log(responseData);
+
+            // Controllo specifico per il caso in cui la query restituisce [null]
+            if (responseData.query[0] === null) {
+                setErrorChiller('There is no data for this time interval.');
+                return;
+            }
             let tempDateTimeChillerRoznovanu = [];
             let tempValueChillerRoznovanu = [];
             let chillerRoznovanu = responseData.query[0];
@@ -215,6 +250,12 @@ export default function ConsumptionDataOfEnergyHistoricalIasiSitta() {
             setLoadingChiller(false);
         }
     };
+
+    const logout = () => {
+        console.log('logout')
+        sessionStorage.clear();
+        navigate('/login')
+    }
 
 
     return (
@@ -273,6 +314,7 @@ export default function ConsumptionDataOfEnergyHistoricalIasiSitta() {
                                 <Button
                                     variant="contained"
                                     sx={{ backgroundColor: '#057BBE', padding: '1vh 2vh', minWidth: '20vh', fontSize: '2ch' }}
+                                    disabled={!selectedDateEletricityStartDubetPyramid || !selectedDateEletricityEndDubetPyramid}
                                     onClick={() => { handleSubmitClickElectricityDubetPyramid() }}
                                 >
                                     Search
@@ -356,6 +398,7 @@ export default function ConsumptionDataOfEnergyHistoricalIasiSitta() {
                                 <Button
                                     variant="contained"
                                     sx={{ backgroundColor: '#057BBE', padding: '1vh 2vh', minWidth: '20vh', fontSize: '2ch' }}
+                                    disabled={!selectedDateElectricityStartRoznovanu || !selectedDateElectricityEndRoznovanu}
                                     onClick={() => { handleSubmitClickElectricityRoznovanu() }}
                                 >
                                     Search
@@ -435,6 +478,7 @@ export default function ConsumptionDataOfEnergyHistoricalIasiSitta() {
                                 <Button
                                     variant="contained"
                                     sx={{ backgroundColor: '#057BBE', padding: '1vh 2vh', minWidth: '20vh', fontSize: '2ch' }}
+                                    disabled={!selectedDateChillerStartRoznovanu || !selectedDateChillerEndRoznovanu}
                                     onClick={() => { handleSubmitClickChillerRoznovanu() }}
                                 >
                                     Search

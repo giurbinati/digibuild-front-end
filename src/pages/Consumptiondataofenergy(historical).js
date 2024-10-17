@@ -11,6 +11,7 @@ import Chart from '../components/chart'
 import CircularProgress from '@mui/material/CircularProgress';
 import { Button } from '@mui/material';
 import { Alert } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const config = {
     host: process.env.REACT_APP_API_HOST,
@@ -22,6 +23,7 @@ const API_URL_Heating = config.host + "/historicalDataHeating";
 const API_URL_Cooling = config.host + "/historicalDataCooling";
 
 export default function ConsumptionDataOfEnergyHistorical() {
+    const navigate = useNavigate()
 
     const [selectedDateEletricityStart, setSelectedDateEletricityStart] = useState(null);
     const [selectedDateEletricityEnd, setSelectedDateEletricityEnd] = useState(null);
@@ -80,12 +82,25 @@ export default function ConsumptionDataOfEnergyHistorical() {
                 }),
             });
 
+            console.log(response.status)
+
+            if (response.status === 401) {
+                logout();
+                return;
+            }
+
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }
 
             const responseData = await response.json();
             console.log(responseData);
+
+            // Controllo specifico per il caso in cui la query restituisce [null]
+            if (responseData.query[0] === null) {
+                setErrorElectricity('There is no data for this time interval.');
+                return;
+            }
 
             let tempDateTimeElectricity = [];
             let tempValueElectricity = [];
@@ -136,12 +151,23 @@ export default function ConsumptionDataOfEnergyHistorical() {
                 }), // Send dates in the body
             });
 
+            if (response.status === 401) {
+                logout();
+                return;
+            }
+
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }
 
             const responseData = await response.json();
             console.log(responseData);
+
+            // Controllo specifico per il caso in cui la query restituisce [null]
+            if (responseData.query[0] === null) {
+                setErrorHeating('There is no data for this time interval.');
+                return;
+            }
 
             let tempDateTimeHeating = [];
             let tempValueHeating = [];
@@ -188,6 +214,12 @@ export default function ConsumptionDataOfEnergyHistorical() {
                     'Authorization': `Bearer ${token}`, // Aggiungi il token nel campo Authorization
                 },
             });
+            console.log(response.status)
+
+            if (response.status === 401) {
+                logout();
+                return;
+            }
 
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
@@ -195,6 +227,12 @@ export default function ConsumptionDataOfEnergyHistorical() {
 
             const responseData = await response.json();
             console.log(responseData);
+
+            // Controllo specifico per il caso in cui la query restituisce [null]
+            if (responseData.query[0] === null) {
+                setErrorCooling('There is no data for this time interval.');
+                return;
+            }
 
             let tempDateTimeCooling = [];
             let tempValueCooling = [];
@@ -223,6 +261,12 @@ export default function ConsumptionDataOfEnergyHistorical() {
             setLoadingCooling(false);
         }
     };
+
+    const logout = () => {
+        console.log('logout')
+        sessionStorage.clear();
+        navigate('/login')
+    }
 
 
     return (
@@ -272,9 +316,8 @@ export default function ConsumptionDataOfEnergyHistorical() {
                                 marginTop: '2vh', // Aggiunto margine superiore per distanziare il pulsante dalla tabella
                                 textAlign: 'center', // Centra il testo verticalmente
                             }}
-                            /* onClick={handleAddRow} */
-                            onClick={() => { handleSubmitClickElectricity() }}> Search</Button> {/*qui definisco il bottone search, dove al click sono collegati le funzioni per mandare i dati al server per eseguire la query(sendSelectBackend(); sendDataStartToBackend(); sendDataEndToBackend();) e la funzione per prendere i dati dalla query e metterli sullo chart (handleSubmitClick())*/}
-                        {/* {failMessage && <p style={{ color: 'red' }}>Please, fill in the fields above.</p>} */}
+                            disabled={!selectedDateEletricityStart || !selectedDateEletricityEnd}
+                            onClick={() => { handleSubmitClickElectricity() }}> Search</Button>
                     </Grid>
                 </Box>
             </Container>
@@ -357,8 +400,8 @@ export default function ConsumptionDataOfEnergyHistorical() {
                                 marginTop: '2vh', // Aggiunto margine superiore per distanziare il pulsante dalla tabella
                                 textAlign: 'center', // Centra il testo verticalmente
                             }}
-                            onClick={() => { handleSubmitClickHeating() }}> Search</Button> {/*qui definisco il bottone search, dove al click sono collegati le funzioni per mandare i dati al server per eseguire la query(sendSelectBackend(); sendDataStartToBackend(); sendDataEndToBackend();) e la funzione per prendere i dati dalla query e metterli sullo chart (handleSubmitClick())*/}
-                        {/* {failMessage && <p style={{ color: 'red' }}>Please, fill in the fields above.</p>} */}
+                            disabled={!selectedDateHeatingStart || !selectedDateHeatingEnd}
+                            onClick={() => { handleSubmitClickHeating() }}> Search</Button>
                     </Grid>
                 </Box>
             </Container>
@@ -442,8 +485,8 @@ export default function ConsumptionDataOfEnergyHistorical() {
                                 marginTop: '2vh', // Aggiunto margine superiore per distanziare il pulsante dalla tabella
                                 textAlign: 'center', // Centra il testo verticalmente
                             }}
-                            onClick={() => { handleSubmitClickCooling() }}> Search</Button> {/*qui definisco il bottone search, dove al click sono collegati le funzioni per mandare i dati al server per eseguire la query(sendSelectBackend(); sendDataStartToBackend(); sendDataEndToBackend();) e la funzione per prendere i dati dalla query e metterli sullo chart (handleSubmitClick())*/}
-                        {/* {failMessage && <p style={{ color: 'red' }}>Please, fill in the fields above.</p>} */}
+                            disabled={!selectedDateCoolingStart || !selectedDateCoolingEnd}
+                            onClick={() => { handleSubmitClickCooling() }}> Search</Button>
                     </Grid>
                 </Box>
             </Container>

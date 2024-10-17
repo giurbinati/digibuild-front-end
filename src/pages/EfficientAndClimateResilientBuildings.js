@@ -12,8 +12,11 @@ import TableRow from '@mui/material/TableRow';
 import { Grid } from '@mui/material';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 
-export default function Home({ setList, list }) {
+export default function Home() {
+    const navigate = useNavigate()
+
     const config = {
         host: process.env.REACT_APP_API_HOST,
         timer: parseInt(process.env.REACT_APP_TIMER)
@@ -67,9 +70,15 @@ export default function Home({ setList, list }) {
                 },
             });
 
+            if (response.status === 401) {
+                logout();
+                return;
+            }
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
+            console.log(response)
 
             const data = await response.json();
             console.log(data)
@@ -110,6 +119,12 @@ export default function Home({ setList, list }) {
             console.error('Fetch error:', error);
             throw error; // Rilancia l'errore per la gestione nel componente
         }
+    }
+
+    const logout = () => {
+        console.log('logout')
+        sessionStorage.clear();
+        navigate('/login')
     }
 
     useEffect(() => {

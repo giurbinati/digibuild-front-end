@@ -346,7 +346,7 @@ export default function Dashboard() {
                                     <Tab label="General Building Information" {...a11yProps(1)} />
                                     <Tab label="Building Element Information" {...a11yProps(2)} />
                                     <Tab label="Building Operation and Use" {...a11yProps(3)} />
-                                    <Tab label="Building Performance" {...a11yProps(4)} />
+                                    {/* <Tab label="Building Performance" {...a11yProps(4)} /> */}
                                     <Tab label="Finance" {...a11yProps(5)} />
                                     <Tab label="Building Documentation" {...a11yProps(6)} />
                                 </Tabs>
@@ -401,32 +401,32 @@ export default function Dashboard() {
                                             }
                                         }}>
                                         <Tab label="Consumption data of energy (forecasting)" {...a11yProps(0)} />
-                                        <Tab label="Consumption data of energy, water, gas, and other resources (invoices)" {...a11yProps(1)} />
-                                        <Tab label="Consumption data of energy and chiller(historical)" {...a11yProps(2)} />
-                                        <Tab label="Maintenance report" {...a11yProps(3)} />
+                                        {/* <Tab label="Consumption data of energy, water, gas, and other resources (invoices)" {...a11yProps(1)} /> */}
+                                        <Tab label="Consumption data of energy and chiller(historical)" {...a11yProps(1)} />
+                                        <Tab label="Maintenance report" {...a11yProps(2)} />
                                     </Tabs>
                                 </Box>
                                 <TabPanel value={valuesub2} index={0}>
                                     <ConsumptiondataofenergyForecastingIasiSitta />
                                 </TabPanel>
-                                <TabPanel value={valuesub2} index={1}>
+                               {/*  <TabPanel value={valuesub2} index={1}>
                                     <ConsumptiondataofenergyInvoices />
-                                </TabPanel>
-                                <TabPanel value={valuesub2} index={2}>
+                                </TabPanel> */}
+                                <TabPanel value={valuesub2} index={1}>
                                     <ConsumptiondataofenergyHistoricalIasiSitta />
                                 </TabPanel>
-                                <TabPanel value={valuesub2} index={3}>
+                                <TabPanel value={valuesub2} index={2}>
                                     <MaintenanceReport />
                                 </TabPanel>
                             </TabPanel>
                         </Grid>
-                        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        {/* <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={4}>
                                 <BuildingPerformanceIASI />
                             </TabPanel>
-                        </Grid>
+                        </Grid> */}
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                            <TabPanel value={value} index={5}>
+                            <TabPanel value={value} index={4}>
                                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                                     <Tabs value={valuesub3} onChange={handleChange3} aria-label="basic example"
                                         sx={{
@@ -454,7 +454,7 @@ export default function Dashboard() {
                             </TabPanel>
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                            <TabPanel value={value} index={6}>
+                            <TabPanel value={value} index={5}>
                                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                                     <Tabs value={valuesub4} onChange={handleChange4} aria-label="basic example" sx={{
                                         '& .MuiTab-root': {

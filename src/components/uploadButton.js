@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Typography } from '@mui/material';
+import { build } from 'pdfjs-dist';
 
 const config = {
   host: process.env.REACT_APP_API_HOST,
@@ -8,7 +9,7 @@ const config = {
 
 const API_URL_DATE_UploadFileFVH = config.host + "/upload";
 
-const UploadButton = ({ fileType, keyword, pilot }) => {
+const UploadButton = ({ fileType, keyword, pilot, building }) => {
   const [error, setError] = useState(null);
   const [uploadStatus, setUploadStatus] = useState("");
 
@@ -18,6 +19,11 @@ const UploadButton = ({ fileType, keyword, pilot }) => {
     formData.append("file", file);
     formData.append("pilot", pilot);
     console.log(pilot)
+
+    if (building) {
+      formData.append("building", building);
+    }
+    console.log(building)
 
     try {
       const response = await fetch(API_URL_DATE_UploadFileFVH, {

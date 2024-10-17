@@ -10,9 +10,12 @@ import Chart from '../components/chart'
 import CircularProgress from '@mui/material/CircularProgress';
 import { Button } from '@mui/material';
 import { Alert } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function Home() {
+    const navigate = useNavigate()
+
     const [section, setSection] = useState('');
     const [floor, setFloor] = useState('');
     const [room, setRoom] = useState('');
@@ -91,9 +94,14 @@ export default function Home() {
             setValueTotal(values);
             console.log('4', valueSection)
         } catch (error) {
-            console.error('Fetch error:', error);
-            setErrorTotal('An error occurred while loading data in Total.'); // Imposta il messaggio di errore
-            setErrorSection('An error occurred while loading data in Section.');
+            console.log(error)
+            if (error.message === 'Unauthorized') {
+                logout(); // Call logout if the error is 401
+            } else {
+                console.error('Fetch error:', error);
+                setErrorTotal('An error occurred while loading data in Total.'); // Imposta il messaggio di errore
+                setErrorSection('An error occurred while loading data in Section.');
+            }
         } finally {
             setLoadingTotal(false); // Set loading to false after fetching
             setLoadingSection(false); // Set loading to false after fetching
@@ -165,6 +173,12 @@ export default function Home() {
             fetchDataForecasting(); // Call fetch function if validation passes
         }
     };
+
+    const logout = () => {
+        console.log('logout')
+        sessionStorage.clear();
+        navigate('/login')
+    }
 
     return (
         <Box

@@ -13,7 +13,7 @@ const config = {
 
 const API_URL_DATE_ViewPDFFVH = config.host + "/last_record";
 
-function PdfViewerApi({ filename, pilot }) {
+function PdfViewerApi({ filename, pilot, building }) {
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
   const [data, setData] = useState(null);
@@ -24,13 +24,18 @@ function PdfViewerApi({ filename, pilot }) {
   const handleOpenPdf = async () => {
     setLoading(true);
     setError(null);
+    const requestBody = { filename, pilot };
+    if (building) {
+      requestBody.building = building;
+    }
+
     try {
       const response = await fetch(API_URL_DATE_ViewPDFFVH, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ filename, pilot }), // Passa il filename come JSON
+        body: JSON.stringify(requestBody), // Passa il filename come JSON
       });
 
       if (response.ok) {

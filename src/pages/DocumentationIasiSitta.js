@@ -1,27 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { Grid, Paper } from '@mui/material';
-import ViewPdfApiButton from '../components/viewPdfApiButton'
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-
+import ViewPdfApiButton from '../components/viewPdfApiButton';
+import UploadButton from '../components/uploadButton';
 
 export default function DocumentationIasiSitta() {
-
-  const urlLCA = process.env.REACT_APP_API_FVH_LCA
-  const urlVentilation = process.env.REACT_APP_API_FVH_VENTILATION
-  const urlElectricity = process.env.REACT_APP_API_FVH_ELECTRICITY
 
   const [building, setBuilding] = useState('Roznovanu');
 
   const handleRadioChange = (event) => {
     setBuilding(event.target.value);
   };
+
+  const [pilot, setPilot] = useState(null);
+  // Array di documenti con i nomi dei file
+  const documentsRoznovanu = [
+    { title: 'Land Book Extract', filename: 'Land Book Extract', type: 'pdf', buildingName: 'Roznovanu' },
+    { title: 'Electricity Affected Areas', filename: 'Electricity', type: 'pdf', buildingName: 'Roznovanu' },
+    { title: 'Ventilation Affected Areas', filename: 'Ventilation', type: 'pdf', buildingName: 'Roznovanu' },
+    { title: 'Physical security risk assessment and treatment report', filename: 'Physical security risk assessment and treatment report', type: 'pdf', buildingName: 'Roznovanu' },
+    { title: 'DHS Schema', filename: 'DHS Schema', type: 'pdf', buildingName: 'Roznovanu' }
+  ];
+
+  const documentsDubetPiramyd = [
+    { title: 'Land Book Extract', filename: 'Land Book Extract', type: 'pdf', buildingName: 'DubetPiramyd' },
+    { title: 'Electricity Affected Areas', filename: 'Electricity', type: 'pdf', buildingName: 'DubetPiramyd' },
+    { title: 'Ventilation Affected Areas', filename: 'Ventilation', type: 'pdf', buildingName: 'DubetPiramyd' },
+    { title: 'DHS Schema', filename: 'DHS Schema', type: 'pdf', buildingName: 'DubetPiramyd' }
+  ];
+
+  useEffect(() => {
+    const storedPilot = sessionStorage.getItem("PILOT");
+    if (storedPilot) {
+      setPilot(storedPilot);
+      console.log(pilot)
+    }
+  }, []);
 
   return (
     <Box
@@ -63,26 +84,67 @@ export default function DocumentationIasiSitta() {
             alignItems: 'center',
           }}
         >
-          <Grid container spacing={4} columns={16} alignItems="center" justify="center" alignContent="center">
-            <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>Electricity Affected Areas</Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <ViewPdfApiButton apiUrl={urlElectricity} />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>Ventilation Affected Areas</Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <ViewPdfApiButton apiUrl={urlVentilation} />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>DHS Schema</Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <ViewPdfApiButton apiUrl={urlLCA} />
-            </Grid>
-          </Grid>
+          {building === "Dubet Pyramid" && (
+            <>
+              <Grid container spacing={4} columns={16} alignItems="center" justifyContent="center">
+                {documentsDubetPiramyd.map((doc) => (
+                  <Grid container item key={doc.filename} spacing={2} alignItems="center" justifyContent="center">
+                    {/* Title */}
+                    <Grid item xs={12} sm={4}>
+                      <Typography variant="h6" align="center" style={{ fontSize: '3ch' }}>
+                        {doc.title}
+                      </Typography>
+                    </Grid>
+
+                    {/* View or Download Button */}
+                    <Grid item xs={12} sm={4}>
+                      {doc.type === 'pdf' ? (
+                        <ViewPdfApiButton filename={doc.filename} pilot={pilot} building={doc.buildingName} />
+                      ) : (
+                        <DownloadButton filename={doc.filename} pilot={pilot} />
+                      )}
+                    </Grid>
+
+                    {/* Upload Button */}
+                    <Grid item xs={12} sm={4}>
+                      <UploadButton fileType={doc.type} keyword={doc.filename} pilot={pilot} building={doc.buildingName} />
+                    </Grid>
+                  </Grid>
+                ))}
+              </Grid>
+            </>
+          )}
+
+          {building === "Roznovanu" && (
+            <>
+              <Grid container spacing={4} columns={16} alignItems="center" justifyContent="center">
+                {documentsRoznovanu.map((doc) => (
+                  <Grid container item key={doc.filename} spacing={2} alignItems="center" justifyContent="center">
+                    {/* Title */}
+                    <Grid item xs={12} sm={4}>
+                      <Typography variant="h6" align="center" style={{ fontSize: '3ch' }}>
+                        {doc.title}
+                      </Typography>
+                    </Grid>
+
+                    {/* View or Download Button */}
+                    <Grid item xs={12} sm={4}>
+                      {doc.type === 'pdf' ? (
+                        <ViewPdfApiButton filename={doc.filename} pilot={pilot} building={doc.buildingName} />
+                      ) : (
+                        <DownloadButton filename={doc.filename} pilot={pilot} />
+                      )}
+                    </Grid>
+
+                    {/* Upload Button */}
+                    <Grid item xs={12} sm={4}>
+                      <UploadButton fileType={doc.type} keyword={doc.filename} pilot={pilot} building={doc.buildingName} />
+                    </Grid>
+                  </Grid>
+                ))}
+              </Grid>
+            </>
+          )}
         </Paper>
       </Container>
     </Box>
