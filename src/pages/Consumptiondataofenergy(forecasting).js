@@ -10,24 +10,42 @@ import Chart from '../components/chart'
 import CircularProgress from '@mui/material/CircularProgress';
 import { Button } from '@mui/material';
 import { Alert } from '@mui/material';
+import TextField from '@mui/material/TextField';
+import Chip from '@mui/material/Chip';
 
 
 export default function Home() {
+    const colors = [
+        'rgba(255, 0, 0, 1)',
+        'rgba(0, 0, 255, 1)',
+        'rgba(0, 0, 0, 1)',
+        'rgba(0, 128, 0, 1)',
+        'rgba(255, 192, 203, 1)',
+        'rgba(255, 255, 0, 1)',
+        'rgba(128, 128, 128, 1)',
+        'rgba(128, 0, 128, 1)'
+    ];
+    const ITEM_HEIGHT = 480;
+    const ITEM_PADDING_TOP = 80;
     const [section, setSection] = useState('');
     const [floor, setFloor] = useState('');
-    const [room, setRoom] = useState('');
+    const [rooms, setRoom] = useState([]);
     const [valueTotal, setValueTotal] = useState([]);
     const [valueSection, setValueSection] = useState([]);
     const [valueFloor, setValueFloor] = useState(null);
     const [timeStamp, setTimeStamp] = useState(null);
     const [timeStampFloor, setTimeStampFloor] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
+    const [errorMessageRooms, setErrorMessageRooms] = useState(null);
     const [loading, setLoading] = useState(false);
     const [loadingTotal, setLoadingTotal] = useState(false);
     const [loadingSection, setLoadingSection] = useState(false);
     const [errorTotal, setErrorTotal] = useState(null);
     const [errorSection, setErrorSection] = useState(null);
     const [error, setError] = useState(null);
+    const [inputs, setInputs] = useState([]);
+    const [datasetsRooms, setDatasetsRooms] = useState('');
+    const [valueRooms, setValueRooms] = useState(null);
 
     const handleChangeSection = (event) => {
         const selectedSection = event.target.value; // Get the selected value
@@ -37,22 +55,21 @@ export default function Home() {
             setFloor(''); // Reset floor to None
         }
     };
-    const handleChangeFloor = (event) => {
-        setFloor(event.target.value);
-    };
-    const handleChangeRoom = (event) => {
-        setRoom(event.target.value);
+
+    const handleChange = (event) => {
+        setValueRooms(null);
+
+        const {
+            target: { value },
+        } = event;
+        setInputs(
+            // On autofill we get a stringified value.
+            typeof value === 'string' ? value.split(',') : value,
+        );
+        console.log(inputs)
     };
 
-    const roomOptions = [
-        'JKA0.1', 'JKA0.2', 'JKA1', 'JKA1.2_1', 'JKA1.2_2', 'JKA2', 'JKA2.1', 'JKA2.2', 'JKA3', 'JKA3.1', 'JKA3.2',
-        'JKA4', 'JKA4.1', 'JKA4.2', 'JKA5', 'JKA5.1', 'JKA5.2', 'JKA6', 'JKA6.1', 'JKA6.2', 'JKA7.1', 'JKA7.2',
-        'JKB0.1', 'JKB1', 'JKB1.1', 'JKB1.2', 'JKB1.3', 'JKB2', 'JKB2.1', 'JKB2.2', 'JKB2.3', 'JKB3', 'JKB3.1',
-        'JKB3.2', 'JKB4', 'JKB4.1', 'JKB4.2', 'JKB5', 'JKB5.1', 'JKB5.2', 'JKB6', 'JKB6.1', 'JKB6.2', 'JKB7.2',
-        'JKB7.3', 'JKC0.0', 'JKC0.1', 'JKC0.2', 'JKC0.3', 'JKC1', 'JKC1.1', 'JKC1.2', 'JKC2', 'JKC2.1', 'JKC2.2',
-        'JKC3', 'JKC3.1', 'JKC3.2', 'JKC4', 'JKC4.1', 'JKC4.2', 'JKC5', 'JKC5.1', 'JKC5.2', 'JKC6', 'JKC6.1',
-        'JKC6.2', 'JKC7.1', 'JKC7.2'
-    ];
+
 
     // Funzioni di fetch aggiornate
     const fetchDataForecastingTotal = async () => {
@@ -61,7 +78,7 @@ export default function Home() {
             console.log('1', data);
             console.log('2', data.Total);
             const dataTotal = data.Total.Total;
-            const timestamps = dataTotal.map(item => Object.keys(item)[0]); // Ottieni tutte le chiavi (i timestamp)
+            setTimeStamp(dataTotal.map(item => Object.keys(item)[0])); // Ottieni tutte le chiavi (i timestamp)
             const values = dataTotal.map(item => Object.values(item)[0]); // Ottieni tutti i valori
             const valuesA = data.Sections.A.map(item => Object.values(item)[0]);  // Valori di A
             const valuesB = data.Sections.B.map(item => Object.values(item)[0]);  // Valori di B
@@ -87,7 +104,7 @@ export default function Home() {
                 }
             ]);
             // Aggiorna gli stati per il grafico
-            setTimeStamp(timestamps);
+
             setValueTotal(values);
             console.log('4', valueSection)
         } catch (error) {
@@ -106,6 +123,9 @@ export default function Home() {
             setErrorSection('')
             setLoadingTotal(true); // Attiva il caricamento per il totale
             setLoadingSection(true); // Attiva il caricamento per le sezioni
+            setFloor(null);
+            setRoom([]);
+            setValueFloor(null);
 
             // Esegui le due chiamate in parallelo
             fetchDataForecastingTotal(); // Non usare await
@@ -116,23 +136,16 @@ export default function Home() {
 
     async function fetchDataForecasting() {
         try {
-            const data = await getDataForecastingFVH.GetDataForecasting(section, floor, room);
+            const data = await getDataForecastingFVH.GetDataForecasting(section, floor);
             console.log(data);
             const datasets = {};
-            const keys = Object.keys(data);
-            const colors = [
-                'rgba(255, 0, 0, 1)',
-                'rgba(0, 0, 255, 1)',
-                'rgba(0, 0, 0, 1)',
-                'rgba(0, 128, 0, 1)',
-                'rgba(255, 192, 203, 1)',
-                'rgba(255, 255, 0, 1)',
-                'rgba(128, 128, 128, 1)',
-                'rgba(128, 0, 128, 1)'
-            ];
+            const keys = Object.keys(data.floors);
+            const keysR = Object.keys(data.rooms);
+            setDatasetsRooms(data.rooms);
+           
 
             keys.forEach((key, index) => {
-                const values = data[key].map(item => Object.values(item)[0]);
+                const values = data.floors[key].map(item => Object.values(item)[0]);
                 datasets[`Floor ${index}`] = {
                     label: `Floor ${index}`,
                     data: values,
@@ -140,7 +153,7 @@ export default function Home() {
                     backgroundColor: colors[index % colors.length].replace('1)', '0.2)'),
                 };
             });
-
+            setRoom(keysR);
             setValueFloor(Object.values(datasets));
             setTimeStampFloor(timeStamp)
         } catch (error) {
@@ -160,9 +173,31 @@ export default function Home() {
             setErrorMessage('Please select at least one of Section.'); // Set error message
 
         } else {
+            setInputs([]);
             setErrorMessage(''); // Clear error message
             setLoading(true);
             fetchDataForecasting(); // Call fetch function if validation passes
+        }
+    };
+    const handleComparedClick = () => {
+        const datasets = {};
+        // Validate selections
+        console.log(datasetsRooms)
+        if (inputs.length < 2) {
+            setErrorMessageRooms('Please select at least two of Rooms.'); // Set error message
+        } else {
+            setErrorMessageRooms(''); // Clear error message
+            inputs.forEach((key, index) => {
+                const values = datasetsRooms[key].map(item => Object.values(item)[0]);
+                datasets[`Room ${key}`] = {
+                    label: `Room ${key}`,
+                    data: values,
+                    borderColor: colors[index % colors.length],
+                    backgroundColor: colors[index % colors.length].replace('1)', '0.2)'),
+                };
+            });
+            setValueRooms(Object.values(datasets));
+
         }
     };
 
@@ -316,12 +351,110 @@ export default function Home() {
                                                 labels={timeStampFloor}
                                                 datasets={valueFloor} // This can be empty
                                                 datasetLabel={''}
-                                                chartTitle="Floor"
+                                                chartTitle="Floors"
                                                 yAxisUnit="kW"
                                                 style={{ position: 'relative' }}
                                             />)
                                         )}
 
+                                        {error && (
+                                            <Grid item xs={12}>
+                                                <Alert severity="error" onClose={() => setError(null)}>
+                                                    {error}
+                                                </Alert>
+                                            </Grid>
+                                        )}
+                                    </Grid>
+                                </Grid>
+                            </Box>
+                        </Container>
+                    </Grid>
+                )}
+                {rooms.length > 0 && (
+                    <Grid container direction="column" alignItems="center">
+                        {/* Section Select */}
+                        <Grid item xs={12}>
+                            <Box sx={{ minWidth: 300, marginTop: '3vh' }}>
+                                <FormControl fullWidth>
+                                    <TextField
+                                        select
+                                        name="select"
+                                        label="Select rooms to be compared"
+                                        variant="outlined"
+                                        InputLabelProps={{
+                                            component: 'span',
+                                        }}
+                                        SelectProps={{
+                                            multiple: true,
+                                            value: inputs,
+                                            onChange: (e) => handleChange(e),
+                                            renderValue: (selected) => (
+                                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                    {selected.map((value) => (
+                                                        <Chip key={value} label={value} />
+                                                    ))}
+                                                </Box>
+                                            ),
+                                            style: {
+                                                maxWidth: "500px"
+                                            }
+                                        }}
+                                        fullWidth
+                                        required
+                                        sx={{ mb: 4 }}
+                                    >
+                                        {rooms.map((option) => (
+                                            <MenuItem key={option} value={option} >
+                                                {option}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
+                                </FormControl>
+                            </Box>
+                        </Grid>
+                        <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "1vh", padding: "2%" }}>
+                            <Box>
+                                <Grid container direction="column" alignItems="center">
+                                    <Grid item xs={12}>
+                                        <Button
+                                            variant="contained"
+                                            sx={{
+                                                backgroundColor: '#057BBE',
+                                                padding: '1vh 2vh',
+                                                minWidth: '20vh',
+                                                fontSize: '2ch',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                marginTop: '2vh',
+                                                textAlign: 'center',
+                                                marginBottom: '3vh',
+                                            }}
+                                            onClick={handleComparedClick}
+                                        >
+                                            Compared
+                                        </Button>
+                                    </Grid>
+                                    {errorMessageRooms && (
+                                        <Grid item xs={12}>
+                                            <Typography color="error" variant="body1" sx={{ marginTop: '1vh', color: 'red' }}>
+                                                {errorMessageRooms}
+                                            </Typography>
+                                        </Grid>
+                                    )}
+                                    <Grid item xs={12} sx={{ position: 'relative', width: '100%' }}>
+                                        {/* Condizione per visualizzare il caricamento o il grafico */}
+                                        {inputs.length >1 && valueRooms && (
+                                            <Chart
+                                                labels={timeStamp}
+                                                datasets={valueRooms} // This can be empty
+                                                datasetLabel={''}
+                                                chartTitle="Rooms"
+                                                yAxisUnit="kW"
+                                                style={{ position: 'relative' }}
+                                            />)
+
+                                        }
                                         {error && (
                                             <Grid item xs={12}>
                                                 <Alert severity="error" onClose={() => setError(null)}>
