@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { Button, Typography } from '@mui/material';
-import { build } from 'pdfjs-dist';
 
 const config = {
   host: process.env.REACT_APP_API_HOST,
-  timer: parseInt(process.env.REACT_APP_TIMER)
 };
 
 const API_URL_DATE_UploadFileFVH = config.host + "/upload";
 
-const UploadButton = ({ fileType, keyword, pilot, building }) => {
+const UploadButton = ({ fileType, keyword, pilot, building, requiresDateRange = false }) => {
   const [error, setError] = useState(null);
   const [uploadStatus, setUploadStatus] = useState("");
 
@@ -18,12 +16,9 @@ const UploadButton = ({ fileType, keyword, pilot, building }) => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("pilot", pilot);
-    console.log(pilot)
-
     if (building) {
       formData.append("building", building);
     }
-    console.log(building)
 
     try {
       const response = await fetch(API_URL_DATE_UploadFileFVH, {
@@ -44,15 +39,31 @@ const UploadButton = ({ fileType, keyword, pilot, building }) => {
     }
   };
 
+  // Funzione per estrarre e validare l'intervallo di tempo nel nome del file
+  const validateDateRange = (fileName) => {
+    // Regex per cercare un intervallo di date nel formato gg.mm.yyyy-gg.mm.yyyy
+    const dateRangePattern = /\d{2}\.\d{2}\.\d{4}-\d{2}\.\d{2}\.\d{4}/;
+    return dateRangePattern.test(fileName);
+  };
+
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
-    console.log(file);
 
     if (file) {
+      // Controllo che il file contenga la keyword
       const isKeywordInFilename = file.name.toLowerCase().includes(keyword.toLowerCase());
       if (!isKeywordInFilename) {
         setError(`Error: The file name must contain the keyword '${keyword}'.`);
         return;
+      }
+
+      // Se l'upload richiede un intervallo di tempo, valida il nome del file
+      if (requiresDateRange) {
+        const isDateRangeValid = validateDateRange(file.name);
+        if (!isDateRangeValid) {
+          setError(`Error: The file name must contain a valid date range in the format 'dd.mm.yyyy-dd.mm.yyyy'.`);
+          return;
+        }
       }
 
       await uploadFileService(file);
@@ -65,7 +76,7 @@ const UploadButton = ({ fileType, keyword, pilot, building }) => {
         type="file"
         id={`file-upload-${keyword}`} // ID unico
         onChange={handleFileChange}
-        accept="*"
+        accept={fileType}
         style={{ display: 'none' }}
       />
       <label htmlFor={`file-upload-${keyword}`}>

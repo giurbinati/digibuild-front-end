@@ -1,130 +1,125 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Container from '@mui/material/Container';
-import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import { Grid } from '@mui/material';
+import { Grid, Paper } from '@mui/material';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import ViewPdfApiButton from '../components/viewPdfApiButton';
+import UploadButton from '../components/uploadButton';
 
-import AuthService from '../services/auth';
-import UploadButton from '../components/uploadButton'
-import DownloadButton from '../components/downloadButton'
+const config = {
+  host: process.env.REACT_APP_API_HOST,
+  timer: parseInt(process.env.REACT_APP_TIMER)
+};
 
-export default function Home({ setList, list }) {
-    const [values, setValues] = useState({
-        'Measured heating consumption': "kWh/year",
-        'Measured electricity consumption ': "kWh/year",
-        'Measured hot water consumption ': "Litres/year",
-    });
-    function getRandom(max) {
-        return (Math.random() * max);
+const API_URL_INVOICE = config.host + "/invoices";
+
+export default function CostInformationHeating() {
+  const [invoices, setInvoices] = useState([]);
+  const [pilot, setPilot] = useState(null);
+  const [filename, setFilename] = useState('heating');
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const storedPilot = sessionStorage.getItem("PILOT");
+    if (storedPilot) {
+      setPilot(storedPilot);
     }
+  }, []);
 
-    /* useEffect(() => {
-        setTimeout(() => {
-            setValues({
-                "Unique building identifier": getRandom(100),
-                'Address': getRandom(100),
-                'Building owner': getRandom(100),
-                'DBL prepared by': getRandom(100),
-                'When was the DBL last edited': getRandom(100),
-                'Ownership type': getRandom(100),
-                'Tenancy agreement': getRandom(100),
-                'Utilities contracts': getRandom(100),
-                'Maintenance service contact': getRandom(100),
-                'Insurance documents': getRandom(100),
-                'Maintenance log': getRandom(100),
-                'Licenses': getRandom(100),
-                'Sbuilding type': getRandom(100),
-                'Building name': getRandom(100),
-                'Ownership': getRandom(100)
-            });
-        }, 2000);
-        // Update count to be 5 after timeout is scheduled
-        //console.log(Object.keys(values));
-    }, [values]); */
+  // Fetch invoices dynamically
+  useEffect(() => {
+    const fetchInvoices = async () => {
+      const requestBody = { filename, pilot};
 
+      const response = await fetch(API_URL_INVOICE, {
+        method: 'POST', // Use POST to send the request body
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody), // Pass the request body as JSON
+      });
 
-    const table = () => {
-        return (
-            <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead sx={{ backgroundColor: '#41BFB9', fontWeight: 'bold' }}>
-                        <TableRow>
-                            <TableCell style={{ fontSize: '2.5ch' }}>Name</TableCell>
-                            <TableCell align="right" style={{ fontSize: '2.5ch' }}>Value</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {Object.keys(values).map((row) => (
-                            <TableRow
-                                key={row}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell component="th" scope="row" style={{ fontSize: '2.5ch' }}>
-                                    {row}
-                                </TableCell>
-                                <TableCell align="right" style={{ fontSize: '2.5ch' }}>{values[row]}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        )
+      if (response.ok) {
+        const data = await response.json();
+        setInvoices(data);
+        setError(null); // Resetta l'errore se la richiesta ha successo
+      } else {
+        setInvoices([]); // Resetta le fatture se c'è un errore
+        if (response.status === 404) {
+          setError('No invoices available.'); // Imposta il messaggio di errore
+        } else {
+          console.error('Failed to fetch invoices:', response.status);
+        }
+      }
+    };
+
+    if (pilot) {
+      fetchInvoices();
     }
+  }, [pilot, filename]);
 
-    return (
-        <Box
-            sx={{
-                flexGrow: 1,
-                minHeight: '78vh',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: 0, // Assicurati che non ci siano padding aggiuntivi
-                margin: 0,  // Assicurati che non ci siano margin aggiuntivi
-            }}
+  return (
+    <Box
+      sx={{
+        flexGrow: 1,
+        minHeight: '78vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: '2vh'
+      }}
+    >
+      <Container maxWidth="xl" sx={{ padding: 0 }}>
+        <Grid container direction="column" alignItems="center" spacing={3}>
+            <UploadButton
+              fileType={'pdf'}
+              keyword={filename}
+              pilot={pilot}
+              requiresDateRange={true}
+            />
+        </Grid>
+
+        <Paper
+          sx={{
+            backgroundColor: 'rgba(147, 208, 167, 0.4)',
+            padding: '2%',
+            width: 'auto',
+            maxWidth: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            marginTop: '3vh'
+          }}
         >
-            <Container maxWidth="xl" sx={{ padding: 0 }}>
-                <Grid container direction="column" alignItems="center"> {/* Spaziatura tra i componenti */}
-                    <Grid item xs={12}>
-                        <Paper
-                            sx={{
-                                backgroundColor: 'rgba(147, 208, 167, 0.4)',
-                                padding: '2%',
-                                width: '900px',
-                                maxWidth: '1200px',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                            }}
-                        >
-                            {/* Grid container per i pulsanti nella stessa riga */}
-                            <Grid container spacing={2} justifyContent="center" sx={{ marginBottom: '2vh' }}>
-                                <Grid item>
-                                    <UploadButton />
-                                </Grid>
-                                <Grid item>
-                                    <DownloadButton />
-                                </Grid>
-                            </Grid>
-
-                            {/* Grid container per la tabella */}
-                            <Grid container spacing={2} justifyContent="center">
-                                <Grid item xs={12}>
-                                    {table()}
-                                </Grid>
-                            </Grid>
-                        </Paper>
-                    </Grid>
+          <Grid container spacing={4} columns={16} alignItems="center" justifyContent="center">
+            {invoices.length > 0 ? (
+              invoices.map((invoice) => (
+                <Grid container item key={invoice.filename} spacing={2} alignItems="center" justifyContent="center">
+                  <Grid item xs={12} sm={4}>
+                    <Typography variant="h6" align="center" style={{ fontSize: '3ch' }}>
+                      {invoice.metadata.name}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                    <ViewPdfApiButton filename={invoice.filename} pilot={pilot} />
+                  </Grid>
                 </Grid>
-            </Container>
-        </Box>
-    );
+              ))
+            ) : (
+              <Typography variant="h6" align="center" style={{ fontSize: '2.5ch' }}>
+                No invoices available.
+              </Typography>
+            )}
+          </Grid>
+        </Paper>
+      </Container>
+    </Box>
+  );
+
 }

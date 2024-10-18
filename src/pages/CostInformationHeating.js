@@ -1,12 +1,72 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { Grid, Paper } from '@mui/material';
-import ViewPdfApiButton from '../components/viewPdfApiButton'
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import ViewPdfApiButton from '../components/viewPdfApiButton';
+import UploadButton from '../components/uploadButton';
 
+const config = {
+  host: process.env.REACT_APP_API_HOST,
+  timer: parseInt(process.env.REACT_APP_TIMER)
+};
+
+const API_URL_INVOICE = config.host + "/invoices";
 
 export default function CostInformationHeating() {
+  const [building, setBuilding] = useState('Roznovanu');
+  const [invoices, setInvoices] = useState([]);
+  const [pilot, setPilot] = useState(null);
+  const [filename, setFilename] = useState('heating');
+  const [error, setError] = useState(null);
+
+  const handleRadioChange = (event) => {
+    setBuilding(event.target.value);
+  };
+
+  useEffect(() => {
+    const storedPilot = sessionStorage.getItem("PILOT");
+    if (storedPilot) {
+      setPilot(storedPilot);
+    }
+  }, []);
+
+  // Fetch invoices dynamically
+  useEffect(() => {
+    const fetchInvoices = async () => {
+      const requestBody = { filename, pilot, building };
+
+      const response = await fetch(API_URL_INVOICE, {
+        method: 'POST', // Use POST to send the request body
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody), // Pass the request body as JSON
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setInvoices(data);
+        setError(null); // Resetta l'errore se la richiesta ha successo
+      } else {
+        setInvoices([]); // Resetta le fatture se c'è un errore
+        if (response.status === 404) {
+          setError('No invoices available.'); // Imposta il messaggio di errore
+        } else {
+          console.error('Failed to fetch invoices:', response.status);
+        }
+      }
+    };
+
+    if (pilot) {
+      fetchInvoices();
+    }
+  }, [building, pilot, filename]);
 
   return (
     <Box
@@ -20,83 +80,74 @@ export default function CostInformationHeating() {
         marginTop: '2vh'
       }}
     >
-      <Grid container direction="column" alignItems="center" spacing={3}>
-        {/* Grid item per il Titolo */}
-
-        <Paper elevation={0} sx={{ textAlign: 'center' }}>
-          <Typography
-            variant="h4"
-            sx={{
-              color: '#41BFB9',
-              fontFamily: 'Poppins, Roboto',
-              fontWeight: 'bold',
-              marginBottom: '1vh'
-            }}
-          >
-            Roznovanu Palace
-          </Typography>
-        </Paper>
-      </Grid>
       <Container maxWidth="xl" sx={{ padding: 0 }}>
+        <Grid container direction="column" alignItems="center" spacing={3}>
+          <FormControl>
+            <FormLabel sx={{ fontSize: '2.5ch' }} id="building-radio-group-label">Building</FormLabel>
+            <RadioGroup
+              aria-labelledby="building-radio-group-label"
+              name="radio-buttons-group"
+              value={building}
+              onChange={handleRadioChange}
+            >
+              <FormControlLabel value="Roznovanu" control={<Radio />} label="Roznovanu Palace" />
+              <FormControlLabel value="Dubet Pyramid" control={<Radio />} label="Dubet Pyramid" />
+            </RadioGroup>
+          </FormControl>
+          <Grid item>
+            <UploadButton
+              fileType={'pdf'}
+              keyword={filename}
+              pilot={pilot}
+              building={building}
+              requiresDateRange={true}
+            />
+          </Grid>
+        </Grid>
+
         <Paper
           sx={{
             backgroundColor: 'rgba(147, 208, 167, 0.4)',
             padding: '2%',
-            width: 'auto', // Cambia '1000px' a 'auto' per una larghezza flessibile
-            maxWidth: '100%', // Massima larghezza consentita è 100% del container
+            width: 'auto',
+            maxWidth: '100%',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
+            marginTop: '3vh'
           }}
         >
-          <Grid container spacing={4} columns={16} alignItems="center" justify="center" alignContent="center">
-            <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>
-                Invoice Period 24.04.2023-25.05.2023</Typography>
-            </Grid>
-            <Grid item xs={8} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <ViewPdfApiButton apiUrl={''} />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>
-                Invoicing Period 27.03.2023-24.04.2023</Typography>
-            </Grid>
-            <Grid item xs={8} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <ViewPdfApiButton apiUrl={''} />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>Invoicing Period 23.02.2023-27.03.2023</Typography>
-            </Grid>
-            <Grid item xs={8} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <ViewPdfApiButton apiUrl={''} />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>Invoicing Period 27.12.2022-25.01.2023</Typography>
-            </Grid>
-            <Grid item xs={8} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <ViewPdfApiButton apiUrl={''} />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>Invoicing Period 24.11.2021-27.12.2021</Typography>
-            </Grid>
-            <Grid item xs={8} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <ViewPdfApiButton apiUrl={''} />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>Invoicing Period 25.01.2023-23.02.2023</Typography>
-            </Grid>
-            <Grid item xs={8} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <ViewPdfApiButton apiUrl={''} />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography variant="h6" style={{ textAlign: 'center', fontSize: '3ch' }}>Invoicing Period 24.11.2022-27.12.2022</Typography>
-            </Grid>
-            <Grid item xs={8} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <ViewPdfApiButton apiUrl={''} />
-            </Grid>
+          <Grid container spacing={4} columns={16} alignItems="center" justifyContent="center">
+            {invoices.length > 0 ? (
+              invoices.filter(invoice => {
+                // Aggiungi la logica per filtrare in base al building
+                if (building === "Roznovanu") {
+                  return invoice.metadata.building === "Roznovanu"; // Filtra per Roznovanu
+                } else if (building === "Dubet Pyramid") {
+                  return invoice.metadata.building === "Dubet Pyramid"; // Filtra per Dubet Pyramid
+                }
+                return true; // Restituisci tutti i documenti se il building non è specificato
+              }).map((invoice) => (
+                <Grid container item key={invoice.filename} spacing={2} alignItems="center" justifyContent="center">
+                  <Grid item xs={12} sm={4}>
+                    <Typography variant="h6" align="center" style={{ fontSize: '3ch' }}>
+                      {invoice.metadata.name}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                    <ViewPdfApiButton filename={invoice.filename} pilot={pilot} building={building} />
+                  </Grid>
+                </Grid>
+              ))
+            ) : (
+              <Typography variant="h6" align="center" style={{ fontSize: '2.5ch' }}>
+                No invoices available.
+              </Typography>
+            )}
           </Grid>
         </Paper>
       </Container>
     </Box>
   );
-};
+
+}

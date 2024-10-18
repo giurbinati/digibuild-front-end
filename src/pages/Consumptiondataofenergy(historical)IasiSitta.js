@@ -101,10 +101,9 @@ export default function ConsumptionDataOfEnergyHistoricalIasiSitta() {
             }
 
             const responseData = await response.json();
-            console.log(responseData);
 
             // Controllo specifico per il caso in cui la query restituisce [null]
-            if (responseData.query[0] === null) {
+            if (responseData.query[0] === null || responseData.query[0].length === 0) {
                 setErrorElectricityDubet('There is no data for this time interval.');
                 return;
             }
@@ -160,7 +159,7 @@ export default function ConsumptionDataOfEnergyHistoricalIasiSitta() {
             console.log(responseData);
 
             // Controllo specifico per il caso in cui la query restituisce [null]
-            if (responseData.query[0] === null) {
+            if (responseData.query[0] === null || responseData.query[0].length === 0) {
                 setErrorElectricityRoznovanu('There is no data for this time interval.');
                 return;
             }
@@ -221,7 +220,7 @@ export default function ConsumptionDataOfEnergyHistoricalIasiSitta() {
             console.log(responseData);
 
             // Controllo specifico per il caso in cui la query restituisce [null]
-            if (responseData.query[0] === null) {
+            if (responseData.query[0] === null || responseData.query[0].length === 0) {
                 setErrorChiller('There is no data for this time interval.');
                 return;
             }

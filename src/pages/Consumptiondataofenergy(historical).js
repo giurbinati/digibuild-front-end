@@ -97,7 +97,7 @@ export default function ConsumptionDataOfEnergyHistorical() {
             console.log(responseData);
 
             // Controllo specifico per il caso in cui la query restituisce [null]
-            if (responseData.query[0] === null) {
+            if (responseData.query[0] === null || responseData.query[0].length === 0) {
                 setErrorElectricity('There is no data for this time interval.');
                 return;
             }
@@ -164,7 +164,7 @@ export default function ConsumptionDataOfEnergyHistorical() {
             console.log(responseData);
 
             // Controllo specifico per il caso in cui la query restituisce [null]
-            if (responseData.query[0] === null) {
+            if (responseData.query[0] === null || responseData.query[0].length === 0) {
                 setErrorHeating('There is no data for this time interval.');
                 return;
             }
@@ -229,7 +229,7 @@ export default function ConsumptionDataOfEnergyHistorical() {
             console.log(responseData);
 
             // Controllo specifico per il caso in cui la query restituisce [null]
-            if (responseData.query[0] === null) {
+            if (responseData.query[0] === null || responseData.query[0].length === 0) {
                 setErrorCooling('There is no data for this time interval.');
                 return;
             }
