@@ -1,11 +1,8 @@
-import * as React from 'react';
-import { useState, useEffect } from 'react';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
+import React, { useState, useEffect } from 'react';
 import Paper from '@mui/material/Paper';
+import { Box, Grid, Snackbar } from '@mui/material';
+import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -14,11 +11,14 @@ import FormLabel from '@mui/material/FormLabel';
 import getDataIasiSitta from '../services/getDataIasiSitta';
 import putDataIasiSitta from '../services/putDataIasiSitta';
 import EditableTable from '../components/editableTable';
+import Alert from '@mui/material/Alert';
 
-export default function GeneralBuildingInformationIasiSitta() {
-
+export default function AdministrativeInformationIasiSitta() {
     const [categories, setCategories] = useState([]);
-    const [building, setBuilding] = useState('Roznovanu')
+    const [building, setBuilding] = useState('Roznovanu');
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
         async function fetchCategories() {
@@ -27,7 +27,6 @@ export default function GeneralBuildingInformationIasiSitta() {
                 setCategories(data);
             } catch (error) {
                 console.error('Fetch error:', error);
-                throw error; // Rilancia l'errore per la gestione nel componente
             }
         }
         fetchCategories();
@@ -37,15 +36,86 @@ export default function GeneralBuildingInformationIasiSitta() {
         setBuilding(event.target.value);
     };
 
-    const handleConfirmChanges = async (updatedCategories) => {
-        try {
-            const buildingName = building;
-            await putDataIasiSitta.updateBuildingData(buildingName, 1, updatedCategories);
-            console.log('Aggiornamento completato con successo');
-            setCategories(updatedCategories); // Update the state with new values
-        } catch (error) {
-            console.error('Errore durante la richiesta PUT:', error);
+    const isValidDate = (dateString) => {
+        const regex = /^\d{4}-\d{2}-\d{2}$/;
+        return regex.test(dateString);
+    };
+
+    const validateInput = (updatedCategories) => {
+        let isValid = true;
+        let firstErrorMessage = ''; // Store the first error message
+
+        // Convert the object to an array
+        const categoriesArray = Array.isArray(updatedCategories)
+            ? updatedCategories
+            : Object.entries(updatedCategories).map(([key, value]) => ({
+                name: key,
+                tableData: value,
+            }));
+            console.log(categoriesArray)
+
+        // Iterate over each category
+        categoriesArray.forEach(category => {
+            const data = category.tableData;
+            console.log(data)
+
+            // Ensure data is a valid object
+            if (data && typeof data === 'object') {
+                // Validate based on type
+                if (data.type === 'string') {
+                    if (typeof data.value !== 'string') {
+                        firstErrorMessage = `${category.name} must be a string.`;
+                        isValid = false; // Set validity to false
+                    } else if (/^\d+$/.test(data.value)) {
+                        firstErrorMessage = `${category.name} must be a string (not just numbers).`;
+                        isValid = false; // Set validity to false
+                    }
+                } else if (data.type === 'number' && isNaN(Number(data.value))) {
+                    firstErrorMessage = `${category.name} must be a number.`;
+                    isValid = false; // Set validity to false
+                } else if (data.type === 'Date' && data.value && !isValidDate(data.value)) {
+                    firstErrorMessage = `${category.name} must be a date (e.g., YYYY-MM-DD).`;
+                    isValid = false; // Set validity to false
+                }
+            } else {
+                console.error('tableData is not a valid object:', category.tableData);
+            }
+        });
+
+        // If there's a validation error, set the error message
+        if (!isValid) {
+            setErrorMessage(firstErrorMessage);
+            console.error(firstErrorMessage);
         }
+
+        return isValid; // Return the validity status
+    };
+
+    const handleConfirmChanges = async (updatedCategories) => {
+        // Validate input
+        if (!validateInput(updatedCategories)) {
+            setOpenSnackbar(true); // Show Snackbar if validation fails
+            return; // Stop further execution if validation fails
+        }
+
+        // Proceed with the API call if validation passes
+        try {
+            await putDataIasiSitta.updateBuildingData(building, 1, updatedCategories);
+            console.log('Update completed successfully');
+            setCategories(updatedCategories); // Update state with new values
+            setSuccessMessage('Update completed successfully!'); // Set success message
+            setOpenSnackbar(true); // Show Snackbar for success
+        } catch (error) {
+            console.error('Error during PUT request:', error);
+            setErrorMessage('Error while updating data.');
+            setOpenSnackbar(true); // Show Snackbar for error
+        }
+    };
+
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false);
+        setSuccessMessage(''); // Clear success message
+        setErrorMessage('');   // Clear error message
     };
 
     return (
@@ -61,7 +131,6 @@ export default function GeneralBuildingInformationIasiSitta() {
         >
             <Container maxWidth="xl" sx={{ padding: 0 }}>
                 <Grid container direction="column" alignItems="center" spacing={3}>
-                    {/* Grid item per il Titolo */}
                     <Grid item xs={12}>
                         <Paper elevation={0} sx={{ textAlign: 'center' }}>
                             <Typography
@@ -85,7 +154,6 @@ export default function GeneralBuildingInformationIasiSitta() {
                                 name="radio-buttons-group"
                                 value={building}
                                 onChange={handleRadioChange}
-
                             >
                                 <FormControlLabel value="Roznovanu" control={<Radio />} label="Roznovanu Palace" />
                                 <FormControlLabel value="Dubet Pyramid" control={<Radio />} label="Dubet Pyramid" />
@@ -97,6 +165,16 @@ export default function GeneralBuildingInformationIasiSitta() {
                     </Grid>
                 </Grid>
             </Container>
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={errorMessage ? 'error' : 'success'} sx={{ width: '100%' }}>
+                    {errorMessage || successMessage}
+                </Alert>
+            </Snackbar>
         </Box>
     );
-}
+};

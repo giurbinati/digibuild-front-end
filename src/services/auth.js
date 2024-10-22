@@ -46,19 +46,6 @@ class AuthService {
         });
         return response;
     };
-
-   /*  
-    getRole() {
-        return this.role;
-    }
-    
-   getPilot() {
-        return this.pilot;
-    } */
-    /*
-    getDblStructure() {
-        return this.dblStructure;
-    } */
 }
 
 export default new AuthService();

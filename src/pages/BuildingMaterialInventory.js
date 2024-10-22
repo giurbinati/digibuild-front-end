@@ -13,9 +13,16 @@ import Container from '@mui/material/Container';
 import TablePagination from '@mui/material/TablePagination';
 import GetDataFVH from '../services/getDataFVH';
 import putDataFVH from '../services/putDataFVH';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
-export default function EditableTable() {
+export default function tableBuildingMaterialInventory() {
     const [categories, setCategories] = useState([]);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [successSnackbar, setSuccessSnackbar] = useState(false); // Stato per il messaggio di successo
+    const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState(''); // Stato per il messaggio di successo
+
 
     useEffect(() => {
         async function fetchCategories() {
@@ -36,7 +43,7 @@ export default function EditableTable() {
     const rows = Object.keys(categories).map(key => ({
         name: key,
         value: categories[key].value,
-        type: categories[key].type
+        type: categories[key].typeofdata
     }));
 
     const handleEditRow = (index) => {
@@ -85,30 +92,99 @@ export default function EditableTable() {
         const newMaterialIndex = lastMaterialIndex + 1;
 
         const newMaterial = {
-            [`Material ${newMaterialIndex} - Type`]: { value: "", type: "Descriptive" },
-            [`Material ${newMaterialIndex} - Location`]: { value: "", type: "Physical" },
-            [`Material ${newMaterialIndex} - Volume`]: { value: "", type: "Physical" },
-            [`Material ${newMaterialIndex} - Weight`]: { value: "", type: "Physical" },
-            [`Material ${newMaterialIndex} - Embodied carbon`]: { value: "", type: "Physical" },
-            [`Material ${newMaterialIndex} - Life span`]: { value: "", type: "Physical" },
-            [`Material ${newMaterialIndex} - Fire resistance class`]: { value: "Rating", type: "Rating" },
-            [`Material ${newMaterialIndex} - Waste category`]: { value: "Code", type: "Code" },
-            [`Material ${newMaterialIndex} - Certificate 1`]: { value: "Linked document", type: "Linked document" },
-            [`Material ${newMaterialIndex} - Chemical declaration`]: { value: "Linked document", type: "Linked document" },
-            [`Material ${newMaterialIndex} - Global Trade Item Number`]: { value: "Linked document", type: "Linked document" }
+            [`Material ${newMaterialIndex} - Type`]: { value: "", typeofdata: "Descriptive", type: "string" },
+            [`Material ${newMaterialIndex} - Location`]: { value: "", typeofdata: "Physical", type: "string" },
+            [`Material ${newMaterialIndex} - Volume`]: { value: "", typeofdata: "Physical", type: "string" },
+            [`Material ${newMaterialIndex} - Weight`]: { value: "", typeofdata: "Physical", type: "string" },
+            [`Material ${newMaterialIndex} - Embodied carbon`]: { value: "", typeofdata: "Physical", type: "string" },
+            [`Material ${newMaterialIndex} - Life span`]: { value: "", typeofdata: "Physical", type: "string" },
+            [`Material ${newMaterialIndex} - Fire resistance class`]: { value: "", typeofdata: "Rating", type: "number" },
+            [`Material ${newMaterialIndex} - Waste category`]: { value: "", typeofdata: "Code", type: "string" },
+            [`Material ${newMaterialIndex} - Certificate 1`]: { value: "Linked document", typeofdata: "Linked document", type: "Linked documente" },
+            [`Material ${newMaterialIndex} - Chemical declaration`]: { value: "Linked document", typeofdata: "Linked document", type: "Linked documente" },
+            [`Material ${newMaterialIndex} - Global Trade Item Number`]: { value: "Linked document", typeofdata: "Linked document", type: "Linked documente" }
         };
 
         setCategories(prevCategories => ({ ...prevCategories, ...newMaterial }));
     };
 
+    const isValidDate = (dateString) => {
+        const regex = /^\d{4}-\d{2}-\d{2}$/;
+        return regex.test(dateString);
+    };
+
+    const validateInput = (updatedCategories) => {
+        let isValid = true;
+        const categoriesArray = Array.isArray(updatedCategories)
+            ? updatedCategories
+            : Object.keys(updatedCategories).map(key => ({
+                name: key,
+                tableData: updatedCategories[key]
+            }));
+
+        categoriesArray.forEach(category => {
+            //console.log('Category:', category);
+            if (typeof category.tableData === 'object' && category.tableData !== null) {
+                const data = category.tableData;
+                console.log(data)
+                if (data.type === 'string') {
+                    if (typeof data.value !== 'string') {
+                        setErrorMessage(`${category.name} must be a string.`);
+                        console.error(`${category.name} must be a string.`);
+                        isValid = false;
+                    } else if (/^\d+$/.test(data.value)) { // Controlla se è solo numeri
+                        setErrorMessage(`${category.name} must be a string.`);
+                        console.error(`${category.name} must be a string.`);
+                        isValid = false;
+                    }
+                }
+                if (data.type === 'number' && isNaN(Number(data.value))) {
+                    setErrorMessage(`${category.name} must be a number.`);
+                    console.error(`${category.name} must be a number.`);
+                    isValid = false;
+                }
+                if (data.type === 'Date' && data.value && !isValidDate(data.value)) {
+                    setErrorMessage(`${category.name} must be a date (es. YYYY-MM-DD).`);
+                    console.error(`${category.name} must be a date.`);
+                    isValid = false;
+                }
+                // Validazione aggiuntiva per dati collegati
+                /*
+                if (data.type === 'Linked data' && typeof data.value !== 'string') {
+                    setErrorMessage(`${category.name} deve essere un collegamento valido (Linked data).`);
+                    console.error(`${category.name} deve essere un collegamento valido.`);
+                    isValid = false;
+                }
+                */
+            } else {
+                console.error('tableData non è un oggetto valido:', category.tableData);
+            }
+        });
+        return isValid;
+    };
+
     const handleConfirmChanges = async () => {
+        const updatedValues = { ...categories };
+        if (!validateInput(updatedValues)) {
+            setOpenSnackbar(true); // Mostra un messaggio di errore se la validazione fallisce
+            return;
+        }
         try {
-            const updatedValues = { ...categories };
-            const response = await putDataFVH.updateData(2, updatedValues, 0);
+            await putDataFVH.updateData(2, updatedValues, 0);
             console.log('Aggiornamento completato con successo');
+            setCategories(updatedValues); // Aggiorna lo stato con i nuovi valori
+            setSuccessMessage('Data updated successfully!'); // Imposta il messaggio di successo
+            setSuccessSnackbar(true); // Mostra il messaggio di successo
         } catch (error) {
             console.error('Errore durante la richiesta PUT:', error);
+            setErrorMessage('Error while updating data.');
+            setOpenSnackbar(true);
         }
+    };
+
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false);
+        setSuccessSnackbar(false); // Chiudi il messaggio di successo
     };
 
     const tableBuildingMaterialInventory = () => (
@@ -237,6 +313,26 @@ export default function EditableTable() {
                     </Grid>
                 </Grid>
             </Container>
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
+            <Snackbar
+                open={successSnackbar}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+                    {successMessage}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 }

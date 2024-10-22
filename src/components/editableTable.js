@@ -17,7 +17,7 @@ const EditableTable = ({ categories, onConfirmChanges }) => {
     const rows = Object.keys(categories).map(key => ({
         name: key,
         value: categories[key].value,
-        type: categories[key].type
+        typeofdata: categories[key].typeofdata
     }));
 
     const handleEditRow = (index) => {
@@ -81,7 +81,7 @@ const EditableTable = ({ categories, onConfirmChanges }) => {
                                     )}
                                 </TableCell>
                                 <TableCell align="right" style={{ fontSize: '2.5ch' }}>
-                                    {row.type}
+                                    {row.typeofdata}
                                 </TableCell>
                                 <TableCell align="right">
                                     {editableRowIndex === index ? (

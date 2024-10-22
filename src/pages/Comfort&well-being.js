@@ -10,9 +10,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Grid } from '@mui/material';
-import Popover from '@mui/material/Popover';
+import Tooltip from '@mui/material/Tooltip';
 
-export default function Home({ setList, list }) {
+export default function ComfortWellBeing() {
     const [values, setValues] = useState({
         "Comfort level(sPMV)": "-0.06",
         'Thermal comfort(KPI)': "100%",
@@ -44,11 +44,9 @@ export default function Home({ setList, list }) {
                     </TableHead>
                     <TableBody>
                         {Object.keys(values).map((row, index) => {
-                            // Verifica se la riga è la prima o la terza
-                            const showPopover = index === 0 || index === 2 || index === 1;
                             let message;
                             if (index === 0) {
-                                message = "The comfort level is calculated as simplified Predicted Mean Vote (sPMV) and it quantifies comfort starting from indoor temperatures and relative humidity.  ";
+                                message = "The comfort level is calculated as simplified Predicted Mean Vote (sPMV) and it quantifies comfort starting from indoor temperatures and relative humidity.";
                             } else if (index === 1) {
                                 message = "This metric is associated with the number of hours the occupant experiences thermal comfort.";
                             } else if (index === 2) {
@@ -58,34 +56,22 @@ export default function Home({ setList, list }) {
                             }
 
                             return (
-                                <TableRow
+                                <Tooltip
                                     key={row}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                    onMouseEnter={showPopover ? (event) => handlePopoverOpen(event, index) : null}
-                                    onMouseLeave={showPopover ? handlePopoverClose : null}
+                                    title={<Typography sx={{ p: 1 }}>{message}</Typography>}
+                                    arrow
+                                    enterTouchDelay={0}
+                                    leaveTouchDelay={3000}
                                 >
-                                    <TableCell component="th" scope="row" style={{ fontSize: '2.5ch' }}>
-                                        {row}
-                                    </TableCell>
-                                    <TableCell align="right" style={{ fontSize: '2.5ch' }}>{values[row]}</TableCell>
-                                    {showPopover && (
-                                        <Popover
-                                            open={hoveredRow === index}
-                                            anchorEl={anchorEl}
-                                            onClose={handlePopoverClose}
-                                            anchorOrigin={{
-                                                vertical: 'bottom',
-                                                horizontal: 'left',
-                                            }}
-                                            transformOrigin={{
-                                                vertical: 'top',
-                                                horizontal: 'left',
-                                            }}
-                                        >
-                                            <Typography sx={{ p: 2 }}>{message}</Typography>
-                                        </Popover>
-                                    )}
-                                </TableRow>
+                                    <TableRow
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >
+                                        <TableCell component="th" scope="row" style={{ fontSize: '2.5ch' }}>
+                                            {row}
+                                        </TableCell>
+                                        <TableCell align="right" style={{ fontSize: '2.5ch' }}>{values[row]}</TableCell>
+                                    </TableRow>
+                                </Tooltip>
                             );
                         })}
                     </TableBody>
@@ -93,8 +79,6 @@ export default function Home({ setList, list }) {
             </TableContainer>
         );
     };
-
-
 
     return (
         <Box

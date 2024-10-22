@@ -8,7 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, Snackbar } from '@mui/material';
 import Container from '@mui/material/Container';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -18,6 +18,7 @@ import FormLabel from '@mui/material/FormLabel';
 import TablePagination from '@mui/material/TablePagination';
 import getDataIasiSitta from '../services/getDataIasiSitta';
 import putDataIasiSitta from '../services/putDataIasiSitta';
+import Alert from '@mui/material/Alert';
 
 
 export default function EditableTable() {
@@ -25,6 +26,9 @@ export default function EditableTable() {
     const [building, setBuilding] = useState('Roznovanu')
     const [editableRowIndex, setEditableRowIndex] = useState(null);
     const [editedValue, setEditedValue] = useState('');
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
         async function fetchCategories() {
@@ -47,7 +51,7 @@ export default function EditableTable() {
     const rows = Object.keys(categories).map(key => ({
         name: key,
         value: categories[key].value,
-        type: categories[key].type
+        typeofdata: categories[key].typeofdata
     }));
 
     const handleEditRow = (index) => {
@@ -59,22 +63,35 @@ export default function EditableTable() {
     const handleSave = async () => {
         const updatedValues = { ...categories };
         const actualIndex = editableRowIndex;
-        updatedValues[rows[actualIndex].name] = editedValue;
+        updatedValues[rows[actualIndex].name] = {
+            ...updatedValues[rows[actualIndex].name], // Mantenere tutte le altre proprietà come "type"
+            value: editedValue // Aggiorna solo il valore
+        };
         setCategories(updatedValues);
         setEditableRowIndex(null);
         setEditedValue('');
     };
+    
 
     const handleConfirmChanges = async () => {
         // Invia la richiesta PUT al backend con l'indice dell'array e i dati aggiornati
         try {
             const updatedValues = { ...categories };
             const buildingName = building;
-            const response = await putDataIasiSitta.updateBuildingData(buildingName, 2, updatedValues, 0);
-            //console.log(response)
+            if (!validateInput(updatedValues)) {
+                setOpenSnackbar(true); // Show Snackbar if validation fails
+                return; // Stop further execution if validation fails
+            }
+            await putDataIasiSitta.updateBuildingData(buildingName, 2, updatedValues, 0);
+            console.log('Update completed successfully');
+            setCategories(updatedValues); // Update state with new values
+            setSuccessMessage('Update completed successfully!'); // Set success message
+            setErrorMessage('');  // Rimuove eventuali messaggi di errore
+            setOpenSnackbar(true); // Mostra lo Snackbar con il messaggio di successo
         } catch (error) {
-            console.log(error);
-            console.error('Errore durante la richiesta PUT:', error);
+            console.error('Error during PUT request:', error);
+            setErrorMessage('Error while updating data.');
+            setOpenSnackbar(true); // Show Snackbar for error
         }
     };
 
@@ -115,17 +132,17 @@ export default function EditableTable() {
 
         // Crea il nuovo set di campi per il materiale
         const newMaterial = {
-            [`Material ${newMaterialIndex} - Type`]: { value: "", type: "Descriptive" },
-            [`Material ${newMaterialIndex} - Location`]: { value: "", type: "Physical" },
-            [`Material ${newMaterialIndex} - Volume`]: { value: "", type: "Physical" },
-            [`Material ${newMaterialIndex} - Weight`]: { value: "", type: "Physical" },
-            [`Material ${newMaterialIndex} - Embodied carbon`]: { value: "", type: "Physical" },
-            [`Material ${newMaterialIndex} - Life span`]: { value: "", type: "Physical" },
-            [`Material ${newMaterialIndex} - Fire resistance class`]: { value: "Rating", type: "Rating" },
-            [`Material ${newMaterialIndex} - Waste category`]: { value: "Code", type: "Code" },
-            [`Material ${newMaterialIndex} - Certificate 1`]: { value: "Linked document", type: "Linked document" },
-            [`Material ${newMaterialIndex} - Chemical declaration`]: { value: "Linked document", type: "Linked document" },
-            [`Material ${newMaterialIndex} - Global Trade Item Number`]: { value: "Linked document", type: "Linked document" }
+            [`Material ${newMaterialIndex} - Type`]: { value: "", typeofdata: "Descriptive", type: "string" },
+            [`Material ${newMaterialIndex} - Location`]: { value: "", typeofdata: "Physical", type: "string" },
+            [`Material ${newMaterialIndex} - Volume`]: { value: "", typeofdata: "Physical", type: "string" },
+            [`Material ${newMaterialIndex} - Weight`]: { value: "", typeofdata: "Physical", type: "string" },
+            [`Material ${newMaterialIndex} - Embodied carbon`]: { value: "", typeofdata: "Physical", type: "string" },
+            [`Material ${newMaterialIndex} - Life span`]: { value: "", typeofdata: "Physical", type: "string" },
+            [`Material ${newMaterialIndex} - Fire resistance class`]: { value: "", typeofdata: "Rating", type: "number" },
+            [`Material ${newMaterialIndex} - Waste category`]: { value: "", typeofdata: "Code", type: "string" },
+            [`Material ${newMaterialIndex} - Certificate 1`]: { value: "Linked document", typeofdata: "Linked document", type: "Linked documente" },
+            [`Material ${newMaterialIndex} - Chemical declaration`]: { value: "Linked document", typeofdata: "Linked document", type: "Linked documente" },
+            [`Material ${newMaterialIndex} - Global Trade Item Number`]: { value: "Linked document", typeofdata: "Linked document", type: "Linked documente" }
         };
 
         // Aggiorna lo stato delle categorie con il nuovo materiale
@@ -169,7 +186,7 @@ export default function EditableTable() {
                                     )}
                                 </TableCell>
                                 <TableCell align="right" style={{ fontSize: '2.5ch' }}>
-                                    {row.type}
+                                    {row.typeofdata}
                                 </TableCell>
                                 <TableCell align="right">
                                     {editableRowIndex === (page * rowsPerPage + index) ? (
@@ -210,6 +227,58 @@ export default function EditableTable() {
                 />
             </TableContainer>
         );
+    };
+
+    const isValidDate = (dateString) => {
+        const regex = /^\d{4}-\d{2}-\d{2}$/;
+        return regex.test(dateString);
+    };
+
+    const validateInput = (updatedCategories) => {
+        let isValid = true;
+        const categoriesArray = Array.isArray(updatedCategories)
+            ? updatedCategories
+            : Object.keys(updatedCategories).map(key => ({
+                name: key,
+                tableData: updatedCategories[key]
+            }));
+
+        categoriesArray.forEach(category => {
+            if (typeof category.tableData === 'object' && category.tableData !== null) {
+                const data = category.tableData;
+                console.log(data);
+                if (data.type === 'string') {
+                    if (typeof data.value !== 'string') {
+                        setErrorMessage(`${category.name} must be a string.`);
+                        console.error(`${category.name} must be a string.`);
+                        isValid = false;
+                    } else if (/^\d+$/.test(data.value)) { // Controlla se è solo numeri
+                        setErrorMessage(`${category.name} must be a string.`);
+                        console.error(`${category.name} must be a string.`);
+                        isValid = false;
+                    }
+                }
+                if (data.type === 'number' && isNaN(Number(data.value))) {
+                    setErrorMessage(`${category.name} must be a number.`);
+                    console.error(`${category.name} must be a number.`);
+                    isValid = false;
+                }
+                if (data.type === 'Date' && data.value && !isValidDate(data.value)) {
+                    setErrorMessage(`${category.name} must be a date (es. YYYY-MM-DD).`);
+                    console.error(`${category.name} must be a date.`);
+                    isValid = false;
+                }
+            } else {
+                console.error('tableData non è un oggetto valido:', category.tableData);
+            }
+        });
+        return isValid;
+    };
+
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false);
+        setSuccessMessage(''); // Clear success message
+        setErrorMessage('');   // Clear error message
     };
 
     return (
@@ -293,6 +362,16 @@ export default function EditableTable() {
                     </Grid>
                 </Grid>
             </Container>
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={errorMessage ? 'error' : 'success'} sx={{ width: '100%' }}>
+                    {errorMessage || successMessage}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 }

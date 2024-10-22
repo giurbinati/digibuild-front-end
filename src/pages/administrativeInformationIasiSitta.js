@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Paper from '@mui/material/Paper';
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, Snackbar } from '@mui/material';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Radio from '@mui/material/Radio';
@@ -11,11 +11,14 @@ import FormLabel from '@mui/material/FormLabel';
 import getDataIasiSitta from '../services/getDataIasiSitta';
 import putDataIasiSitta from '../services/putDataIasiSitta';
 import EditableTable from '../components/editableTable';
+import Alert from '@mui/material/Alert';
 
 export default function AdministrativeInformationIasiSitta() {
-
     const [categories, setCategories] = useState([]);
-    const [building, setBuilding] = useState('Roznovanu')
+    const [building, setBuilding] = useState('Roznovanu');
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
         async function fetchCategories() {
@@ -24,7 +27,6 @@ export default function AdministrativeInformationIasiSitta() {
                 setCategories(data);
             } catch (error) {
                 console.error('Fetch error:', error);
-                throw error; // Rilancia l'errore per la gestione nel componente
             }
         }
         fetchCategories();
@@ -34,17 +36,80 @@ export default function AdministrativeInformationIasiSitta() {
         setBuilding(event.target.value);
     };
 
+    const isValidDate = (dateString) => {
+        const regex = /^\d{4}-\d{2}-\d{2}$/;
+        return regex.test(dateString);
+    };
+
+    const validateInput = (updatedCategories) => {
+        let isValid = true;
+        const categoriesArray = Array.isArray(updatedCategories)
+            ? updatedCategories
+            : Object.keys(updatedCategories).map(key => ({
+                name: key,
+                tableData: updatedCategories[key]
+            }));
+
+        categoriesArray.forEach(category => {
+            if (typeof category.tableData === 'object' && category.tableData !== null) {
+                const data = category.tableData;
+                console.log(data);
+                if (data.type === 'string') {
+                    if (typeof data.value !== 'string') {
+                        setErrorMessage(`${category.name} must be a string.`);
+                        console.error(`${category.name} must be a string.`);
+                        isValid = false;
+                    } else if (/^\d+$/.test(data.value)) { // Controlla se è solo numeri
+                        setErrorMessage(`${category.name} must be a string.`);
+                        console.error(`${category.name} must be a string.`);
+                        isValid = false;
+                    }
+                }
+                if (data.type === 'number' && isNaN(Number(data.value))) {
+                    setErrorMessage(`${category.name} must be a number.`);
+                    console.error(`${category.name} must be a number.`);
+                    isValid = false;
+                }
+                if (data.type === 'Date' && data.value && !isValidDate(data.value)) {
+                    setErrorMessage(`${category.name} must be a date (es. YYYY-MM-DD).`);
+                    console.error(`${category.name} must be a date.`);
+                    isValid = false;
+                }
+            } else {
+                console.error('tableData non è un oggetto valido:', category.tableData);
+            }
+        });
+        return isValid;
+    };
+
     const handleConfirmChanges = async (updatedCategories) => {
+        // Validate input
+        const buildingName = building;
+        if (!validateInput(updatedCategories)) {
+            setOpenSnackbar(true); // Show Snackbar if validation fails
+            return; // Stop further execution if validation fails
+        }
+
+        // Proceed with the API call if validation passes
         try {
-            const buildingName = building;
             await putDataIasiSitta.updateBuildingData(buildingName, 0, updatedCategories);
-            console.log('Aggiornamento completato con successo');
-            setCategories(updatedCategories); // Update the state with new values
+            console.log('Update completed successfully');
+            setCategories(updatedCategories); // Update state with new values
+            setSuccessMessage('Update completed successfully!'); // Set success message
+            setErrorMessage('');  // Rimuove eventuali messaggi di errore
+            setOpenSnackbar(true); // Mostra lo Snackbar con il messaggio di successo
         } catch (error) {
-            console.error('Errore durante la richiesta PUT:', error);
+            console.error('Error during PUT request:', error);
+            setErrorMessage('Error while updating data.');
+            setOpenSnackbar(true); // Show Snackbar for error
         }
     };
 
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false);
+        setSuccessMessage(''); // Clear success message
+        setErrorMessage('');   // Clear error message
+    };
 
     return (
         <Box
@@ -59,7 +124,6 @@ export default function AdministrativeInformationIasiSitta() {
         >
             <Container maxWidth="xl" sx={{ padding: 0 }}>
                 <Grid container direction="column" alignItems="center" spacing={3}>
-                    {/* Grid item per il Titolo */}
                     <Grid item xs={12}>
                         <Paper elevation={0} sx={{ textAlign: 'center' }}>
                             <Typography
@@ -83,7 +147,6 @@ export default function AdministrativeInformationIasiSitta() {
                                 name="radio-buttons-group"
                                 value={building}
                                 onChange={handleRadioChange}
-
                             >
                                 <FormControlLabel value="Roznovanu" control={<Radio />} label="Roznovanu Palace" />
                                 <FormControlLabel value="Dubet Pyramid" control={<Radio />} label="Dubet Pyramid" />
@@ -95,6 +158,16 @@ export default function AdministrativeInformationIasiSitta() {
                     </Grid>
                 </Grid>
             </Container>
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={errorMessage ? 'error' : 'success'} sx={{ width: '100%' }}>
+                    {errorMessage || successMessage}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };
