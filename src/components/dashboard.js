@@ -30,7 +30,6 @@ import ConsumptiondataofenergyForecastingIasiSitta from '../pages/Consumptiondat
 import ConsumptiondataofenergyHistoricalIasiSitta from '../pages/Consumptiondataofenergy(historical)IasiSitta'
 //import ConsumptiondataofenergyInvoices from '../pages/Consumptiondataofenergy(invoices)'
 import MaintenanceReport from '../pages/maintenanceReport'
-import BuildingPerformanceIASI from '../pages/documentationPerformanceIASI'
 import CostInformationinvoices from '../pages/CostInformationHeatingAndHotWater'
 import DesignAndPlansOfTheBuildingIasiSitta from '../pages/DesignAndPlansOfTheBuildingIasiSitta'
 import DocumentationIasiSitta from '../pages/DocumentationIasiSitta'
@@ -402,7 +401,7 @@ export default function Dashboard() {
                                         }}>
                                         <Tab label="Consumption data of energy (forecasting)" {...a11yProps(0)} />
                                         {/* <Tab label="Consumption data of energy, water, gas, and other resources (invoices)" {...a11yProps(1)} /> */}
-                                        <Tab label="Consumption data of energy and chiller(historical)" {...a11yProps(1)} />
+                                        <Tab label="Consumption data of energy and chiller (historical)" {...a11yProps(1)} />
                                         <Tab label="Maintenance report" {...a11yProps(2)} />
                                     </Tabs>
                                 </Box>

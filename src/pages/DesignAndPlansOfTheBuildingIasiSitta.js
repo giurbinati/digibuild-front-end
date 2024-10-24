@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import Container from '@mui/material/Container';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Radio from '@mui/material/Radio';
@@ -12,7 +10,7 @@ import FormLabel from '@mui/material/FormLabel';
 import FloorTabsRoznovanuIasiSitta from '../components/floorTabsRoznovanuIasiStta';
 import FloorTabsDubetPiramydIasiSitta from '../components/floorTabsDubetPiramydIasiStta';
 
-export default function Home() {
+export default function DesignAndPlansOfTheBuildingIasi() {
   const [building, setBuilding] = useState('Roznovanu Palace'); // Stato per tenere traccia dell'edificio selezionato
 
   const handleRadioChange = (event) => {
@@ -28,51 +26,51 @@ export default function Home() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: '2vh',
+        marginTop: '2vh'
       }}
     >
       <Container maxWidth="xl" sx={{ padding: 0 }}>
-        <Box mb={4}>
-          <Grid container spacing={2} justifyContent="center" alignItems="center">
-            <Grid item>
-              {/* RadioGroup per selezionare l'edificio */}
-              <FormControl component="fieldset">
-                <FormLabel component="legend">Building</FormLabel>
-                <RadioGroup
-                  aria-label="building"
-                  name="building"
-                  value={building}
-                  onChange={handleRadioChange}
-                >
-                  <FormControlLabel
-                    value="Roznovanu Palace"
-                    control={<Radio />}
-                    label="Roznovanu Palace"
-                  />
-                  <FormControlLabel
-                    value="Dubet Pyramid"
-                    control={<Radio />}
-                    label="Dubet Pyramid"
-                  />
-                </RadioGroup>
-              </FormControl>
-            </Grid>
-          </Grid>
-        </Box>
+        <Grid container direction="column" alignItems="center" spacing={3}>
 
-        <Box>
-          <Grid container spacing={2} justifyContent="center">
-            <Grid item>
-              {/* Visualizza il tab corretto in base all'edificio selezionato */}
-              {building === 'Roznovanu Palace' ? (
-                <FloorTabsRoznovanuIasiSitta />
-              ) : (
-                <FloorTabsDubetPiramydIasiSitta />
-              )}
-            </Grid>
-          </Grid>
-        </Box>
-      </Container>
-    </Box>
+          <FormControl>
+            <FormLabel sx={{ fontSize: '2.5ch' }} id="demo-radio-buttons-group-label">Building</FormLabel>
+            <RadioGroup
+              aria-labelledby="demo-radio-buttons-group-label"
+              name="radio-buttons-group"
+              value={building}
+              onChange={handleRadioChange}
+
+            >
+              <FormControlLabel value="Roznovanu Palace" control={<Radio />} label="Roznovanu Palace" />
+              <FormControlLabel value="Dubet Pyramid" control={<Radio />} label="Dubet Pyramid" />
+            </RadioGroup>
+          </FormControl>
+        </Grid>
+        {building === "Dubet Pyramid" && (
+          <>
+            <Container maxWidth="xl" sx={{ padding: 0 }}>
+              <Grid container spacing={2} justifyContent="center">
+                {/* Grid item per il Paper contenente la Tabella e il Bottone */}
+                <Grid item>
+                  <FloorTabsRoznovanuIasiSitta />
+                </Grid>
+              </Grid>
+            </Container>
+          </>
+        )}
+        {building === "Roznovanu Palace" && (
+          <>
+            <Container maxWidth="xl" sx={{ padding: 0 }}>
+              <Grid container spacing={2} justifyContent="center">
+                {/* Grid item per il Paper contenente la Tabella e il Bottone */}
+                <Grid item>
+                  <FloorTabsDubetPiramydIasiSitta />
+                </Grid>
+              </Grid>
+            </Container>
+          </>
+        )}
+      </Container >
+    </Box >
   );
 }

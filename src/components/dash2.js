@@ -7,30 +7,34 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 
 import AdministrativeInformation from '../pages/administrativeInformation'
-import AdministrativeInformationIasiSitta from '../pages/administrativeInformationIasiSitta'
 import GeneralBuildingInformation from '../pages/generalBuildingInformation'
-import GeneralBuildingInformationIasiSitta from '../pages/generalBuildingInformationIasiSitta'
 import BuildingMaterialInventory from '../pages/BuildingMaterialInventory'
-import BuildingMaterialInventoryIAsiSitta from '../pages/BuildingMaterialInventoryIasiSitta'
 import BuildingEnvelope from '../pages/buildingEnvelope'
-import BuildingEnvelopeIasiSitta from '../pages/buildingEnvelopeIasiSitta'
 import TechnicalBuildingSystem from '../pages/technicalBuildingSystem'
-import TechnicalBuildingSystemIasiSitta from '../pages/technicalBuildingSystemIasiSitta'
-import Equipmentwithdescriptionanddesign from '../pages/buildingEnvelope'
+import DocumentationPerformance from '../pages/documentationPerformance'
+import Documentation from '../pages/Documentation'
+import BIM from '../pages/BIM'
+import DesignAndPlansOfTheBuilding from '../pages/DesignAndPlansOfTheBuilding'
 import ConsumptiondataofenergyForecasting from '../pages/Consumptiondataofenergy(forecasting)'
 import ConsumptiondataofenergyHistorical from '../pages/Consumptiondataofenergy(historical)'
 import ConsumptiondataofenergyInvoices from '../pages/Consumptiondataofenergy(invoices)'
 import Informationonoccupancy from '../pages/Informationonoccupancy'
 import ComfortEwellbeing from '../pages/Comfort&well-being'
-import BuildingPerformance from '../pages/documentationPerformance'
+import EfficientAndClimateResilientBuildings from '../pages/EfficientAndClimateResilientBuildings'
+import AdministrativeInformationIasiSitta from '../pages/administrativeInformationIasiSitta'
+import GeneralBuildingInformationIasiSitta from '../pages/generalBuildingInformationIasiSitta'
+import BuildingMaterialInventoryIAsiSitta from '../pages/BuildingMaterialInventoryIasiSitta'
+import BuildingEnvelopeIasiSitta from '../pages/buildingEnvelopeIasiSitta'
+import TechnicalBuildingSystemIasiSitta from '../pages/technicalBuildingSystemIasiSitta'
+import ConsumptiondataofenergyForecastingIasiSitta from '../pages/Consumptiondataofenergy(forecasting)IasiSitta'
+import ConsumptiondataofenergyHistoricalIasiSitta from '../pages/Consumptiondataofenergy(historical)IasiSitta'
+//import ConsumptiondataofenergyInvoices from '../pages/Consumptiondataofenergy(invoices)'
 import MaintenanceReport from '../pages/maintenanceReport'
-import BuildingPerformanceIASI from '../pages/documentationPerformanceIASI'
 import CostInformationinvoices from '../pages/CostInformationHeatingAndHotWater'
-import Savingsintheoperatingcostsrenovation from '../pages/savingsintheoperatingcosts(renovation)'
-import DesignAndPlansOfTheBuilding from '../pages/DesignAndPlansOfTheBuilding'
-import Documentation from '../pages/Documentation'
+import DesignAndPlansOfTheBuildingIasiSitta from '../pages/DesignAndPlansOfTheBuildingIasiSitta'
 import DocumentationIasiSitta from '../pages/DocumentationIasiSitta'
-import BIM from '../pages/BIM'
+import CostInformationHotWater from '../pages/CostInformationHotWater'
+import CostInformationHeating from '../pages/CostInformationHeating'
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -73,6 +77,8 @@ export default function BasicTabs() {
     const [valueSubSub2, setValueSubSub2] = useState(0);
     const [valuesub3, setValueSub3] = useState(0);
     const [valueSubSub3, setValueSubSub3] = useState(0);
+    const [valuesub4, setValueSub4] = useState(0);
+    const [valueSubSub4, setValueSubSub4] = useState(0);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -82,6 +88,8 @@ export default function BasicTabs() {
         setValueSubSub2(0);
         setValueSub3(0);
         setValueSubSub3(0);
+        setValueSub4(0);
+        setValueSubSub4(0);
     };
 
     const handleChange1 = (event, newValue) => {
@@ -99,58 +107,97 @@ export default function BasicTabs() {
         setValueSubSub3(0);
     };
 
+    const handleChange4 = (event, newValue) => {
+        setValueSub4(newValue);
+        setValueSubSub4(0);
+    };
+
     const [userRole, setUserRole] = useState("");
     const [userDblStructure, setUserDblStructure] = useState("");
 
     useEffect(() => {
-        // Nel componente dove hai bisogno del ruolo
-        setUserRole(sessionStorage.getItem('ROLE'));
-        console.log(userRole)
-    }, []); // Dipendenza vuota per eseguire useEffect solo una volta
+        const role = sessionStorage.getItem('ROLE');
+        const dblStructure = sessionStorage.getItem('PILOT');
 
-    useEffect(() => {
-        // Nel componente dove hai bisogno del ruolo
-        setUserDblStructure(sessionStorage.getItem('PILOT'));
-        console.log(userDblStructure)
+        if (role && dblStructure) {
+            setUserRole(role);
+            setUserDblStructure(dblStructure);
+            console.log("Ruolo:", role);
+            console.log("Struttura:", dblStructure);
+        }
     }, []); // Dipendenza vuota per eseguire useEffect solo una volta
 
     return (
         <Box sx={{ width: '100%' }}>
-            {(userDblStructure === 'FVH' && userRole === 'Building Manager') && (
+            {(userDblStructure === 'FVH' && userRole === 'Building_Manager') && (
                 <>
                     <Grid container spacing={2} justifyContent="center">
                         <Grid item xs={12}>
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                <Tabs value={value} onChange={handleChange} variant="fullWidth" aria-label="basic tabs example">
+                                <Tabs
+                                    value={value}
+                                    onChange={handleChange}
+                                    variant="fullWidth"
+                                    aria-label="basic tabs example"
+                                    sx={{
+                                        '& .MuiTab-root': {
+                                            minHeight: '5vh', // Imposta l'altezza minima
+                                            fontSize: '2.5ch',
+                                            fontWeight: 'bold',
+                                            textAlign: 'center',
+                                            backgroundColor: 'rgba(5, 123, 190, 0.2)', // Sfondo nero
+                                            color: '#057BBE', // Colore del testo bianco
+                                            '&.Mui-selected': {
+                                                backgroundColor: '#057BBE', // Sfondo blu quando selezionato
+                                                color: 'white', // Colore del testo bianco
+                                            },
+                                        },
+                                    }}
+                                >
                                     <Tab label="Building Element Information" {...a11yProps(0)} />
                                     <Tab label="Building Operation and Use" {...a11yProps(1)} />
                                     <Tab label="Building Performance" {...a11yProps(2)} />
-                                    <Tab label="Building Documentation BIM" {...a11yProps(3)} />
+                                    <Tab label="Building Documentation" {...a11yProps(3)} />
                                 </Tabs>
                             </Box>
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={0}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'center' }}>
-                                    <Tabs value={valuesub} onChange={handleChange1} aria-label="basic example" sx={{ '& .MuiTab-root': { margin: '0 10px' } }}>
+                                    <Tabs value={valuesub} onChange={handleChange1} aria-label="basic example" sx={{
+                                        '& .MuiTab-root': {
+                                            flex: '1', margin: '0 10px', fontWeight: 'bold', textAlign: 'center', fontSize: '2.5ch', '&.Mui-selected': {
+                                                color: '#41BFB9', // Colore del testo bianco
+                                            },
+                                        }
+                                    }}>
                                         <Tab label="Building Material Inventory" {...a11yProps(0)} />
-                                        <Tab label="Equipment with description and design" {...a11yProps(1)} />
+                                        <Tab label="Building Envelope" {...a11yProps(1)} />
+                                        <Tab label="Technical Building System" {...a11yProps(2)} />
                                     </Tabs>
                                 </Box>
                                 <TabPanel value={valuesub} index={0}>
                                     <BuildingMaterialInventory />
                                 </TabPanel>
-
                                 <TabPanel value={valuesub} index={1}>
-                                    <Equipmentwithdescriptionanddesign />
+                                    <BuildingEnvelope />
+                                </TabPanel>
+                                <TabPanel value={valuesub} index={2}>
+                                    <TechnicalBuildingSystem />
                                 </TabPanel>
                             </TabPanel>
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={1}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'center' }}>
-                                    <Tabs value={valuesub2} onChange={handleChange2} aria-label="basic example" sx={{ '& .MuiTab-root': { margin: '0 10px' } }}>
-                                        <Tab label="Consumption data of energy, water, gas, and other resources (forecasting)" {...a11yProps(0)} />
+                                    <Tabs value={valuesub2} onChange={handleChange2} aria-label="basic example" sx={{
+                                        '& .MuiTab-root': {
+                                            flex: '1', margin: '0 10px', fontWeight: 'bold', textAlign: 'center', fontSize: '2.5ch', '&.Mui-selected': {
+                                                color: '#41BFB9', // Colore del testo bianco
+                                            },
+                                        }
+                                    }}>
+                                        <Tab label="Consumption data of energy (forecasting)" {...a11yProps(0)} />
                                         <Tab label="Consumption data of energy, water, gas, and other resources (invoices)" {...a11yProps(1)} />
                                         <Tab label="Consumption data of energy, water, gas, and other resource (historical)" {...a11yProps(2)} />
                                         <Tab label="Information on occupancy" {...a11yProps(3)} />
@@ -176,12 +223,50 @@ export default function BasicTabs() {
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={2}>
-                                <BuildingPerformance />
+                                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                    <Tabs value={valuesub3} onChange={handleChange3} aria-label="basic example" sx={{
+                                        '& .MuiTab-root': {
+                                            flex: '1', margin: '0 10px', fontWeight: 'bold', textAlign: 'center', fontSize: '2.5ch', '&.Mui-selected': {
+                                                color: '#41BFB9', // Colore del testo bianco
+                                            },
+                                        }
+                                    }}>
+                                        <Tab label="Documentation" {...a11yProps(0)} />
+                                        <Tab label="Efficient and climate resilient buildings" {...a11yProps(1)} />
+                                    </Tabs>
+                                </Box>
+                                <TabPanel value={valuesub3} index={0}>
+                                    <DocumentationPerformance />
+                                </TabPanel>
+                                <TabPanel value={valuesub3} index={1}>
+                                    <EfficientAndClimateResilientBuildings />
+                                </TabPanel>
                             </TabPanel>
                         </Grid>
-                        <Grid item xs={12}>
+                        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={3}>
-                                {/* <BuildingDocumentationBIM /> */}
+                                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                    <Tabs value={valuesub4} onChange={handleChange4} aria-label="basic example" sx={{
+                                        '& .MuiTab-root': {
+                                            flex: '1', margin: '0 10px', fontWeight: 'bold', textAlign: 'center', fontSize: '2.5ch', '&.Mui-selected': {
+                                                color: '#41BFB9', // Colore del testo bianco
+                                            },
+                                        }
+                                    }}>
+                                        <Tab label="Design and plans of the building" {...a11yProps(0)} />
+                                        <Tab label="Documentation" {...a11yProps(1)} />
+                                        <Tab label="BIM" {...a11yProps(2)} />
+                                    </Tabs>
+                                </Box>
+                                <TabPanel value={valuesub3} index={0}>
+                                    <DesignAndPlansOfTheBuilding />
+                                </TabPanel>
+                                <TabPanel value={valuesub3} index={1}>
+                                    <Documentation />
+                                </TabPanel>
+                                <TabPanel value={valuesub3} index={2}>
+                                    <BIM />
+                                </TabPanel>
                             </TabPanel>
                         </Grid>
                     </Grid>
@@ -192,13 +277,31 @@ export default function BasicTabs() {
                     <Grid container spacing={2} justifyContent="center">
                         <Grid item xs={12}>
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                <Tabs value={value} onChange={handleChange} variant="fullWidth" aria-label="basic tabs example">
+                                <Tabs
+                                    value={value}
+                                    onChange={handleChange}
+                                    variant="fullWidth"
+                                    aria-label="basic tabs example"
+                                    sx={{
+                                        '& .MuiTab-root': {
+                                            minHeight: '5vh', // Imposta l'altezza minima
+                                            fontSize: '2.5ch',
+                                            fontWeight: 'bold',
+                                            textAlign: 'center',
+                                            backgroundColor: 'rgba(5, 123, 190, 0.2)', // Sfondo nero
+                                            color: '#057BBE', // Colore del testo bianco
+                                            '&.Mui-selected': {
+                                                backgroundColor: '#057BBE', // Sfondo blu quando selezionato
+                                                color: 'white', // Colore del testo bianco
+                                            },
+                                        },
+                                    }}
+                                >
                                     <Tab label="Administrative Information" {...a11yProps(0)} />
                                     <Tab label="General Building Information" {...a11yProps(1)} />
                                     <Tab label="Building Element Information" {...a11yProps(2)} />
                                     <Tab label="Building Operation and Use" {...a11yProps(3)} />
                                     <Tab label="Building Performance" {...a11yProps(4)} />
-                                    <Tab label="Smart Readiness" {...a11yProps(5)} />
                                 </Tabs>
                             </Box>
                         </Grid>
@@ -215,25 +318,40 @@ export default function BasicTabs() {
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={2}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'center' }}>
-                                    <Tabs value={valuesub} onChange={handleChange1} aria-label="basic example" sx={{ '& .MuiTab-root': { margin: '0 10px' } }}>
+                                    <Tabs value={valuesub} onChange={handleChange1} aria-label="basic example" sx={{
+                                        '& .MuiTab-root': {
+                                            flex: '1', margin: '0 10px', fontWeight: 'bold', textAlign: 'center', fontSize: '2.5ch', '&.Mui-selected': {
+                                                color: '#41BFB9', // Colore del testo bianco
+                                            },
+                                        }
+                                    }}>
                                         <Tab label="Building Material Inventory" {...a11yProps(0)} />
-                                        <Tab label="Equipment with description and design" {...a11yProps(1)} />
+                                        <Tab label="Building Envelope" {...a11yProps(1)} />
+                                        <Tab label="Technical Building System" {...a11yProps(2)} />
                                     </Tabs>
                                 </Box>
                                 <TabPanel value={valuesub} index={0}>
                                     <BuildingMaterialInventory />
                                 </TabPanel>
-
                                 <TabPanel value={valuesub} index={1}>
-                                    <Equipmentwithdescriptionanddesign />
+                                    <BuildingEnvelope />
+                                </TabPanel>
+                                <TabPanel value={valuesub} index={2}>
+                                    <TechnicalBuildingSystem />
                                 </TabPanel>
                             </TabPanel>
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={3}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'center' }}>
-                                    <Tabs value={valuesub2} onChange={handleChange2} aria-label="basic example" sx={{ '& .MuiTab-root': { margin: '0 10px' } }}>
-                                        <Tab label="Consumption data of energy, water, gas, and other resources (forecasting)" {...a11yProps(0)} />
+                                    <Tabs value={valuesub2} onChange={handleChange2} aria-label="basic example" sx={{
+                                        '& .MuiTab-root': {
+                                            flex: '1', margin: '0 10px', fontWeight: 'bold', textAlign: 'center', fontSize: '2.5ch', '&.Mui-selected': {
+                                                color: '#41BFB9', // Colore del testo bianco
+                                            },
+                                        }
+                                    }}>
+                                        <Tab label="Consumption data of energy (forecasting)" {...a11yProps(0)} />
                                         <Tab label="Consumption data of energy, water, gas, and other resources (invoices)" {...a11yProps(1)} />
                                         <Tab label="Consumption data of energy, water, gas, and other resource (historical)" {...a11yProps(2)} />
                                         <Tab label="Information on occupancy" {...a11yProps(3)} />
@@ -259,29 +377,60 @@ export default function BasicTabs() {
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={4}>
-                                <BuildingPerformance />
-                            </TabPanel>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TabPanel value={value} index={5}>
-                                {/* <SmartReadiness /> */}
+                                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                    <Tabs value={valuesub3} onChange={handleChange3} aria-label="basic example" sx={{
+                                        '& .MuiTab-root': {
+                                            flex: '1', margin: '0 10px', fontWeight: 'bold', fontSize: '2.5ch', textAlign: 'center',
+                                            '&.Mui-selected': {
+                                                color: '#41BFB9', // Colore del testo bianco
+                                            },
+                                        }
+                                    }}>
+                                        <Tab label="Documentation" {...a11yProps(0)} />
+                                        <Tab label="Efficient and climate resilient buildings" {...a11yProps(1)} />
+                                    </Tabs>
+                                </Box>
+                                <TabPanel value={valuesub3} index={0}>
+                                    <DocumentationPerformance />
+                                </TabPanel>
+                                <TabPanel value={valuesub3} index={1}>
+                                    <EfficientAndClimateResilientBuildings />
+                                </TabPanel>
                             </TabPanel>
                         </Grid>
                     </Grid>
                 </>
             )}
-            {(userDblStructure === 'FVH' && userRole === 'Owner-occupiers') && (
+            {(userDblStructure === 'FVH' && userRole === 'Owner_Occupier') && (
                 <>
                     <Grid container spacing={2} justifyContent="center">
                         <Grid item xs={12}>
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                <Tabs value={value} onChange={handleChange} variant="fullWidth" aria-label="basic tabs example">
+                                <Tabs
+                                    value={value}
+                                    onChange={handleChange}
+                                    variant="fullWidth"
+                                    aria-label="basic tabs example"
+                                    sx={{
+                                        '& .MuiTab-root': {
+                                            minHeight: '5vh', // Imposta l'altezza minima
+                                            fontSize: '2.5ch',
+                                            fontWeight: 'bold',
+                                            textAlign: 'center',
+                                            backgroundColor: 'rgba(5, 123, 190, 0.2)', // Sfondo nero
+                                            color: '#057BBE', // Colore del testo bianco
+                                            '&.Mui-selected': {
+                                                backgroundColor: '#057BBE', // Sfondo blu quando selezionato
+                                                color: 'white', // Colore del testo bianco
+                                            },
+                                        },
+                                    }}
+                                >
                                     <Tab label="Administrative Information" {...a11yProps(0)} />
                                     <Tab label="General Building Information" {...a11yProps(1)} />
                                     <Tab label="Building Element Information" {...a11yProps(2)} />
                                     <Tab label="Building Operation and Use" {...a11yProps(3)} />
                                     <Tab label="Building Performance" {...a11yProps(4)} />
-                                    <Tab label="Smart Readiness" {...a11yProps(5)} />
                                 </Tabs>
                             </Box>
                         </Grid>
@@ -298,25 +447,40 @@ export default function BasicTabs() {
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={2}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'center' }}>
-                                    <Tabs value={valuesub} onChange={handleChange1} aria-label="basic example" sx={{ '& .MuiTab-root': { margin: '0 10px' } }}>
+                                    <Tabs value={valuesub} onChange={handleChange1} aria-label="basic example" sx={{
+                                        '& .MuiTab-root': {
+                                            flex: '1', margin: '0 10px', fontWeight: 'bold', textAlign: 'center', fontSize: '2.5ch', '&.Mui-selected': {
+                                                color: '#41BFB9', // Colore del testo bianco
+                                            },
+                                        }
+                                    }}>
                                         <Tab label="Building Material Inventory" {...a11yProps(0)} />
-                                        <Tab label="Equipment with description and design" {...a11yProps(1)} />
+                                        <Tab label="Building Envelope" {...a11yProps(1)} />
+                                        <Tab label="Technical Building System" {...a11yProps(2)} />
                                     </Tabs>
                                 </Box>
                                 <TabPanel value={valuesub} index={0}>
                                     <BuildingMaterialInventory />
                                 </TabPanel>
-
                                 <TabPanel value={valuesub} index={1}>
-                                    <Equipmentwithdescriptionanddesign />
+                                    <BuildingEnvelope />
+                                </TabPanel>
+                                <TabPanel value={valuesub} index={2}>
+                                    <TechnicalBuildingSystem />
                                 </TabPanel>
                             </TabPanel>
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={3}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'center' }}>
-                                    <Tabs value={valuesub2} onChange={handleChange2} aria-label="basic example" sx={{ '& .MuiTab-root': { margin: '0 10px' } }}>
-                                        <Tab label="Consumption data of energy, water, gas, and other resources (forecasting)" {...a11yProps(0)} />
+                                    <Tabs value={valuesub2} onChange={handleChange2} aria-label="basic example" sx={{
+                                        '& .MuiTab-root': {
+                                            flex: '1', margin: '0 10px', fontWeight: 'bold', textAlign: 'center', fontSize: '2.5ch', '&.Mui-selected': {
+                                                color: '#41BFB9', // Colore del testo bianco
+                                            },
+                                        }
+                                    }}>
+                                        <Tab label="Consumption data of energy (forecasting)" {...a11yProps(0)} />
                                         <Tab label="Consumption data of energy, water, gas, and other resources (invoices)" {...a11yProps(1)} />
                                         <Tab label="Consumption data of energy, water, gas, and other resource (historical)" {...a11yProps(2)} />
                                         <Tab label="Information on occupancy" {...a11yProps(3)} />
@@ -342,23 +506,55 @@ export default function BasicTabs() {
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={4}>
-                                <BuildingPerformance />
-                            </TabPanel>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TabPanel value={value} index={5}>
-                               {/*  <SmartReadiness /> */}
+                                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                    <Tabs value={valuesub3} onChange={handleChange3} aria-label="basic example" sx={{
+                                        '& .MuiTab-root': {
+                                            flex: '1', margin: '0 10px', fontWeight: 'bold', fontSize: '2.5ch', textAlign: 'center',
+                                            '&.Mui-selected': {
+                                                color: '#41BFB9', // Colore del testo bianco
+                                            },
+                                        }
+                                    }}>
+                                        <Tab label="Documentation" {...a11yProps(0)} />
+                                        <Tab label="Efficient and climate resilient buildings" {...a11yProps(1)} />
+                                    </Tabs>
+                                </Box>
+                                <TabPanel value={valuesub3} index={0}>
+                                    <DocumentationPerformance />
+                                </TabPanel>
+                                <TabPanel value={valuesub3} index={1}>
+                                    <EfficientAndClimateResilientBuildings />
+                                </TabPanel>
                             </TabPanel>
                         </Grid>
                     </Grid>
                 </>
             )}
-            {(userDblStructure === 'FVH' && userRole === 'policy makers') && (
+            {(userDblStructure === 'FVH' && userRole === 'Policy_Maker') && (
                 <>
                     <Grid container spacing={2} justifyContent="center">
                         <Grid item xs={12}>
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                <Tabs value={value} onChange={handleChange} variant="fullWidth" aria-label="basic tabs example">
+                                <Tabs
+                                    value={value}
+                                    onChange={handleChange}
+                                    variant="fullWidth"
+                                    aria-label="basic tabs example"
+                                    sx={{
+                                        '& .MuiTab-root': {
+                                            minHeight: '5vh', // Imposta l'altezza minima
+                                            fontSize: '2.5ch',
+                                            fontWeight: 'bold',
+                                            textAlign: 'center',
+                                            backgroundColor: 'rgba(5, 123, 190, 0.2)', // Sfondo nero
+                                            color: '#057BBE', // Colore del testo bianco
+                                            '&.Mui-selected': {
+                                                backgroundColor: '#057BBE', // Sfondo blu quando selezionato
+                                                color: 'white', // Colore del testo bianco
+                                            },
+                                        },
+                                    }}
+                                >
                                     <Tab label="Administrative Information" {...a11yProps(0)} />
                                     <Tab label="General Building Information" {...a11yProps(1)} />
                                 </Tabs>
@@ -377,12 +573,31 @@ export default function BasicTabs() {
                     </Grid>
                 </>
             )}
-            {(userDblStructure === 'FVH' && userRole === 'Public authorities') && (
+            {(userDblStructure === 'FVH' && userRole === 'Public_Authority') && (
                 <>
                     <Grid container spacing={2} justifyContent="center">
                         <Grid item xs={12}>
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                <Tabs value={value} onChange={handleChange} variant="fullWidth" aria-label="basic tabs example">
+                                <Tabs
+                                    value={value}
+                                    onChange={handleChange}
+                                    variant="fullWidth"
+                                    aria-label="basic tabs example"
+                                    sx={{
+                                        '& .MuiTab-root': {
+                                            minHeight: '5vh', // Imposta l'altezza minima
+                                            fontSize: '2.5ch',
+                                            fontWeight: 'bold',
+                                            textAlign: 'center',
+                                            backgroundColor: 'rgba(5, 123, 190, 0.2)', // Sfondo nero
+                                            color: '#057BBE', // Colore del testo bianco
+                                            '&.Mui-selected': {
+                                                backgroundColor: '#057BBE', // Sfondo blu quando selezionato
+                                                color: 'white', // Colore del testo bianco
+                                            },
+                                        },
+                                    }}
+                                >
                                     <Tab label="Administrative Information" {...a11yProps(0)} />
                                     <Tab label="General Building Information" {...a11yProps(1)} />
                                 </Tabs>
@@ -406,91 +621,107 @@ export default function BasicTabs() {
                     <Grid container spacing={2} justifyContent="center">
                         <Grid item xs={12}>
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                <Tabs value={value} onChange={handleChange} variant="fullWidth" aria-label="basic tabs example">
+                                <Tabs
+                                    value={value}
+                                    onChange={handleChange}
+                                    variant="fullWidth"
+                                    aria-label="basic tabs example"
+                                    sx={{
+                                        '& .MuiTab-root': {
+                                            minHeight: '5vh', // Imposta l'altezza minima
+                                            fontSize: '2.5ch',
+                                            fontWeight: 'bold',
+                                            textAlign: 'center',
+                                            backgroundColor: 'rgba(5, 123, 190, 0.2)', // Sfondo nero
+                                            color: '#057BBE', // Colore del testo bianco
+                                            '&.Mui-selected': {
+                                                backgroundColor: '#057BBE', // Sfondo blu quando selezionato
+                                                color: 'white', // Colore del testo bianco
+                                            },
+                                        },
+                                    }}
+                                >
                                     <Tab label="Building Element Information" {...a11yProps(0)} />
                                     <Tab label="Building Operation and Use" {...a11yProps(1)} />
-                                    <Tab label="Building Performance" {...a11yProps(2)} />
-                                    <Tab label="Building Documentation BIM" {...a11yProps(3)} />
+                                    <Tab label="Building Documentation" {...a11yProps(2)} />
                                 </Tabs>
                             </Box>
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={0}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'center' }}>
-                                    <Tabs value={valuesub} onChange={handleChange1} aria-label="basic example" sx={{ '& .MuiTab-root': { margin: '0 10px' } }}>
+                                    <Tabs value={valuesub} onChange={handleChange1} aria-label="basic example" sx={{
+                                        '& .MuiTab-root': {
+                                            flex: '1', margin: '0 10px', fontWeight: 'bold', textAlign: 'center', fontSize: '2.5ch', '&.Mui-selected': {
+                                                color: '#41BFB9', // Colore del testo bianco
+                                            },
+                                        }
+                                    }}>
                                         <Tab label="Building Material Inventory" {...a11yProps(0)} />
-                                        <Tab label="Equipment with description and design" {...a11yProps(1)} />
+                                        <Tab label="Building Envelope" {...a11yProps(1)} />
+                                        <Tab label="Technical Building System" {...a11yProps(2)} />
                                     </Tabs>
                                 </Box>
                                 <TabPanel value={valuesub} index={0}>
-                                    <BuildingMaterialInventory />
+                                    <BuildingMaterialInventoryIAsiSitta />
                                 </TabPanel>
-
                                 <TabPanel value={valuesub} index={1}>
-                                    <Equipmentwithdescriptionanddesign />
+                                    <BuildingEnvelopeIasiSitta />
+                                </TabPanel>
+                                <TabPanel value={valuesub} index={2}>
+                                    <TechnicalBuildingSystemIasiSitta />
                                 </TabPanel>
                             </TabPanel>
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={1}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'center' }}>
-                                    <Tabs value={valuesub2} onChange={handleChange2} aria-label="basic example" sx={{ '& .MuiTab-root': { margin: '0 10px' } }}>
-                                        <Tab label="Consumption data of energy, water, gas, and other resources (forecasting)" {...a11yProps(0)} />
-                                        <Tab label="Consumption data of energy, water, gas, and other resources (invoices)" {...a11yProps(1)} />
-                                        <Tab label="Consumption data of energy, water, gas, and other resource (historical)" {...a11yProps(2)} />
-                                        <Tab label="Maintenance Report" {...a11yProps(3)} />
-                                        <Tab label="Information on occupancy" {...a11yProps(4)} />
+                                    <Tabs value={valuesub2} onChange={handleChange2} aria-label="basic example" sx={{
+                                        '& .MuiTab-root': {
+                                            flex: '1', margin: '0 10px', fontWeight: 'bold', textAlign: 'center', fontSize: '2.5ch', '&.Mui-selected': {
+                                                color: '#41BFB9', // Colore del testo bianco
+                                            },
+                                        }
+                                    }}>
+                                        <Tab label="Consumption data of energy (forecasting)" {...a11yProps(0)} />
+                                        <Tab label="Consumption data of energy and chiller (historical)" {...a11yProps(1)} />
+                                        <Tab label="Maintenance Report" {...a11yProps(2)} />
                                     </Tabs>
                                 </Box>
                                 <TabPanel value={valuesub2} index={0}>
-                                    <ConsumptiondataofenergyForecasting />
+                                    <ConsumptiondataofenergyForecastingIasiSitta />
                                 </TabPanel>
                                 <TabPanel value={valuesub2} index={1}>
-                                    <ConsumptiondataofenergyInvoices />
+                                    <ConsumptiondataofenergyHistoricalIasiSitta />
                                 </TabPanel>
                                 <TabPanel value={valuesub2} index={2}>
-                                    <ConsumptiondataofenergyHistorical />
-                                </TabPanel>
-                                <TabPanel value={valuesub2} index={3}>
                                     <MaintenanceReport />
                                 </TabPanel>
-                                <TabPanel value={valuesub2} index={4}>
-                                    <Informationonoccupancy />
-                                </TabPanel>
-                            </TabPanel>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TabPanel value={value} index={2}>
-                                <BuildingPerformanceIASI />
                             </TabPanel>
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <TabPanel value={value} index={3}>
-                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                            <Tabs value={valuesub3} onChange={handleChange3} aria-label="basic example" sx={{
-                                '& .MuiTab-root': {
-                                    flex: '1', margin: '0 10px', fontWeight: 'bold', fontSize: '2.5ch', textAlign: 'center',
-                                    '&.Mui-selected': {
-                                        color: '#41BFB9', // Colore del testo bianco
-                                    },
-                                }
-                            }}>
-                                <Tab label="Design and plans of the building" {...a11yProps(0)} />
-                                <Tab label="Documentation" {...a11yProps(1)} />
-                                <Tab label="BIM" {...a11yProps(2)} />
-                            </Tabs>
-                        </Box>
-                        <TabPanel value={valuesub3} index={0}>
-                            <DesignAndPlansOfTheBuilding />
-                        </TabPanel>
-                        <TabPanel value={valuesub3} index={1}>
-                            <DocumentationIasiSitta />
-                        </TabPanel>
-                        <TabPanel value={valuesub3} index={2}>
-                            <BIM />
-                        </TabPanel>
-                    </TabPanel>
-                </Grid>
+                            <TabPanel value={value} index={2}>
+                                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                    <Tabs value={valuesub3} onChange={handleChange3} aria-label="basic example" sx={{
+                                        '& .MuiTab-root': {
+                                            flex: '1', margin: '0 10px', fontWeight: 'bold', fontSize: '2.5ch', textAlign: 'center',
+                                            '&.Mui-selected': {
+                                                color: '#41BFB9', // Colore del testo bianco
+                                            },
+                                        }
+                                    }}>
+                                        <Tab label="Design and plans of the building" {...a11yProps(0)} />
+                                        <Tab label="Documentation" {...a11yProps(1)} />
+                                    </Tabs>
+                                </Box>
+                                <TabPanel value={valuesub3} index={0}>
+                                    <DesignAndPlansOfTheBuildingIasiSitta />
+                                </TabPanel>
+                                <TabPanel value={valuesub3} index={1}>
+                                    <DocumentationIasiSitta />
+                                </TabPanel>
+                            </TabPanel>
+                        </Grid>
                     </Grid>
                 </>
             )}
@@ -499,13 +730,31 @@ export default function BasicTabs() {
                     <Grid container spacing={2} justifyContent="center">
                         <Grid item xs={12}>
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                <Tabs value={value} onChange={handleChange} variant="fullWidth" aria-label="basic tabs example">
+                                <Tabs
+                                    value={value}
+                                    onChange={handleChange}
+                                    variant="fullWidth"
+                                    aria-label="basic tabs example"
+                                    sx={{
+                                        '& .MuiTab-root': {
+                                            minHeight: '5vh', // Imposta l'altezza minima
+                                            fontSize: '2.5ch',
+                                            fontWeight: 'bold',
+                                            textAlign: 'center',
+                                            backgroundColor: 'rgba(5, 123, 190, 0.2)', // Sfondo nero
+                                            color: '#057BBE', // Colore del testo bianco
+                                            '&.Mui-selected': {
+                                                backgroundColor: '#057BBE', // Sfondo blu quando selezionato
+                                                color: 'white', // Colore del testo bianco
+                                            },
+                                        },
+                                    }}
+                                >
                                     <Tab label="Administrative Information" {...a11yProps(0)} />
                                     <Tab label="General Building Information" {...a11yProps(1)} />
                                     <Tab label="Building Element Information" {...a11yProps(2)} />
                                     <Tab label="Building Operation and Use" {...a11yProps(3)} />
-                                    <Tab label="Building Performance" {...a11yProps(4)} />
-                                    <Tab label="Finance" {...a11yProps(5)} />
+                                    <Tab label="Finance" {...a11yProps(4)} />
                                 </Tabs>
                             </Box>
                         </Grid>
@@ -548,68 +797,90 @@ export default function BasicTabs() {
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={3}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'center' }}>
-                                    <Tabs value={valuesub2} onChange={handleChange2} aria-label="basic example" sx={{ '& .MuiTab-root': { margin: '0 10px' } }}>
-                                        <Tab label="Consumption data of energy, water, gas, and other resources (forecasting)" {...a11yProps(0)} />
-                                        <Tab label="Consumption data of energy, water, gas, and other resources (invoices)" {...a11yProps(1)} />
-                                        <Tab label="Consumption data of energy, water, gas, and other resource (historical)" {...a11yProps(2)} />
-                                        <Tab label="Maintenance Report" {...a11yProps(3)} />
-                                        <Tab label="Information on occupancy" {...a11yProps(4)} />
+                                    <Tabs value={valuesub2} onChange={handleChange2} aria-label="basic example" sx={{
+                                        '& .MuiTab-root': {
+                                            flex: '1', margin: '0 10px', fontWeight: 'bold', textAlign: 'center', fontSize: '2.5ch', '&.Mui-selected': {
+                                                color: '#41BFB9', // Colore del testo bianco
+                                            },
+                                        }
+                                    }}>
+                                        <Tab label="Consumption data of energy (forecasting)" {...a11yProps(0)} />
+                                        <Tab label="Consumption data of energy and chiller (historical)" {...a11yProps(1)} />
+                                        <Tab label="Maintenance Report" {...a11yProps(2)} />
                                     </Tabs>
                                 </Box>
                                 <TabPanel value={valuesub2} index={0}>
-                                    <ConsumptiondataofenergyForecasting />
+                                    <ConsumptiondataofenergyForecastingIasiSitta />
                                 </TabPanel>
                                 <TabPanel value={valuesub2} index={1}>
-                                    <ConsumptiondataofenergyInvoices />
+                                    <ConsumptiondataofenergyHistoricalIasiSitta />
                                 </TabPanel>
                                 <TabPanel value={valuesub2} index={2}>
-                                    <ConsumptiondataofenergyHistorical />
-                                </TabPanel>
-                                <TabPanel value={valuesub2} index={3}>
                                     <MaintenanceReport />
                                 </TabPanel>
-                                <TabPanel value={valuesub2} index={4}>
-                                    <Informationonoccupancy />
-                                </TabPanel>
-                            </TabPanel>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TabPanel value={value} index={4}>
-                                <BuildingPerformanceIASI />
                             </TabPanel>
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                            <TabPanel value={value} index={5}>
-                                <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'center' }}>
-                                    <Tabs value={valuesub3} onChange={handleChange3} aria-label="basic example" sx={{ '& .MuiTab-root': { margin: '0 5px' } }}>
-                                        <Tab label="Cost Information (invoices)" {...a11yProps(0)} />
-                                        <Tab label="Savings in the operating costs (renovation)" {...a11yProps(1)} />
+                            <TabPanel value={value} index={4}>
+                                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                    <Tabs value={valuesub3} onChange={handleChange3} aria-label="basic example"
+                                        sx={{
+                                            '& .MuiTab-root': {
+                                                flex: '1', margin: '0 10px', fontWeight: 'bold', fontSize: '2.5ch', textAlign: 'center',
+                                                '&.Mui-selected': {
+                                                    color: '#41BFB9', // Colore del testo bianco
+                                                },
+                                            }
+                                        }}>
+                                        <Tab label="Cost Information (invoices thermal energy for heating and hot water)" {...a11yProps(0)} />
+                                        <Tab label="Cost Information (invoices thermal energy for hot water)" {...a11yProps(1)} />
+                                        <Tab label="Cost Information (invoices thermal energy for heating)" {...a11yProps(2)} />
                                     </Tabs>
                                 </Box>
                                 <TabPanel value={valuesub3} index={0}>
                                     <CostInformationinvoices />
                                 </TabPanel>
-
                                 <TabPanel value={valuesub3} index={1}>
-                                    <Savingsintheoperatingcostsrenovation />
+                                    <CostInformationHotWater />
+                                </TabPanel>
+                                <TabPanel value={valuesub3} index={2}>
+                                    <CostInformationHeating />
                                 </TabPanel>
                             </TabPanel>
                         </Grid>
                     </Grid>
                 </>
             )}
-            {(userDblStructure === 'IASI&SITTA' && userRole === 'Owner-occupier') && (
+            {(userDblStructure === 'IASI&SITTA' && userRole === 'Owner_Occupier') && (
                 <>
                     <Grid container spacing={2} justifyContent="center">
                         <Grid item xs={12}>
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                <Tabs value={value} onChange={handleChange} variant="fullWidth" aria-label="basic tabs example">
+                                <Tabs
+                                    value={value}
+                                    onChange={handleChange}
+                                    variant="fullWidth"
+                                    aria-label="basic tabs example"
+                                    sx={{
+                                        '& .MuiTab-root': {
+                                            minHeight: '5vh', // Imposta l'altezza minima
+                                            fontSize: '2.5ch',
+                                            fontWeight: 'bold',
+                                            textAlign: 'center',
+                                            backgroundColor: 'rgba(5, 123, 190, 0.2)', // Sfondo nero
+                                            color: '#057BBE', // Colore del testo bianco
+                                            '&.Mui-selected': {
+                                                backgroundColor: '#057BBE', // Sfondo blu quando selezionato
+                                                color: 'white', // Colore del testo bianco
+                                            },
+                                        },
+                                    }}
+                                >
                                     <Tab label="Administrative Information" {...a11yProps(0)} />
                                     <Tab label="General Building Information" {...a11yProps(1)} />
                                     <Tab label="Building Element Information" {...a11yProps(2)} />
                                     <Tab label="Building Operation and Use" {...a11yProps(3)} />
-                                    <Tab label="Building Performance" {...a11yProps(4)} />
-                                    <Tab label="Finance" {...a11yProps(5)} />
+                                    <Tab label="Finance" {...a11yProps(4)} />
                                 </Tabs>
                             </Box>
                         </Grid>
@@ -626,79 +897,111 @@ export default function BasicTabs() {
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={2}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'center' }}>
-                                    <Tabs value={valuesub} onChange={handleChange1} aria-label="basic example" sx={{ '& .MuiTab-root': { margin: '0 10px' } }}>
+                                    <Tabs value={valuesub} onChange={handleChange1} aria-label="basic example" sx={{
+                                        '& .MuiTab-root': {
+                                            flex: '1', margin: '0 10px', fontWeight: 'bold', textAlign: 'center', fontSize: '2.5ch', '&.Mui-selected': {
+                                                color: '#41BFB9', // Colore del testo bianco
+                                            },
+                                        }
+                                    }}>
                                         <Tab label="Building Material Inventory" {...a11yProps(0)} />
-                                        <Tab label="Equipment with description and design" {...a11yProps(1)} />
+                                        <Tab label="Building envelope" {...a11yProps(1)} />
+                                        <Tab label="Technical building system" {...a11yProps(2)} />
                                     </Tabs>
                                 </Box>
                                 <TabPanel value={valuesub} index={0}>
-                                    <BuildingMaterialInventory />
+                                    <BuildingMaterialInventoryIAsiSitta />
                                 </TabPanel>
-
                                 <TabPanel value={valuesub} index={1}>
-                                    <Equipmentwithdescriptionanddesign />
+                                    <BuildingEnvelopeIasiSitta />
+                                </TabPanel>
+                                <TabPanel value={valuesub} index={2}>
+                                    <TechnicalBuildingSystemIasiSitta />
                                 </TabPanel>
                             </TabPanel>
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={3}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'center' }}>
-                                    <Tabs value={valuesub2} onChange={handleChange2} aria-label="basic example" sx={{ '& .MuiTab-root': { margin: '0 10px' } }}>
-                                        <Tab label="Consumption data of energy, water, gas, and other resources (forecasting)" {...a11yProps(0)} />
-                                        <Tab label="Consumption data of energy, water, gas, and other resources (invoices)" {...a11yProps(1)} />
-                                        <Tab label="Consumption data of energy, water, gas, and other resource (historical)" {...a11yProps(2)} />
-                                        <Tab label="Maintenance Report" {...a11yProps(3)} />
-                                        <Tab label="Information on occupancy" {...a11yProps(4)} />
+                                    <Tabs value={valuesub2} onChange={handleChange2} aria-label="basic example" sx={{
+                                        '& .MuiTab-root': {
+                                            flex: '1', margin: '0 10px', fontWeight: 'bold', textAlign: 'center', fontSize: '2.5ch', '&.Mui-selected': {
+                                                color: '#41BFB9', // Colore del testo bianco
+                                            },
+                                        }
+                                    }}>
+                                        <Tab label="Consumption data of energy (forecasting)" {...a11yProps(0)} />
+                                        <Tab label="Consumption data of energy and chiller (historical)" {...a11yProps(1)} />
+                                        <Tab label="Maintenance Report" {...a11yProps(2)} />
                                     </Tabs>
                                 </Box>
                                 <TabPanel value={valuesub2} index={0}>
-                                    <ConsumptiondataofenergyForecasting />
+                                    <ConsumptiondataofenergyForecastingIasiSitta />
                                 </TabPanel>
                                 <TabPanel value={valuesub2} index={1}>
-                                    <ConsumptiondataofenergyInvoices />
+                                    <ConsumptiondataofenergyHistoricalIasiSitta />
                                 </TabPanel>
                                 <TabPanel value={valuesub2} index={2}>
-                                    <ConsumptiondataofenergyHistorical />
-                                </TabPanel>
-                                <TabPanel value={valuesub2} index={3}>
                                     <MaintenanceReport />
                                 </TabPanel>
-                                <TabPanel value={valuesub2} index={4}>
-                                    <Informationonoccupancy />
-                                </TabPanel>
-                            </TabPanel>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TabPanel value={value} index={4}>
-                                <BuildingPerformanceIASI />
                             </TabPanel>
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                            <TabPanel value={value} index={5}>
-                                <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'center' }}>
-                                    <Tabs value={valuesub3} onChange={handleChange3} aria-label="basic example" sx={{ '& .MuiTab-root': { margin: '0 10px' } }}>
-                                        <Tab label="Cost Information (invoices)" {...a11yProps(0)} />
-                                        <Tab label="Savings in the operating costs (renovation)" {...a11yProps(1)} />
+                            <TabPanel value={value} index={4}>
+                                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                    <Tabs value={valuesub3} onChange={handleChange3} aria-label="basic example"
+                                        sx={{
+                                            '& .MuiTab-root': {
+                                                flex: '1', margin: '0 10px', fontWeight: 'bold', fontSize: '2.5ch', textAlign: 'center',
+                                                '&.Mui-selected': {
+                                                    color: '#41BFB9', // Colore del testo bianco
+                                                },
+                                            }
+                                        }}>
+                                        <Tab label="Cost Information (invoices thermal energy for heating and hot water)" {...a11yProps(0)} />
+                                        <Tab label="Cost Information (invoices thermal energy for hot water)" {...a11yProps(1)} />
+                                        <Tab label="Cost Information (invoices thermal energy for heating)" {...a11yProps(2)} />
                                     </Tabs>
                                 </Box>
                                 <TabPanel value={valuesub3} index={0}>
                                     <CostInformationinvoices />
                                 </TabPanel>
-
                                 <TabPanel value={valuesub3} index={1}>
-                                    <Savingsintheoperatingcostsrenovation />
+                                    <CostInformationHotWater />
+                                </TabPanel>
+                                <TabPanel value={valuesub3} index={2}>
+                                    <CostInformationHeating />
                                 </TabPanel>
                             </TabPanel>
                         </Grid>
                     </Grid>
                 </>
             )}
-            {(userDblStructure === 'IASI&SITTA' && userRole === 'policy_Maker') && (
+            {(userDblStructure === 'IASI&SITTA' && userRole === 'Policy_Maker') && (
                 <>
                     <Grid container spacing={2} justifyContent="center">
                         <Grid item xs={12}>
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                <Tabs value={value} onChange={handleChange} variant="fullWidth" aria-label="basic tabs example">
+                                <Tabs
+                                    value={value}
+                                    onChange={handleChange}
+                                    variant="fullWidth"
+                                    aria-label="basic tabs example"
+                                    sx={{
+                                        '& .MuiTab-root': {
+                                            minHeight: '5vh', // Imposta l'altezza minima
+                                            fontSize: '2.5ch',
+                                            fontWeight: 'bold',
+                                            textAlign: 'center',
+                                            backgroundColor: 'rgba(5, 123, 190, 0.2)', // Sfondo nero
+                                            color: '#057BBE', // Colore del testo bianco
+                                            '&.Mui-selected': {
+                                                backgroundColor: '#057BBE', // Sfondo blu quando selezionato
+                                                color: 'white', // Colore del testo bianco
+                                            },
+                                        },
+                                    }}
+                                >
                                     <Tab label="Administrative Information" {...a11yProps(0)} />
                                     <Tab label="General Building Information" {...a11yProps(1)} />
                                 </Tabs>
@@ -706,12 +1009,12 @@ export default function BasicTabs() {
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={0}>
-                                <AdministrativeInformation />
+                                <AdministrativeInformationIasiSitta />
                             </TabPanel>
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={1}>
-                                <GeneralBuildingInformation />
+                                <GeneralBuildingInformationIasiSitta />
                             </TabPanel>
                         </Grid>
                     </Grid>
@@ -722,7 +1025,26 @@ export default function BasicTabs() {
                     <Grid container spacing={2} justifyContent="center">
                         <Grid item xs={12}>
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                <Tabs value={value} onChange={handleChange} variant="fullWidth" aria-label="basic tabs example">
+                                <Tabs
+                                    value={value}
+                                    onChange={handleChange}
+                                    variant="fullWidth"
+                                    aria-label="basic tabs example"
+                                    sx={{
+                                        '& .MuiTab-root': {
+                                            minHeight: '5vh', // Imposta l'altezza minima
+                                            fontSize: '2.5ch',
+                                            fontWeight: 'bold',
+                                            textAlign: 'center',
+                                            backgroundColor: 'rgba(5, 123, 190, 0.2)', // Sfondo nero
+                                            color: '#057BBE', // Colore del testo bianco
+                                            '&.Mui-selected': {
+                                                backgroundColor: '#057BBE', // Sfondo blu quando selezionato
+                                                color: 'white', // Colore del testo bianco
+                                            },
+                                        },
+                                    }}
+                                >
                                     <Tab label="Administrative Information" {...a11yProps(0)} />
                                     <Tab label="General Building Information" {...a11yProps(1)} />
                                 </Tabs>
@@ -730,18 +1052,17 @@ export default function BasicTabs() {
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={0}>
-                                <AdministrativeInformation />
+                                <AdministrativeInformationIasiSitta />
                             </TabPanel>
                         </Grid>
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                             <TabPanel value={value} index={1}>
-                                <GeneralBuildingInformation />
+                                <GeneralBuildingInformationIasiSitta />
                             </TabPanel>
                         </Grid>
                     </Grid>
                 </>
             )}
-
         </Box>
     );
 }

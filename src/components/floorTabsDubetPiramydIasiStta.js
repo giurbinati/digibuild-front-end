@@ -3,340 +3,49 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import TableContainer from '@mui/material/TableContainer';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableHead from '@mui/material/TableHead';
-import TableBody from '@mui/material/TableBody';
-import TableRow from '@mui/material/TableRow';
-import TableCell from '@mui/material/TableCell';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
 import { Grid } from '@mui/material';
+import TextWithButtons from './textWithButtons';
 
+export default function AccordionWithTableIASIDubet() {
 
-export default function AccordionWithTable() {
-
-    const [valuesFloor1, setValuesFloor1] = useState({
-        "A": "https://cloud2.digibuild-project.com/file/f3b2d314-da87-4186-a2cf-2368f2824aa2/download",
-        'B': "https://cloud2.digibuild-project.com/file/b47289e3-872f-43b1-b355-73c5bd2cb76e/download",
-        "C": "https://cloud2.digibuild-project.com/file/5af6eff2-5ace-4396-833b-764528d08e9c/download"
-    });
-    const [valuesFloor2, setValuesFloor2] = useState({
-        "A": "Link",
-        'B': "Link",
-        "C": "Link"
-    });
-    const [valuesFloor3, setValuesFloor3] = useState({
-        "A": "Link",
-        'B': "Link",
-        "C": "Link"
-    });
-    const [valuesFloor4, setValuesFloor4] = useState({
-        "A": "Link",
-        'B': "Link",
-        "C": "Link"
-    });
-    const [valuesFloor5, setValuesFloor5] = useState({
-        "A": "Link",
-        'B': "Link",
-        "C": "Link"
-    });
-    const [valuesFloor6, setValuesFloor6] = useState({
-        "A": "Link",
-        'B': "Link",
-        "C": "Link"
-    });
-
-    const table1 = () => {
-        return (
-            <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead sx={{ backgroundColor: '#41BFB9', fontWeight: 'bold' }}>
-                        <TableRow>
-                            <TableCell style={{ fontSize: '2.5ch' }}>Section</TableCell>
-                            <TableCell align="right" style={{ fontSize: '2.5ch' }}>Value</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {Object.entries(valuesFloor1).map(([key, value]) => (
-                            <TableRow
-                                key={key}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 }, height: '5vh' }}
-                            >
-                                <TableCell component="th" scope="row" style={{ fontSize: '2.5ch' }}>
-                                    {key}
-                                </TableCell>
-                                <TableCell align="right" style={{ fontSize: '2.5ch' }}>
-                                    {typeof value === 'string' && value.startsWith('http') ?
-                                        <a href={value}>{value}</a> :
-                                        value
-                                    }
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        )
-    }
-    const table2 = () => {
-        return (
-            <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead sx={{ backgroundColor: '#41BFB9', fontWeight: 'bold' }}>
-                        <TableRow>
-                            <TableCell style={{ fontSize: '2.5ch' }}>Section</TableCell>
-                            <TableCell align="right" style={{ fontSize: '2.5ch' }}>Value</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {Object.keys(valuesFloor2).map((row) => (
-                            <TableRow
-                                key={row}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell component="th" scope="row"style={{ fontSize: '2.5ch' }}>
-                                    {row}
-                                </TableCell>
-                                <TableCell align="right" style={{ fontSize: '2.5ch' }}>{valuesFloor2[row]}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        )
-    }
-    const table3 = () => {
-        return (
-            <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead sx={{ backgroundColor: '#41BFB9', fontWeight: 'bold' }}>
-                        <TableRow>
-                            <TableCell style={{ fontSize: '2.5ch' }}>Section</TableCell>
-                            <TableCell align="right" style={{ fontSize: '2.5ch' }}>Value</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {Object.keys(valuesFloor3).map((row) => (
-                            <TableRow
-                                key={row}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell component="th" scope="row" style={{ fontSize: '2.5ch' }}>
-                                    {row}
-                                </TableCell>
-                                <TableCell align="right" style={{ fontSize: '2.5ch' }}>{valuesFloor3[row]}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        )
-    }
-    const table4 = () => {
-        return (
-            <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead sx={{ backgroundColor: '#41BFB9', fontWeight: 'bold' }}>
-                        <TableRow>
-                            <TableCell style={{ fontSize: '2.5ch' }}>Section</TableCell>
-                            <TableCell align="right" style={{ fontSize: '2.5ch' }}>Value</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {Object.keys(valuesFloor4).map((row) => (
-                            <TableRow
-                                key={row}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell component="th" scope="row" style={{ fontSize: '2.5ch' }}>
-                                    {row}
-                                </TableCell>
-                                <TableCell align="right" style={{ fontSize: '2.5ch' }}>{valuesFloor4[row]}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        )
-    }
-    const table5 = () => {
-        return (
-            <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead sx={{ backgroundColor: '#41BFB9', fontWeight: 'bold' }}>
-                        <TableRow>
-                            <TableCell style={{ fontSize: '2.5ch' }}>Section</TableCell>
-                            <TableCell align="right" style={{ fontSize: '2.5ch' }}>Value</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {Object.keys(valuesFloor5).map((row) => (
-                            <TableRow
-                                key={row}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell component="th" scope="row" style={{ fontSize: '2.5ch' }}>
-                                    {row}
-                                </TableCell>
-                                <TableCell align="right" style={{ fontSize: '2.5ch' }}>{valuesFloor5[row]}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        )
-    }
-    const table6 = () => {
-        return (
-            <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead sx={{ backgroundColor: '#41BFB9', fontWeight: 'bold' }}>
-                        <TableRow>
-                            <TableCell style={{ fontSize: '2.5ch' }}>Section</TableCell>
-                            <TableCell align="right" style={{ fontSize: '2.5ch' }}>Value</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {Object.keys(valuesFloor6).map((row) => (
-                            <TableRow
-                                key={row}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell component="th" scope="row" style={{ fontSize: '2.5ch' }}>
-                                    {row}
-                                </TableCell>
-                                <TableCell align="right" style={{ fontSize: '2.5ch' }}>{valuesFloor6[row]}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        )
-    }
+    const documentsDubet = [
+        { title: 'Floor 0', filename: 'Floor 0', type: 'pdf', buildingName: 'DubetPiramyd', floor: '0' },
+        { title: 'Floor 1', filename: 'Floor 1', type: 'pdf', buildingName: 'DubetPiramyd', floor: '1' },
+        { title: 'Floor 2', filename: 'Floor 2', type: 'pdf', buildingName: 'DubetPiramyd', floor: '2' },
+        { title: 'Floor 3', filename: 'Floor 3', type: 'pdf', buildingName: 'DubetPiramyd', floor: '3' },
+        { title: 'Floor 4', filename: 'Floor 4', type: 'pdf', buildingName: 'DubetPiramyd', floor: '4' },
+        { title: 'Floor 5', filename: 'Floor 5', type: 'pdf', buildingName: 'DubetPiramyd', floor: '5' },
+        { title: 'Floor 6', filename: 'Floor 6', type: 'pdf', buildingName: 'DubetPiramyd', floor: '6' },
+    ];
 
     const accordionItemStyle = {
         minHeight: '5vh', // Altezza minima delle righe dell'accordione impostata a 60px
+        fontSize: '2.5ch',
     };
 
     return (
         <div>
-            <Accordion>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1-content"
-                    id="panel1-header"
-                    sx={accordionItemStyle}
-                >
-                    Floor 1
-                </AccordionSummary>
-                <AccordionDetails>
-                    <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "3vh", padding: "2%" }}>
-                        <Box /* sx={{ paddingLeft: "32px", marginTop: "32px", paddingRight: "32px" }} */>
+            {[...Array(7).keys()].map(floor => ( 
+                <Accordion key={floor}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls={`panel${floor}-content`}
+                        id={`panel${floor}-header`}
+                        sx={accordionItemStyle}
+                    >
+                        Floor {floor}
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "3vh", padding: "2%", width: "80vh" }}>
                             <Grid container spacing={2} justifyContent="center">
-                                {table1()}
+                                <TextWithButtons documents={documentsDubet} floor={floor} />
                             </Grid>
-                        </Box>
-                    </Container>
-                </AccordionDetails>
-            </Accordion>
-            <Accordion>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1-content"
-                    id="panel1-header"
-                    sx={accordionItemStyle}
-                >
-                    Floor 2
-                </AccordionSummary>
-                <AccordionDetails>
-                    <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "3vh", padding: "2%" }}>
-                        <Box /* sx={{ paddingLeft: "32px", marginTop: "32px", paddingRight: "32px" }} */>
-                            <Grid container spacing={2} justifyContent="center">
-                                {table2()}
-                            </Grid>
-                        </Box>
-                    </Container>
-                </AccordionDetails>
-            </Accordion>
-            <Accordion>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1-content"
-                    id="panel1-header"
-                    sx={accordionItemStyle}
-                >
-                    Floor 3
-                </AccordionSummary>
-                <AccordionDetails>
-                    <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "3vh", padding: "2%" }}>
-                        <Box /* sx={{ paddingLeft: "32px", marginTop: "32px", paddingRight: "32px" }} */>
-                            <Grid container spacing={2} justifyContent="center">
-                                {table3()}
-                            </Grid>
-                        </Box>
-                    </Container>
-                </AccordionDetails>
-            </Accordion>
-            <Accordion>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1-content"
-                    id="panel1-header"
-                    sx={accordionItemStyle}
-                >
-                    Floor 4
-                </AccordionSummary>
-                <AccordionDetails>
-                    <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "3vh", padding: "2%" }}>
-                        <Box /* sx={{ paddingLeft: "32px", marginTop: "32px", paddingRight: "32px" }} */>
-                            <Grid container spacing={2} justifyContent="center">
-                                {table4()}
-                            </Grid>
-                        </Box>
-                    </Container>
-                </AccordionDetails>
-            </Accordion>
-            <Accordion>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1-content"
-                    id="panel1-header"
-                    sx={accordionItemStyle}
-                >
-                    Floor 5
-                </AccordionSummary>
-                <AccordionDetails>
-                    <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "3vh", padding: "2%" }}>
-                        <Box /* sx={{ paddingLeft: "32px", marginTop: "32px", paddingRight: "32px" }} */>
-                            <Grid container spacing={2} justifyContent="center">
-                                {table5()}
-                            </Grid>
-                        </Box>
-                    </Container>
-                </AccordionDetails>
-            </Accordion>
-            <Accordion>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1-content"
-                    id="panel1-header"
-                    sx={accordionItemStyle}
-                >
-                    Floor 6
-                </AccordionSummary>
-                <AccordionDetails>
-                    <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "3vh", padding: "2%" }}>
-                        <Box /* sx={{ paddingLeft: "32px", marginTop: "32px", paddingRight: "32px" }} */>
-                            <Grid container spacing={2} justifyContent="center">
-                                {table6()}
-                            </Grid>
-                        </Box>
-                    </Container>
-                </AccordionDetails>
-            </Accordion>
+                        </Container>
+                    </AccordionDetails>
+                </Accordion>
+            ))}
         </div>
     );
 }

@@ -31,11 +31,11 @@ const UploadButton = ({ fileType, keyword, pilot, building, requiresDateRange = 
       }
 
       const data = await response.json();
-      setUploadStatus("Upload completato con successo!");
+      setUploadStatus("Upload successfully completed!");
       setError(null);
     } catch (error) {
       setUploadStatus("");
-      setError('Errore durante l\'upload del file.');
+      setError('Error during file upload.');
     }
   };
 

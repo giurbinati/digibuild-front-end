@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import { Grid } from '@mui/material';
 
 import FloorTabs from '../components/floorTabs'
-export default function Home({ setList, list }) {
+export default function DesignAndPlansOfTheBuilding() {
 
   return (
 

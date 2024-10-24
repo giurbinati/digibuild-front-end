@@ -3,9 +3,8 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
 import { Grid } from '@mui/material';
 import TextWithButtons from './textWithButtons';
 
@@ -56,7 +55,7 @@ export default function AccordionWithTable() {
                         Floor {floor}
                     </AccordionSummary>
                     <AccordionDetails>
-                        <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "3vh", padding: "2%" }}>
+                        <Container maxWidth="xl" sx={{ marginTop: "1vh", marginBottom: "3vh", padding: "2%", width: "80vh" }}>
                             <Grid container spacing={2} justifyContent="center">
                                 <TextWithButtons documents={documents} floor={floor} />
                             </Grid>

@@ -62,7 +62,7 @@ function App() {
             path="/"
             element={
               <PrivateRoute token={setAuth}>
-                <Dashboard/>
+                <Dash2/>
                 {/* <Home/> */}
               </PrivateRoute>
             }
@@ -71,7 +71,7 @@ function App() {
             path=""
             element={
               <PrivateRoute token={setAuth}>
-                <Dashboard />
+                <Dash2 />
                 {/* <Home/> */}
               </PrivateRoute>
             }
